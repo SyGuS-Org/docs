@@ -1,0 +1,266 @@
+\documentclass{llncs}
+\usepackage[margin=2.5cm]{geometry}
+\pagestyle{plain}
+\title{SyGuS Syntax for SyGuS-COMP'15}
+%
+\author{Rajeev Alur, Dana Fisman, P. Madhusudan, Rishabh Singh, Armando Solar-Lezama}
+%
+\institute{}
+%
+\begin{document}
+\maketitle
+
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\commentout}[1]{}
+
+\begin{abstract}
+We describe here the new syntax for SyGuS, to accommodate for the new tracks of SyGuS-COMP'15: (1) conditional linear integer arithmetic and (2) invariant synthesis. The enhanced syntax can be easily translated to the syntax of SyGuS-COMP'14~\cite{sygus-if}, which will be the syntax for the general track of  SyGuS-COMP'15.
+\end{abstract}
+
+\section{Conditional Linear Integer Arithmetic track}
+This track is aimed at synthesizing function in conditional linear integer arithmetic. That is, the grammar of the function to be synthesized is determined a priory to be in LIA, and no further syntactic restrictions are imposed. To allow this we relax the syntax of \texttt{synth-func} by making the last argument, which describes the grammar for the function to be synthesized, optional. When it is absent the the only syntactic restriction for the formula to be synthesized is to be in the defined logic. 
+
+\commentout{
+\subsection*{Current Syntax of \texttt{synth-func}}
+The current syntax of the \texttt{synth-func} is:
+$$\begin{array}{r@{~::=~}l}
+\la SynthFunCond\ra & (\texttt{synth-func} ~\la Symbol \ra ~(( \la Symbol \ra  ~\la SortExpr\ra)^*) ~\la SortExpr \ra ~(
+\la NTDef\ra^+)) 
+\end{array}$$
+where the last argument
+$(\la NTDef\ra^+)$ provides the definition of the grammar by specifying the expansion of the non-terminals.
+$$\begin{array}{r@{~::=~}l}
+\la NTDef\ra & (\la Symbol \ra ~\la SortExpr \ra ~\la GTerm \ra^+)
+\end{array}$$}
+
+\subsection*{command \texttt{synth-func}}
+The new syntax of \texttt{synth-func} is: 
+$$\begin{array}{r@{~::=~}l}
+\la SynthFunCond\ra & (\texttt{synth-func} ~\la Symbol \ra ~(( \la Symbol \ra  ~\la SortExpr\ra)^*) ~\la SortExpr \ra ~(
+\la NTDef\ra^+)) ~|~ \\
+ & (\texttt{synth-func} ~\la Symbol \ra ~(( \la Symbol \ra  ~\la SortExpr\ra)^*) ~\la SortExpr \ra )
+\end{array}$$
+
+\commentout{
+\subsection*{Further Extension}
+In the sequel we might want to add a way to fix arbitrary grammars. e.g. by $$\begin{array}{r@{~::=~}l}\la GrmrDef\ra & \la TheoryName \ra ~|~ \la GrmrDefCmd \ra ~|~\la GrmrExpr\ra\end{array}$$ and $\la GrmrDefCmd \ra ~::=~ (\texttt{define-grmr} ~\la Symbol \ra ~\la GrmrExpr \ra)$
+
+This will enable us to define tracks for fixed grammars that do not constitute a certain SMT theory, as well as to use the same grammar definition in a benchmark, e.g. with multiple functions, by referring to it twice (or more) instead of defining it twice (or more) as we currently need to.}
+
+\subsection*{Example}
+The following is a legal SyGuS problem that can be used in the  Conditional Linear Integer Arithmetic track of SyGuS-COMP'15:
+\begin{verbatim}
+(set-logic LIA)
+(synth-fun max2 ((x Int) (y Int)) Int)
+(declare-var x Int)
+(declare-var y Int)
+(constraint (>= (max2 x y) x))
+(constraint (>= (max2 x y) y))
+(constraint (or (= x (max2 x y)) (or (= y (max2 x y)))))
+(check-synth)
+\end{verbatim}
+Since \texttt{synth-fun} does not provide a grammar argument, the function \texttt{max2} is required to be in LIA, and no other syntactic restrictions on it are imposed. That is, it is equivalent to the following example which is given in SyGuS syntax for the general track.
+
+
+\begin{verbatim}
+(set-logic LIA)
+
+(synth-fun max2 ((x Int)(y Int)) Int
+    ((Start Int (StartInt))
+               
+     (StartInt Int (x   y  ConstantInt 
+            (+ StartInt StartInt)
+            (- StartInt StartInt)
+            (* StartInt ConstantInt)
+            (* ConstantInt StartInt)
+            (div StartInt ConstantInt)
+            (mod StartInt ConstantInt)
+            (ite StartBool StartInt StartInt)))
+        
+	 (ConstantInt (Constant Int))
+	      
+     (StartBool Bool (true   false
+            (and  StartBool StartBool)
+            (or   StartBool StartBool)
+            (=>   StartBool StartBool)
+            (xor  StartBool StartBool)
+            (xnor StartBool StartBool)
+            (nand StartBool StartBool)
+            (nor  StartBool StartBool)
+            (iff  StartBool StartBool)
+            (not  StartBool)
+            (=    StartBool StartBool)
+            (<= StartInt StartInt)
+            (=  StartInt StartInt)
+            (>= StartInt StartInt)
+            (>  StartInt StartInt)
+            (<  StartInt StartInt)))))
+
+(declare-var x Int)
+(declare-var y Int)
+
+(constraint (>= (max2 x y) x))
+(constraint (>= (max2 x y) y))
+(constraint (or (= x (max2 x y)) (= y (max2 x y))))
+
+(check-synth)
+\end{verbatim}
+
+\section{Invariant Synthesis Track}
+The \texttt{synth-fun} command declares a function to be synthesizes. For the \emph{invariant synthesis track} of SyGuS-COMP'15, we want to synthesize predicates. In addition we want to have a mechanism for relating the constraint to the pre-condition, post-condition and transition relation, which rely on primed and unprimed versions of variables. We suggest  to add the following keyword 
+\begin{center}
+\texttt{synth-inv}, \texttt{declare-primed-var}, and \texttt{inv-constratint}.
+\end{center} 
+with the syntax and semantics defined below.
+
+\subsection*{Command \texttt{synth-inv}}
+The syntax of \texttt{synth-inv} is similar to that of \texttt{synth-fun} but does not require the return sort which is always \texttt{Bool}. 
+$$\begin{array}{r@{~::=~}l}
+\la SynthInvCmd\ra & (\texttt{synth-inv} ~\la Symbol \ra ~(( \la Symbol \ra  ~\la SortExpr\ra)^*) ~\la ~(
+\la NTDef\ra^+) \ra)~|~ \\
+& (\texttt{synth-inv} ~\la Symbol \ra ~(( \la Symbol \ra  ~\la SortExpr\ra)^*)\ )\\
+\end{array}$$
+
+\subsection*{Command \texttt{declare-primed-var}}
+The
+\texttt{declare-primed-var} command is equivalent to two \texttt{declare-var} commands, one with the given variable, and one with the given variable suffixed by \texttt{!}, which stands for the primed version of that variable. 
+
+$$\begin{array}{r@{~::=~}l}
+\la DeclarePrimedVar \ra &(\texttt{declare-primed-var}~\la Symbol \ra  ~\la SortExpr \ra)\\
+\end{array}$$
+
+For example,
+\begin{verbatim}
+(declare-primed-var x Int)
+\end{verbatim}
+
+is equivalent to
+\begin{verbatim}
+(declare-var x  Int)
+(declare-var x! Int)
+\end{verbatim}
+
+\subsection*{Command \texttt{inv-constratint}}
+The \texttt{inv-constratint} command has 4 arguments, all are strings corresponding to already defined names: The first is the name of the invariant to synthesize, the second is the name of a user defined function providing the pre-condition, the third is the name of a user defined function providing the transition, and the forth is the name of a user defined function providing the post-condition.
+
+$$\begin{array}{r@{~::=~}l}
+\la InvConstraintCmd\ra & (\texttt{inv-constraint} ~\la Symbol \ra ~\la Symbol \ra ~\la Symbol \ra ~\la Symbol \ra)\\
+\end{array}$$
+
+The number and sorts of the arguments of the pre-condition function and the post-condition function should be the same as that of the invariant to synthesize (not all arguments must be referred to in the function definition). Since the function for the transitions needs to refer to both the primed and unprimed versions of the variables to be synthesized, its list of arguments should be a concatenation of two list of arguments for the given invariant. 
+
+\vspace{3mm}
+\noindent
+An \texttt{inv-constraint} command is compiled into three constraints: 
+\vspace{-3mm}
+\begin{itemize}
+\item A constraint stipulating that the pre-condition implies the invariant (with unprimed variables). 
+\item A constraint stipulating that the conjunction of the invariant with unprimed variables and the transitions implies the invariant with primed variables.
+\item A constraint stipulating that the invariant (with unprimed variables) implies the pos-condition. 
+\end{itemize}
+
+
+
+
+\subsection*{Example}
+Consider the following program
+\begin{verbatim}
+   f(bool b) {
+      int x, y;
+      x = random(5,9);
+      y = random(1,3);
+      while (nondet) {
+        y = x;    	
+        if (b) 
+           x = x+10;
+        else 
+           x = x+12;
+      }
+      assert(y<x);
+   }
+\end{verbatim}
+
+\subsection*{Encoding in SyGuS-COMP'15}
+The problem of finding an invariant for this program can be encoded in SyGuS-COMP'15 syntax as follows: 
+\begin{verbatim}
+(set-logic LIA)
+
+(synth-inv inv-f ((x Int) (y Int) (b Bool)))
+
+(declare-primed-var b Bool)
+(declare-primed-var x Int)
+(declare-primed-var y Int)
+
+(define-fun pre-f ((x Int) (y Int) (b Bool)) Bool
+                  (and (and (>= x 5) (<= x 9))
+                       (and (>= y 1) (<= y 3))))
+                       
+(define-fun trans-f ((x Int) (y Int) (b Bool) (x! Int) (y! Int) (b! Bool)) Bool
+                    (and (and (= b! b) (= y! x)) 
+                         (ite b (= x! (+ x 10)) (= x! (+ x 12)))))
+                         
+(define-fun post-f ((x Int) (y Int) (b Bool)) Bool
+                   (< y x))
+
+(inv-constraint inv-f pre-f trans-f post-f)
+
+(check-synth)
+\end{verbatim}
+
+\subsection*{Compilation to general track}
+This is equivalent to the following problem encoded in SyGuS under first tack.
+
+\begin{verbatim}
+(set-logic LIA)
+
+(synth-fun inv-f ((x Int)(b Bool)) Bool)
+
+(declare-var b  Bool)
+(declare-var b! Bool)
+(declare-var x  Int)
+(declare-var x! Int)
+(declare-var y  Int)
+(declare-var y! Int)
+
+(define-fun pre-f ((x Int) (y Int) (b Bool)) Bool
+                  (and (and (>= x 5) (<= x 9))
+                       (and (>= y 1) (<= y 3))))
+                       
+(define-fun trans-f ((x Int) (y Int) (b Bool) (x! Int) (y! Int) (b! Bool)) Bool
+                    (and (and (= b! b) (= y! x)) 
+                         (ite b (= x! (+ x 10)) (= x! (+ x 12)))))
+                         
+(define-fun post-f ((x Int) (y Int) (b Bool)) Bool
+                   (< y x))
+
+(constraint (=> (pre-f x y b) 
+                (inv-f x y b)))
+
+(constraint (=> (and (inv-f x y b) (trans-f x y b x! y! b!)) 
+                (inv-f x! y! b!)))
+
+(constraint (=> (inv-f x y b) 
+                (post-f x y b)))
+
+(check-synth)
+\end{verbatim}
+
+
+\begin{thebibliography}{1}
+
+\bibitem{fmcad13}
+Rajeev Alur, Rastislav Bod\'{\i}k, Garvit Juniwal, Milo M.~K. Martin, Mukund
+  Raghothaman, Sanjit~A. Seshia, Rishabh Singh, Armando Solar-Lezama, Emina
+  Torlak and Abhishek Udupa.
+\newblock Syntax-Guided Synthesis.
+\newblock In {\em FMCAD}, pages 1--17. IEEE, 2013.
+
+\bibitem{sygus-if}
+Mukund Raghothaman and Abhishek Udupa.
+\newblock Language to Specify Syntax-Guided Synthesis Problems.
+\newblock In {\em http://sygus.seas.upenn.edu/files/SyGuS-IF.pdf}, May, 2014.
+
+\end{thebibliography}
+
+\end{document}

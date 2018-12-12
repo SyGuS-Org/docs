@@ -1,0 +1,156 @@
+\documentclass{llncs}
+\usepackage[margin=2.5cm]{geometry}
+\pagestyle{plain}
+\title{SyGuS Syntax for SyGuS-COMP'16}
+%
+\author{Rajeev Alur, Dana Fisman, Rishabh Singh, Armando Solar-Lezama}
+%
+\institute{}
+%
+\begin{document}
+\maketitle
+
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\commentout}[1]{}
+
+\begin{abstract}
+SyGuS-COMP'16 will consists of four tracks: the \emph{general track} (GENERAL), the \emph{conditional linear integer arithmetic track} (LIA), the \emph{invariant synthesis track} (INV), and the \emph{programming by examples track} (PBE). The latter is a track introduced in this year's competition. This document describes the syntax for this track. The syntax for the three other tracks is described in previous documents: GENERAL in~\cite{sygus-if} and LIA and INV in~\cite{sygus15syntax}. 
+\end{abstract}
+
+
+\section{The Programming by Examples (PBE) Track}
+This track is aimed at synthesizing functions where all constraints are given by means of examples of what the result of the functions to be synthesized on certain inputs should be. The current supported logics for this track are either bit vectors (BV) or strings and linear integer arithmetic (SLIA).
+
+
+\subsection*{Limitation on the constraints}
+All constraints in the PBE track should have equality at the root and the name of a function to be synthesized as the left argument.
+
+
+\subsection*{Supported functions in SLIA}
+The supported string functions are defined below:
+
+\paragraph{Functions with String Sort}
+\begin{verbatim}
+ (str.++ String String)
+ (str.replace String String String)
+ (str.at String Int)
+ (int.to.str String)
+ (str.substr String Int Int)
+\end{verbatim}
+
+
+\paragraph{Functions with Int Sort}
+\begin{verbatim}
+ (str.len String) 
+ (str.to.int String)
+ (str.indexof String String Int)
+\end{verbatim}
+
+\paragraph{Functions with Bool Sort}
+\begin{verbatim}
+ (str.prefixof String String) 
+ (str.suffixof String String)
+ (str.contains String String)
+\end{verbatim}
+
+
+
+
+\subsection*{Example}
+The following is a legal SyGuS problem that can be used in the PBE track of SyGuS-COMP'16:
+
+\begin{verbatim}
+(set-logic SLIA)
+
+(synth-fun f ((firstname String) (lastname String)) String
+    ((Start String (ntString))
+     (ntString String (firstname lastname " "
+                       (str.++ ntString ntString)
+                       (str.replace ntString ntString ntString)
+                       (str.at ntString ntInt)
+                       (int.to.str ntString)
+                       (str.substr ntString ntInt ntInt)))
+     (ntInt Int (0 1 2
+                 (+ ntInt ntInt)
+                 (- ntInt ntInt)
+                 (str.len ntString)
+                 (str.to.int ntString)
+                 (str.indexof ntString ntString ntInt)))
+     (ntBool Bool (true false
+                   (str.prefixof ntString ntString)
+                   (str.suffixof ntString ntString)
+                   (str.contains ntString ntString)))))
+
+(declare-var name String)
+
+(constraint (= (f "Nancy" "FreeHafer") "Nancy FreeHafer"))
+(constraint (= (f "Andrew" "Cencici") "Andrew Cencici"))
+(constraint (= (f "Jan" "Kotas") "Jan Kotas"))
+(constraint (= (f "Mariya" "Sergienko") "Maria Sergienko"))
+
+(check-synth)
+\end{verbatim}
+
+The following is a valid implementation for the function \texttt{f} in this example:
+\begin{verbatim}
+(define-fun f ((first String) (last String)) String
+              (str.++ (str.++ first " ") last))
+\end{verbatim}
+
+
+\begin{thebibliography}{1}
+
+\bibitem{fmcad13}
+Rajeev Alur, Rastislav Bod\'{\i}k, Garvit Juniwal, Milo M.~K. Martin, Mukund
+  Raghothaman, Sanjit~A. Seshia, Rishabh Singh, Armando Solar-Lezama, Emina
+  Torlak and Abhishek Udupa.
+\newblock Syntax-Guided Synthesis.
+\newblock In {\em FMCAD}, pages 1--17. IEEE, 2013.
+
+
+
+\bibitem{sygus-if}
+Mukund Raghothaman and Abhishek Udupa.
+\newblock Language to Specify Syntax-Guided Synthesis Problems.
+\newblock In {\em http://sygus.seas.upenn.edu/files/SyGuS-IF.pdf}, May, 2014.
+
+\bibitem{sygus15syntax}
+Rajeev Alur, Dana Fisman, P. Madhusudan, Rishabh Singh, Armando Solar-Lezama.
+\newblock SyGuS Syntax for SyGuS-COMP’15.
+\newblock In {\em http://sygus.seas.upenn.edu/files/SyGuS-Syntax-SyGuSCOMP'15.pdf}, May, 2015.
+
+
+\bibitem{sygus-journal}
+        Rajeev Alur and
+		Rastislav Bod{\'{\i}}k and
+		Eric Dallal and
+		Dana Fisman and
+		Pranav Garg and
+		Garvit Juniwal and
+		Hadas Kress{-}Gazit and
+		P. Madhusudan and
+		Milo M. K. Martin and
+		Mukund Raghothaman and
+		Shambwaditya Saha and
+		Sanjit A. Seshia and
+		Rishabh Singh and
+		Armando Solar{-}Lezama and
+		Emina Torlak and
+		Abhishek Udupa,
+	\newblock Syntax-Guided Synthesis.
+	\newblock In \em{Dependable Software Systems Engineering} pp.1--25, 2015.
+	
+\bibitem{sygus-comp-15}
+	    Rajeev Alur and
+		Dana Fisman and
+		Rishabh Singh and
+		Armando Solar{-}Lezama.
+	\newblock {Results and Analysis of SyGuS-Comp'15}.
+	\newblock In \em{Proceedings Fourth Workshop on Synthesis}, {SYNT}, pp.{3--26}, 2015.
+		
+		
+
+\end{thebibliography}
+
+\end{document}
