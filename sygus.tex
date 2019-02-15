@@ -1,0 +1,105 @@
+\pdfoutput=1
+
+%% LyX 2.1.5 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{xargs}[2008/03/08]
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false]
+ {hyperref}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% For printing a cirumflex inside a formula
+\newcommand{\mathcircumflex}[0]{\mbox{\^{}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{bussproofs}
+\usepackage{centernot}
+\usepackage{datetime}
+\usepackage{filecontents}
+\usepackage{fullpage}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usetikzlibrary{automata}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+
+\makeatother
+
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Listing}
+
+\begin{document}
+
+\title{SyGuS Input Language Standard Version 2.0}
+
+
+\author{Mukund Raghothaman \and Andrew Reynolds \and Abhishek Udupa}
+
+\maketitle
+\input{macros.tex}
+
+\input{sygus-macros.tex}
+
+\section{Specification Language \label{sec:Spec}}
+
+\begin{figure}[t]
+\[
+\begin{array}{rcl}
+\sygus & ::= & \kstar{\cmd}\\[2ex]
+% & | & \kplus{\cmd}\\
+\cmd 
+ & ::= & \paren{\constraintkwd\mbox{ }\term} \\
+ & | & \paren{\checksynthkwd} \\
+ & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
+ %& | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\paren{\symbol\mbox{ }\sortexpr}}}\mbox{ }\sortexpr\mbox{ }\paren{\kplus{\ntdef}}}\\
+ & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}}}\\
+ & | & \smtcmd \\[2ex]
+\smtcmd 
+ & ::= & \paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
+ & | & \paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
+ & | & \paren{\dtdeclkwd\mbox{ }\symbol\mbox{}\dtdec} \\
+ & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}} \\
+ & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
+ & | & \paren{\fundefkwd\mbox{ }\fundef} \\
+ & | & \paren{\recfundefkwd\mbox{ }\fundef} \\
+ & | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
+ & | & \paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
+ & | & \paren{\setlogickwd\mbox{ }\symbol} \\
+ & | & \paren{\setoptkwd\mbox{ }\option} \\[2ex]
+ \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
+ \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
+ \fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
+ \fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
+ \dtdec & ::= & \paren{\kplus{\dtconsdec}} \\
+ \dtconsdec & ::= & \paren{\symbol\mbox{ }\kstar{\sortedvar}} \\
+ \ntdef & ::= & \paren{\symbol\mbox{ }\paren{ \kplus{\gterm} } } \\[2ex]
+ \gterm 
+ & ::= &  \paren{\constantkwd\mbox{ }\sortexpr}\\
+ & | &\paren{\varkwd\mbox{ }\sortexpr}\\
+ & | & \term\\
+\end{array}
+\]
+\caption{
+SyGuS version 2.0 commands.
+}
+\end{figure}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
