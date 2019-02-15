@@ -55,7 +55,11 @@
 
 \input{sygus-macros.tex}
 
-\section{Specification Language \label{sec:Spec}}
+\section{Introduction}
+\label{sec:Introduction}
+
+\section{Syntax}
+\label{sec:syntax}
 
 \begin{figure}[t]
 \[
@@ -67,8 +71,8 @@
  & | & \paren{\checksynthkwd} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\setextensionkwd\mbox{ }\symbol} \\
- %& | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\paren{\symbol\mbox{ }\sortexpr}}}\mbox{ }\sortexpr\mbox{ }\paren{\kplus{\ntdef}}}\\
- & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}}}\\
+ & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
+ & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \smtcmd \\[2ex]
 \smtcmd 
  & ::= & \paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
@@ -88,6 +92,7 @@
  \fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
  \dtdec & ::= & \paren{\kplus{\dtconsdec}} \\
  \dtconsdec & ::= & \paren{\symbol\mbox{ }\kstar{\sortedvar}} \\
+ \grammardef & ::= & \paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}} \\
  \ntdef & ::= & \paren{\symbol\mbox{ }\paren{ \kplus{\gterm} } } \\[2ex]
  \gterm 
  & ::= &  \paren{\constantkwd\mbox{ }\sortexpr}\\
@@ -99,6 +104,12 @@
 SyGuS version 2.0 commands.
 }
 \end{figure}
+
+
+\section{Semantics}
+\label{sec:semantics}
+
+
 
 \bibliographystyle{plain}
 \bibliography{references}
