@@ -133,14 +133,15 @@ After encountering a ${\tt ;}$, the rest of the line is ignored.
 \subsection{Literals}
 \label{ssec:literals}
 
-A \emph{literal} is a special sequence of characters.
+A \emph{literal} $\literal$ is a special sequence of characters.
 The SyGuS format includes syntax for several kinds of literals,
 listed below.
 
 \begin{alignat*}{1}
  & \begin{array}{rcl}
-%\literal & ::= & \begin{array}{ccccccc}
-%\intconst & | & \realconst & | & \boolconst & | & \bvconst\end{array}\\
+\literal & ::= & \begin{array}{ccccccccccc}
+\intconst & | & \realconst & | & \boolconst & | \\
+\hexconst & | & \binaryconst & | & \stringconst\end{array}\\
 \intconst & ::= & \begin{array}{ccc}
 \kplus{\left[{\tt 0}-{\tt 9}\right]} & | & {\tt -}\kplus{\left[{\tt 0}-{\tt 9}\right]}\end{array}\\
 \realconst & ::= & \begin{array}{ccc}
@@ -222,9 +223,19 @@ identifiers in Section 3.1 of the SMT LIB version 2.6 format.
 
 A sort $\sortexpr$ is
 
+
 \subsection{Terms}
 
 A term $\term$ is
+
+\begin{alignat*}{1}
+ & \begin{array}{rcl}
+\term & ::= & \paren{\symbol\mbox{ }\kstar{\term}}\\
+ & | & \literal\\
+ & | & \symbol\\
+ & | & \paren{\letkwd\mbox{ }\paren{\kplus{\paren{\symbol\mbox{ }\sortexpr}}}\mbox{ }\term}\\
+\end{array}
+\end{alignat*}
 
 \subsection{Commands}
 
