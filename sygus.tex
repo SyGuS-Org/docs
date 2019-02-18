@@ -62,6 +62,18 @@
 
 \subsection{Differences from~\cite{}}
 
+\rem{Syntax for synth-fun}
+
+\rem{Remove declare-primed-var}
+
+\rem{set-options to set-option}
+
+\rem{Remove Enum}
+
+\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
+
+\rem{No input/local variable}
+
 
 \section{Syntax}
 \label{sec:syntax}
@@ -70,15 +82,20 @@
 
 \subsection{Comments}
 
+Comments in SyGuS specifications are indicated by a semicolon ${\tt ;}$.
+On encountering a ${\tt ;}$, the rest of the line is ignored.
 
 \subsection{Identifiers}
 
+An indentifer $\symbol$ is
 
 \subsection{Sorts}
 
+A sort $\sortexpr$ is
 
 \subsection{Terms}
 
+A term $\term$ is
 
 \subsection{Commands}
 
@@ -96,22 +113,22 @@
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
  & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \smtcmd \\[2ex]
+ %\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
 \smtcmd 
- & ::= & \paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
- & | & \paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
+ & ::= & \paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
  & | & \paren{\dtdeclkwd\mbox{ }\symbol\mbox{}\dtdec} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
- & | & \paren{\fundefkwd\mbox{ }\fundef} \\
- & | & \paren{\recfundefkwd\mbox{ }\fundef} \\
- & | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
+ & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
+ %& | & \paren{\recfundefkwd\mbox{ }\fundef} \\
+ %& | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
  & | & \paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
  & | & \paren{\setoptkwd\mbox{ }\option} \\[2ex]
  \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
  \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
- \fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
- \fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
+ %\fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
+ %\fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
  \dtdec & ::= & \paren{\kplus{\dtconsdec}} \\
  \dtconsdec & ::= & \paren{\symbol\mbox{ }\kstar{\sortedvar}} \\
  \grammardef & ::= & \paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}} \\
@@ -137,15 +154,82 @@ Figure~\ref{fig:commands} gives the syntax for commands.
 \section{Semantics of Commands}
 \label{sec:semantics}
 
-\ajr{Outline structure}
+A SyGuS input file is a sequence of commands whose syntax is given in
+Figure~\ref{fig:commands}.
+These commands are used for defining a (single) synthesis conjecture
+and invoking a solver for this conjecture.
+As mentioned this conjecture is of the form:
+\begin{alignat*}{1}
+ & \exists f_1,\ldots,f_n.\, \forall x_1,\ldots,x_m.\,\varphi[f_1,\ldots,f_n,x_1,\ldots,x_m]
+\end{alignat*}
+In this section, we define how $f_1, \ldots, f_n, x_1, \ldots, x_m, \varphi$
+are established via SyGuS commands.
 
-\subsection{Defining Symbols}
+\subsection{Setting the Logic and Solver Options}
 
+\begin{itemize}
+\item $\paren{\setlogickwd\mbox{ }\symbol}$
 
-\subsection{Describing Synthesis Constraints}
+\item $\paren{\setextensionkwd\mbox{ }\symbol}$
 
+\item $\paren{\setoptkwd\mbox{ }\option}$
+\end{itemize}
+
+\subsection{Declaring Universal Variables}
+
+\begin{itemize}
+\item $\paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
+
+%\item $\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
+
+\item $\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr}$
+
+\end{itemize}
+
+\subsection{Declaring Functions-to-Synthesize}
+
+\begin{itemize}
+\item $\paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}$
+
+\item $\paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}}$
+
+\end{itemize}
+
+\subsection{Defining Sorts}
+
+\begin{itemize}
+\item $\paren{\dtdeclkwd\mbox{ }\symbol\mbox{}\dtdec}$
+
+\item $\paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}}$
+
+\item $\paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst}$
+\end{itemize}
+
+\subsection{Defining Macros}
+
+\begin{itemize}
+\item $\paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term}$
+
+\item $\paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
+\end{itemize}
+
+\subsection{Asserting Synthesis Constraints}
+
+\begin{itemize}
+\item $\paren{\constraintkwd\mbox{ }\term}$
+
+\item $\paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol}$
+
+\end{itemize}
 
 \subsection{Initiating Synthesis and Synthesizer Output}
+
+\begin{itemize}
+\item $\paren{\checksynthkwd}$
+
+
+\end{itemize}
+
 
 \bibliographystyle{plain}
 \bibliography{references}
