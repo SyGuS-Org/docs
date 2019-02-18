@@ -105,6 +105,8 @@ prescribed in SMT LIB version 2.6.
 
 %\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
 
+%\item Change (fail)?
+
 \end{enumerate}
 
 
@@ -354,10 +356,37 @@ This section covers the expected output from a synthesis solver.
 
 The synthesis solver is expected to respond with
 output for the $\checksynthkwd$ command only.
+A well-formed response to this command is one of the following:
+
+\begin{enumerate}
+\item
+A list of $\fundefkwd$ commands of the form:
+\[
+\begin{array}{l}
+{\tt (}\fundefkwd\mbox{ }f_{o1}\mbox{ }X_{o1}\mbox{ }\sigma_{o1}\mbox{ }t_{o1}{\tt )}\\
+\ldots\\
+{\tt (}\fundefkwd\mbox{ }f_{on}\mbox{ }X_{on}\mbox{ }\sigma_{on}\mbox{ }t_{on}{\tt )}
+\end{array}
+\]
+where functions $\{ f_{o1}, \ldots, f_{on} \}$
+are the functions-to-synthesize $\{ f_1,\ldots,f_n \}$ (in any order), 
+$X_{o1}, \ldots, X_{on}$ are sorted variable lists,
+$\sigma_{o1}, \ldots, \sigma_{on}$ are types,
+and $t_{o1}, \ldots, t_{on}$ are terms.
+To be a well-formed output, 
+for each $j=1, \ldots, n$, it must be the case that
+$t_{oj}$ is a term of $\sigma_{oj}$,
+and the type of $\lambda X_{oj}.\, t_{oj}$ is the same as the type of $f_{oj}$.
+
+\item
+The output ${\tt (fail)}$.
+
+\end{enumerate}
+
 
 %\section{
 
-\section{Logical Semantics}
+\section{Logical Semantics and Restrictions}
 \label{sec:logical-semantics}
 
 \rem{Reference smt semantics}
