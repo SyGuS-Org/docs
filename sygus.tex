@@ -91,14 +91,15 @@ in version 2.0.
 
 \item 
 The syntax for existing terms and sorts
-that was not compliant with SMT LIB version 2.6 has been removed.
+that was not compliant with SMT LIB versions 2.0 and later have been removed.
 This includes two notable exceptions from the previous format.
 First,
-the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$,
-which is now written  ${\tt (\_\ BitVec\ n)}$.
+the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$
+is now written  ${\tt (\_\ BitVec\ n)}$.
 Second,
-all let-terms 
-Wherever applicable,
+all let-bindings do \emph{not} annotate the type of the variable being bound.
+%A let-binding
+Furthermore, wherever applicable,
 the syntax for sorts and terms
 from other SMT theories assumes the syntax
 prescribed in SMT LIB version 2.6.
@@ -106,6 +107,8 @@ prescribed in SMT LIB version 2.6.
 %\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
 
 %\item Change (fail)?
+
+\item Elaborations on 
 
 \end{enumerate}
 
@@ -181,19 +184,39 @@ For more details on concrete theory definitions,
 see Section~\ref{sec:smt-theories}.
 
 
-\subsection{Identifiers}
+\subsection{Symbols}
 
-Identifiers are denoted with the non-terminal $\symbol$. 
-An identifier
+Symbols are denoted with the non-terminal $\symbol$. 
+A symbol
 is any non-empty sequence of upper- and lower-case alphabets, digits,
 and certain special characters (listed below), with the restriction that it may not
-begin with a digit and is not a reserved word.
+begin with a digit and is not a reserved word (see Appendix~\ref{apx:reserved} 
+for a full list of reserved words).
 A special character is any of the following:
 \[
 {\tt \_}\mbox{ }{\tt +}\mbox{ }{\tt -}\mbox{ }{\tt *}\mbox{ }{\tt \&}\mbox{ }{\tt |}\mbox{ }{\tt !}\mbox{ }{\tt \sim}\mbox{ }{\tt <}\mbox{ }{\tt >}\mbox{ }{\tt =}\mbox{ }{\tt /}\mbox{ }{\tt \%}\mbox{ }{\tt ?}\mbox{ }{\tt .}\mbox{ }{\tt \$}\mbox{ }{\tt \mathcircumflex}
 \]
-This definition coincides with
-valid identifiers in Section 3.1 of the SMT LIB version 2.6 format.
+Note this definition coincides with
+symbols in Section 3.1 of the SMT LIB version 2.6 format,
+apart from differences in their reserved words.
+
+\subsection{Identifier}
+
+An identifier $\identifier$
+is a syntactic extension of symbols 
+that includes indexed symbols.
+\[
+\begin{array}{rcl}
+\identifier & ::= & \begin{array}{ccc}
+\symbol & | & \paren{{\tt \_}\mbox{ }\symbol\mbox{ }\kplus{\identifierindex}}
+\end{array}\\
+\identifierindex & ::= & \begin{array}{ccc}
+\intconst & | & \symbol
+\end{array}\\
+\end{array}
+\]
+Note this definition coincides with
+identifiers in Section 3.1 of the SMT LIB version 2.6 format.
 
 \subsection{Sorts}
 
@@ -205,11 +228,11 @@ A term $\term$ is
 
 \subsection{Commands}
 
-\begin{figure}[t]
+A command $\cmd$
+is one of the following.
+
 \[
 \begin{array}{rcl}
-\sygus & ::= & \kstar{\cmd}\\[2ex]
-% & | & \kplus{\cmd}\\
 \cmd 
  & ::= & \paren{\constraintkwd\mbox{ }\term} \\
  & | & \paren{\checksynthkwd} \\
@@ -245,17 +268,17 @@ A term $\term$ is
  & | & \term\\
 \end{array}
 \]
-\caption{
-SyGuS version 2.0 commands.
-}
-\label{fig:commands}
-\end{figure}
 
-Figure~\ref{fig:commands} gives the syntax for commands
-$\cmd$.
+
+
 
 
 A SyGuS input $\sygus$ is thus a sequence of zero or more commands.
+\[
+\begin{array}{rcl}
+\sygus & ::= & \kstar{\cmd}\\[2ex]
+\end{array}
+\]
 
 \paragraph{Reserved Words}
 All strings mentioned in Section~\ref{ssec:literals}
@@ -324,6 +347,9 @@ are established via SyGuS commands.
 \item $\paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term}$
 
 \item $\paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
+
+%This command adds the sort specified by the symbol
+
 \end{itemize}
 
 \subsection{Asserting Synthesis Constraints}
@@ -332,6 +358,12 @@ are established via SyGuS commands.
 \item $\paren{\constraintkwd\mbox{ }\term}$
 
 \item $\paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol}$
+
+This command is syntax-sugar for
+declaring a set of variables and asserting a function.
+A $\constraintinvkwd$ is well-formed if it is of the following form:
+\rem{TODO}
+
 
 \end{itemize}
 
@@ -406,6 +438,17 @@ of a number of theories of interest.
 \section{Examples}
 \label{sec:examples}
 
+
+\begin{appendix}
+
+\section{Reserved Words}
+\label{sec:reserved}
+
+A \emph{reserved word} is any of the 
+literals from Section~\ref{ssec:literals},
+or any of the following keywords:
+
+\end{appendix}
 
 \bibliographystyle{plain}
 \bibliography{references}
