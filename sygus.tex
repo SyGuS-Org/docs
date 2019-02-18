@@ -86,13 +86,26 @@ for the sake of simplicity.
 \item The keywords $\inputvarkwd$ and $\localvarkwd$,
 which were used to specify input and local variables in grammars
 respectively, have been removed. These were removed
-since grammars involving local variables are no longer supported.
+since grammars involving local variables cannot be expressed
+in version 2.0.
 
 \item 
-\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
+The syntax for existing terms and sorts
+that was not compliant with SMT LIB version 2.6 has been removed.
+This includes two notable exceptions from the previous format.
+First,
+the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$,
+which is now written  ${\tt (\_\ BitVec\ n)}$.
+Second,
+all let-terms 
+Wherever applicable,
+the syntax for sorts and terms
+from other SMT theories assumes the syntax
+prescribed in SMT LIB version 2.6.
+
+%\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
 
 \end{enumerate}
-
 
 
 
@@ -101,18 +114,84 @@ since grammars involving local variables are no longer supported.
 
 \ajr{General relation to smt2}
 
+In this section, we describe the concrete syntax
+of SyGuS version 2.0 inputs.
+In the following description,
+italicized text within angle-brackets represents EBNF non-terminals,
+and text in typewriter font represents terminal symbols.
+
 \subsection{Comments}
 
 Comments in SyGuS specifications are indicated by a semicolon ${\tt ;}$.
 After encountering a ${\tt ;}$, the rest of the line is ignored.
 
-\subsection{Numeral}
+\subsection{Literals}
+\label{ssec:literals}
 
-A numeral $\intconst$ is
+A \emph{literal} is a special sequence of characters.
+The SyGuS format includes syntax for several kinds of literals,
+listed below.
+
+\begin{alignat*}{1}
+ & \begin{array}{rcl}
+%\literal & ::= & \begin{array}{ccccccc}
+%\intconst & | & \realconst & | & \boolconst & | & \bvconst\end{array}\\
+\intconst & ::= & \begin{array}{ccc}
+\kplus{\left[{\tt 0}-{\tt 9}\right]} & | & {\tt -}\kplus{\left[{\tt 0}-{\tt 9}\right]}\end{array}\\
+\realconst & ::= & \begin{array}{ccc}
+\kplus{\left[{\tt 0}-{\tt 9}\right]}{\tt .}\kplus{\left[{\tt 0}-{\tt 9}\right]} & | & {\tt -}\kplus{\left[{\tt 0}-{\tt 9}\right]}{\tt .}\kplus{\left[{\tt 0}-{\tt 9}\right]}\end{array}\\
+\boolconst & ::= & \begin{array}{ccc}
+\truekwd & | & \falsekwd\end{array}\\
+\hexconst & ::= & \begin{array}{c}
+{\tt \#x}\kplus{\left(\begin{array}{ccccc}
+\left[{\tt 0-9}\right] & | & \left[{\tt a}-{\tt f}\right] & | & \left[{\tt A}-{\tt F}\right]\end{array}\right)}\end{array}\\
+\binaryconst & ::= & \begin{array}{c}
+{\tt \#b}\kplus{\left[{\tt 0}-{\tt 1}\right]}\end{array}\\
+\end{array}
+\end{alignat*}
+
+Integer constants are written as usual, in decimal, with an optional
+minus at the beginning to denote a negative number. Real numbers are
+written using their decimal expansion: at least one decimal digit
+before and after a mandatory period, and an optional minus sign at
+the beginning. $\truekwd$ and $\falsekwd$ are the predefined boolean
+constants.
+Hexidecimal and binary constants are written in their
+traditional representations.
+
+Additionally,
+a string literal $\stringconst$
+is any sequence of printable characters
+delimited by the double quotes character ${\tt ``}$.
+\rem{TODO: double quotes escape}
+This definition coincides with
+string literals in Section 3.1 of the SMT LIB version 2.6 format.
+
+Literals are commonly
+used for denoting 0-ary symbols of a theory.
+For example, 
+the theory of integer arithmetic 
+uses integer constants to denote integer values.
+The theory of bit-vectors uses both
+hexidecimal and binary constants in the above syntax
+to denote bit-vector vectors.
+For more details on concrete theory definitions,
+see Section~\ref{sec:smt-theories}.
+
 
 \subsection{Identifiers}
 
-An indentifer $\symbol$ is
+Identifiers are denoted with the non-terminal $\symbol$. 
+An identifier
+is any non-empty sequence of upper- and lower-case alphabets, digits,
+and certain special characters (listed below), with the restriction that it may not
+begin with a digit and is not a reserved word.
+A special character is any of the following:
+\[
+{\tt \_}\mbox{ }{\tt +}\mbox{ }{\tt -}\mbox{ }{\tt *}\mbox{ }{\tt \&}\mbox{ }{\tt |}\mbox{ }{\tt !}\mbox{ }{\tt \sim}\mbox{ }{\tt <}\mbox{ }{\tt >}\mbox{ }{\tt =}\mbox{ }{\tt /}\mbox{ }{\tt \%}\mbox{ }{\tt ?}\mbox{ }{\tt .}\mbox{ }{\tt \$}\mbox{ }{\tt \mathcircumflex}
+\]
+This definition coincides with
+valid identifiers in Section 3.1 of the SMT LIB version 2.6 format.
 
 \subsection{Sorts}
 
@@ -170,10 +249,15 @@ SyGuS version 2.0 commands.
 \label{fig:commands}
 \end{figure}
 
-Figure~\ref{fig:commands} gives the syntax for commands.
+Figure~\ref{fig:commands} gives the syntax for commands
+$\cmd$.
 
 
-\subsection{Examples}
+A SyGuS input $\sygus$ is thus a sequence of zero or more commands.
+
+\paragraph{Reserved Words}
+All strings mentioned in Section~\ref{ssec:literals}
+
 
 
 \section{Semantics of Commands}
@@ -267,18 +351,31 @@ are established via SyGuS commands.
 \section{Synthesis Solver Output}
 
 This section covers the expected output from a synthesis solver.
+
 The synthesis solver is expected to respond with
 output for the $\checksynthkwd$ command only.
 
 %\section{
 
+\section{Logical Semantics}
+\label{sec:logical-semantics}
+
+\rem{Reference smt semantics}
+
+\rem{Formalize fits grammar}
+
+\rem{Summarize logic restrictions regarding what symbols appear where}
 
 \section{SMT LIB Version 2.6 Theory References}
 \label{sec:smt-theories}
 
-In this section, we provide the concrete
-grammar for a number of theories of interest to the SyGuS community.
+In this section, for conveinence, we provide the concrete
+grammar corresponding to the (full) signature
+of a number of theories of interest.
 
+
+\section{Examples}
+\label{sec:examples}
 
 
 \bibliographystyle{plain}
