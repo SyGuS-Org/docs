@@ -60,19 +60,40 @@
 
 \ajr{Intro to sygus and example}
 
-\subsection{Differences from~\cite{}}
+\subsection{Differences from Previous Versions}
 
-\rem{Syntax for synth-fun}
+In this section, we cover the differences
+in this format with respect to the one described in the previous
+SyGuS standard document~\cite{},
+and the extensions described in~\cite{}.
 
-\rem{Remove declare-primed-var}
+\begin{enumerate}
 
-\rem{set-options to set-option}
+\item The concrete syntax for the $\synthfunkwd$
+was changed so that non-terminal symbols are declared upfront.
 
-\rem{Remove Enum}
+\item The datatype keyword $\enumkwd$
+and related syntactic features were removed.
+The standard SMT LIB version 2.6 commands
+for declaring datatypes are adopted.
 
+\item The command $\primedvardeclkwd$, which is syntax
+sugar for two $\vardeclkwd$ commands, has been removed
+for the sake of simplicity.
+
+\item The $\setoptskwd$ has been renamed $\setoptkwd$.
+
+\item The keywords $\inputvarkwd$ and $\localvarkwd$,
+which were used to specify input and local variables in grammars
+respectively, have been removed. These were removed
+since grammars involving local variables are no longer supported.
+
+\item 
 \rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
 
-\rem{No input/local variable}
+\end{enumerate}
+
+
 
 
 \section{Syntax}
@@ -83,7 +104,11 @@
 \subsection{Comments}
 
 Comments in SyGuS specifications are indicated by a semicolon ${\tt ;}$.
-On encountering a ${\tt ;}$, the rest of the line is ignored.
+After encountering a ${\tt ;}$, the rest of the line is ignored.
+
+\subsection{Numeral}
+
+A numeral $\intconst$ is
 
 \subsection{Identifiers}
 
@@ -164,15 +189,17 @@ As mentioned this conjecture is of the form:
 \end{alignat*}
 In this section, we define how $f_1, \ldots, f_n, x_1, \ldots, x_m, \varphi$
 are established via SyGuS commands.
+%At a high level, 
+%functions to synthesize $f_1, \ldots, f_n$ 
 
-\subsection{Setting the Logic and Solver Options}
+\subsection{Setting the Logic}
 
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }\symbol}$
 
+
 \item $\paren{\setextensionkwd\mbox{ }\symbol}$
 
-\item $\paren{\setoptkwd\mbox{ }\option}$
 \end{itemize}
 
 \subsection{Declaring Universal Variables}
@@ -222,13 +249,36 @@ are established via SyGuS commands.
 
 \end{itemize}
 
-\subsection{Initiating Synthesis and Synthesizer Output}
+\subsection{Initiating Synthesis Solver}
 
 \begin{itemize}
 \item $\paren{\checksynthkwd}$
 
 
 \end{itemize}
+
+\subsection{Setting Solver Options}
+
+\begin{itemize}
+\item $\paren{\setoptkwd\mbox{ }\option}$
+
+\end{itemize}
+
+\section{Synthesis Solver Output}
+
+This section covers the expected output from a synthesis solver.
+The synthesis solver is expected to respond with
+output for the $\checksynthkwd$ command only.
+
+%\section{
+
+
+\section{SMT LIB Version 2.6 Theory References}
+\label{sec:smt-theories}
+
+In this section, we provide the concrete
+grammar for a number of theories of interest to the SyGuS community.
+
 
 
 \bibliographystyle{plain}
