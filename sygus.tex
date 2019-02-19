@@ -71,23 +71,24 @@ and the extensions described in~\cite{}.
 
 \item The concrete syntax for the $\synthfunkwd$
 was changed so that non-terminal symbols are declared upfront.
+\rem{Start symbol?}
+
+\item 
+Terms that occur as the right hand side of production rules in
+SyGuS grammars are now assumed to be binder-free,
+in particular, this means that let-terms in this context are now disallowed.
+Accordingly,
+the keywords $\inputvarkwd$ and $\localvarkwd$,
+which were used to specify input and local variables in grammars
+respectively, have been removed.
 
 \item The datatype keyword $\enumkwd$
 and related syntactic features were removed.
 The standard SMT LIB version 2.6 commands
 for declaring datatypes are adopted.
 
-\item The command $\primedvardeclkwd$, which is syntax
-sugar for two $\vardeclkwd$ commands, has been removed
-for the sake of simplicity.
-
-\item The $\setoptskwd$ has been renamed $\setoptkwd$.
-
-\item The keywords $\inputvarkwd$ and $\localvarkwd$,
-which were used to specify input and local variables in grammars
-respectively, have been removed. These were removed
-since grammars involving local variables cannot be expressed
-in version 2.0.
+\item The $\setoptskwd$ has been renamed $\setoptkwd$ to 
+correlate to the existing SMT LIB version 2.6 command.\rem{Objection?}
 
 \item 
 The syntax for existing terms and sorts
@@ -107,6 +108,9 @@ the syntax for sorts and terms
 from other SMT theories assumes the syntax
 prescribed in theory definitions from SMT LIB~\cite{}.
 
+\item The command $\primedvardeclkwd$, which is syntax
+sugar for two $\vardeclkwd$ commands, has been removed
+for the sake of simplicity.
 
 %\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
 
@@ -239,6 +243,7 @@ A sort $\sortexpr$ denotes the
 \sortexpr & ::= & \identifier\mbox{ }|\mbox{ }\paren{\identifier\mbox{ }\kplus{\sortexpr}}\\
 \end{array}
 \end{alignat*}
+The \emph{arity} of the sort is the number of (sort) arguments it takes.
 Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
 Examples of such sorts that are defined by theories 
@@ -247,27 +252,31 @@ Sorts may also be user-defined (see Section~\ref{ssec:defining-sorts}.
 
 \subsection{Terms}
 
-A term $\term$ is
-
+Terms $\term$ are used to specify grammars and constraints.
 \begin{alignat*}{1}
  & \begin{array}{rcl}
-\term & ::= & \identifier\\
+\term & ::= & \qualidentifier\\
  & | & \literal\\
- & | & \paren{\identifier\mbox{ }\kplus{\term}}\\
+ & | & \paren{\qualidentifier\mbox{ }\kplus{\term}}\\
  & | & \paren{\existskwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
  & | & \paren{\forallkwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
  & | & \paren{\letkwd\mbox{ }\paren{\kplus{\varbinding}}\mbox{ }\term}\\[2ex]
+ \bfterm & ::= & \qualidentifier\\
+ & | & \literal\\
+ & | & \paren{\qualidentifier\mbox{ }\kplus{\bfterm}}\\[2ex]
+ \qualidentifier & ::= & \identifier\mbox{ }|\mbox{ }\paren{\askwd\mbox{ }\identifier\mbox{ }\sortexpr}\\
  \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
  \varbinding & ::= & \paren{\symbol\mbox{ }\term}\\
 \end{array}
 \end{alignat*}
 Like sorts, the identifiers that comprise terms
-can either be defined by the user or 
+can either be defined by the user or by the theory.
+Examples of the latter are given in Section~\ref{sec:smt-theories}.
 
-theories associate identifiers with symbols
-used to construct terms that have an intended semantics.
-Examples are given in Section~\ref{sec:smt-theories}.
 
+
+We distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax above,
+which do not contain variable bindings.
 
 \subsection{Commands}
 
@@ -305,9 +314,7 @@ A command $\cmd$ is given by the following syntax.
  \grammardef & ::= & \paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}} \\
  \ntdef & ::= & \paren{\symbol\mbox{ }\paren{ \kplus{\gterm} } } \\[2ex]
  \gterm 
- & ::= &  \paren{\constantkwd\mbox{ }\sortexpr}\\
- & | &\paren{\varkwd\mbox{ }\sortexpr}\\
- & | & \term\\
+ & ::= &  \paren{\constantkwd\mbox{ }\sortexpr}\mbox{ }|\mbox{ }\paren{\varkwd\mbox{ }\sortexpr}\mbox{ }|\mbox{ }\bfterm\\
 \end{array}
 \]
 For conveinence,
@@ -347,7 +354,7 @@ as the set of defined symbols in the current scope.
 In this context, 
 a signature is 
 a mapping from symbols to expressions (either sorts or terms).
-
+\rem{Details}
 
 In the following section, we describe how each command updates
 the state of the sets above and the current signature.
@@ -357,12 +364,16 @@ the state of the sets above and the current signature.
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
 
+This adds the set of sort and function symbols
+from the logic specified by $S$ to the current signature.
+This command is not well-formed if $S$ is not
+one of the logics allowe
 
-
+For examples of common SMT theories, see Section~\ref{sec:smt-theories}.
 
 \item $\paren{\setextensionkwd\mbox{ }S}$
 
-This
+This enables 
 
 \end{itemize}
 
@@ -371,9 +382,18 @@ This
 \begin{itemize}
 \item $\paren{\vardeclkwd\mbox{ }S\mbox{ }\sigma}$
 
+This command adds $S$ to the current set of universal variables
+and adds the symbol $S$ of sort $\sigma$ to the current signature.
+
 %\item $\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
 
 \item $\paren{\fundeclkwd\mbox{ }S\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
+
+This command adds $S$ to the current set of universal variables.
+The sort of $S$ is $\sigma$ if $n=0$ or
+$\sigma_1 \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
+\rem{Mention this is higher-order quantification}
+The symbol $S$ should not oxx
 
 \end{itemize}
 
@@ -389,21 +409,26 @@ consists of two parts:
 a \emph{predeclaration}
 $\paren{\paren{y_1\mbox{ }\tau_1} \ldots \paren{y_n\mbox{ }\tau_n}}$,
 followed by a \emph{rule list}
-$\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{1m_n} } }}$,
-where notice we require that the same variable symbols
-$y_1, \ldots, y_n$ appear both in the predeclaration and as heads
-of each of the rules.
-If this is not the case, then this command is not well-formed.
-Recall that each $t_{ij}$ is a term or 
-an instance of the special terms $\paren{\constantkwd\mbox{ }\sigma_c}$ 
+$\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{1m_n} } }}$
+where $y_1, \ldots, y_n$ are the \emph{non-terminal} symbols of the grammar.
+For all $i,j$, recall that $g_{ij}$ is either a term, or a class of terms
+denoted by $\paren{\constantkwd\mbox{ }\sigma_c}$ 
 and $\paren{\varkwd\mbox{ }\sigma_v}$ denoting respectively
 the (possibly infinte) set of constants whose sort is $\sigma_c$,
 and the set of all variables from $x_1, \ldots, x_n$ whose sort is $\sigma_v$.
-If $t_{ij}$ is neither of these, then it is a term 
-whose free variables may contain $y_1, \ldots, y_n$.
-This command is not well-formed if
-$\tau_1$ is not $\sigma$ \rem{First symbol of grammar instead of distinguished Start keyword?},
-or if any
+If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldots, y_n$.
+Note that the same variable symbols
+$y_1, \ldots, y_n$ appear both in the predeclaration and as heads
+of each of the rules.
+If this is not the case, then this command is not well-formed.
+Furthermore,
+this command is not well-formed if
+$\tau_1$ is not $\sigma$.\rem{First symbol of grammar instead of distinguished Start keyword?},
+It is also not well-formed if
+it is possible to generate a term $t$ with $G$ starting from $y_i$
+that does not have type $\tau_i$ for some $i$.
+Details on grammars and the terms
+they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
 
 If $G$ is not provided,
 then this command is syntax
@@ -413,10 +438,15 @@ $\paren{\synthfunkwd\mbox{ }S\mbox{ }
 G_{T,\vec{x},\sigma}}$
 where $G_{T,\sigma,\vec{x}}$ is the \emph{default}
 grammar for theory $T$, sort $\sigma$ and free variables $\vec{x} = ( x_1, \ldots, x_n )$.
-\rem{Explain}
+In other words, $G_{T,\vec{x},\sigma}$ is a grammar that
+generates all well-sorted terms of sort $\sigma$
+whose symbols belong to the signature of $T$ and whose
+free variables are in $x_1, \ldots, x_n$.
 
 This command adds $S$ to the current set of functions to synthesize,
-where the type of $S$ is $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$.
+and adds the symbol $S$ of 
+sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$
+to the current signature.
 
 
 \item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
@@ -431,7 +461,20 @@ $\paren{\synthfunkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \
 \begin{itemize}
 \item $\paren{\dtdeclkwd\mbox{ }S\mbox{ }D}$
 
-\item $\paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{D}{n+1}}}$
+This is syntax sugar for
+$\paren{\dtsdeclkwd\mbox{ }\paren{\paren{S\mbox{ }0} }\mbox{ }\paren{D}}$.
+
+\item $\paren{\dtsdeclkwd\mbox{ }\paren{\paren{S_1\mbox{ }m_1}\ldots\paren{S_n\mbox{ }m_n} }\mbox{ }\paren{D_1 \ldots D_n}}$
+
+This command adds the symbols $S_1, \ldots, S_n$ to the current signature
+and associates it with a datatype sorts
+whose definitions are given by $D_1, \ldots, D_n$.
+The integer constant $m_i$ denotes the arity of datatype $D_i$.
+\rem{Details}
+
+We provide examples of datatype definitions in Section~\ref{sec:examples}.
+For full details on well-formed datatype declarations,
+refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{}.
 
 \item $\paren{\sortdeclkwd\mbox{ }S\mbox{ }n}$
 
@@ -443,7 +486,11 @@ and associates it with an uninterpreted sort of arity $n$.
 \subsection{Defining Macros}
 
 \begin{itemize}
-\item $\paren{\fundefkwd\mbox{ }S\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sigma\mbox{ }t}$
+\item $\paren{\fundefkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }\sigma\mbox{ }t}$
+
+This adds to the current signature
+the symbol $S$ of sort $\sigma$
+if $n=0$ or $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
 
 \item $\paren{\sortdefkwd\mbox{ }S\mbox{ }\sigma}$
 
@@ -480,7 +527,10 @@ of sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$.
 \begin{itemize}
 \item $\paren{\checksynthkwd}$
 
-
+This asks the synthesis solver to find a solution for the synthesis conjecture
+corresponding to the current set of functions-to-synthesize,
+universal variables and constraints.
+The expected output from the synthesis solver is covered in Section~\ref{sec:output}.
 \end{itemize}
 
 \subsection{Setting Solver Options}
@@ -491,12 +541,15 @@ of sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$.
 \end{itemize}
 
 \section{Synthesis Solver Output}
+\label{sec:output}
 
-This section covers the expected output from a synthesis solver.
+This section covers the expected output from a synthesis solver,
+which currently is limited to responses to $\checksynthkwd$ 
+only.
 
-The synthesis solver is expected to respond with
-output for the $\checksynthkwd$ command only.
-A well-formed response to this command is one of the following:
+\begin{itemize}
+\item
+A well-formed response to $\checksynthkwd$ is one of the following:
 
 \begin{enumerate}
 \item
@@ -516,26 +569,40 @@ and $t_{o1}, \ldots, t_{on}$ are terms.
 To be a well-formed output, 
 for each $j=1, \ldots, n$, it must be the case that
 $t_{oj}$ is a term of $\sigma_{oj}$,
-and $X_{oj}$ is identical to the variable list associated with $f_{oj}$.
+and $X_{oj}$ is identical to the sorted variable list
+used when introducing the function-to-synthesize $f_{oj}$.
 
 \item
 The output ${\tt (fail)}$.
 
 \end{enumerate}
-
+\end{itemize}
 
 %\section{
 
 \section{Logical Semantics and Restrictions}
 \label{sec:logical-semantics}
 
-\rem{Reference smt semantics}
-
-\rem{Formalize fits grammar}
+\subsection{Logic}
 
 \rem{Logic e.g. Non-linear vs linear: generated terms}
 
+\rem{Quantifiers implicit, but disallowed in contraints}
+
 \rem{Summarize logic restrictions regarding what symbols appear where}
+
+
+\subsection{Satisfying Syntactic Specifications}
+\label{ssec:sat-syntactic}
+\rem{Formalize fits grammar}
+
+Given a grammar
+
+
+\subsection{Satisfying Semantic Specifications}
+\label{ssec:sat-semantic}
+\rem{Reference smt semantics}
+
 
 \section{SMT LIB Version 2.6 Theory References}
 \label{sec:smt-theories}
@@ -543,6 +610,7 @@ The output ${\tt (fail)}$.
 In this section, for conveinence, we provide the concrete
 grammar corresponding to the (full) signature
 of a number of theories of interest.
+Note this is not intended to be a complete list of all theories.
 
 \subsection{Integer Arithmetic}
 
@@ -561,6 +629,10 @@ of a number of theories of interest.
 
 \section{Examples}
 \label{sec:examples}
+
+\rem{Simple LIA example}
+
+\rem{Datatypes}
 
 
 \begin{appendix}
@@ -587,6 +659,8 @@ Parametric datatypes
 Recursive functions 
 
 Match terms
+
+Attribute annotations
 
 \end{appendix}
 
