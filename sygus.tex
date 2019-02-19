@@ -98,21 +98,23 @@ the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$
 is now written  ${\tt (\_\ BitVec\ n)}$.
 Second,
 all let-bindings do \emph{not} annotate the type of the variable being bound.
+Previously, a let-term could be written ${\tt (let\ ((x\ t\ T)) ...)}$
+where ${\tt T}$ indicates the type of ${\tt t}$.
+
 %A let-binding
 Furthermore, wherever applicable,
 the syntax for sorts and terms
 from other SMT theories assumes the syntax
-prescribed in SMT LIB version 2.6.
+prescribed in theory definitions from SMT LIB~\cite{}.
+
 
 %\rem{Syntax for terms assumes smt2: especially BitVec and 3 argument let}
 
 %\item Change (fail)?
 
-\item Elaborations on 
+\item Elaborations on the well-formedness of all commands.
 
 \end{enumerate}
-
-
 
 \section{Syntax}
 \label{sec:syntax}
@@ -124,6 +126,15 @@ of SyGuS version 2.0 inputs.
 In the following description,
 italicized text within angle-brackets represents EBNF non-terminals,
 and text in typewriter font represents terminal symbols.
+
+A SyGuS input $\sygus$ is thus a sequence of zero or more commands.
+\[
+\begin{array}{rcl}
+\sygus & ::= & \kstar{\cmd}\\[2ex]
+\end{array}
+\]
+The syntax for commands is given at the end of this section.
+We first introduce the necessary preliminary definitions.
 
 \subsection{Comments}
 
@@ -221,8 +232,18 @@ identifiers in Section 3.1 of the SMT LIB version 2.6 format.
 
 \subsection{Sorts}
 
-A sort $\sortexpr$ is
+A sort $\sortexpr$ denotes the
 
+\begin{alignat*}{1}
+ & \begin{array}{rcl}
+\sortexpr & ::= & \identifier\mbox{ }|\mbox{ }\paren{\identifier\mbox{ }\kplus{\sortexpr}}\\
+\end{array}
+\end{alignat*}
+Theories associate identifiers with sorts and sort constructors
+that have an intended semantics.
+Examples of such sorts that are defined by theories 
+are given in Section~\ref{sec:smt-theories}.
+Sorts may also be user-defined (see Section~\ref{ssec:defining-sorts}.
 
 \subsection{Terms}
 
@@ -230,17 +251,27 @@ A term $\term$ is
 
 \begin{alignat*}{1}
  & \begin{array}{rcl}
-\term & ::= & \paren{\symbol\mbox{ }\kstar{\term}}\\
+\term & ::= & \identifier\\
  & | & \literal\\
- & | & \symbol\\
- & | & \paren{\letkwd\mbox{ }\paren{\kplus{\paren{\symbol\mbox{ }\sortexpr}}}\mbox{ }\term}\\
+ & | & \paren{\identifier\mbox{ }\kplus{\term}}\\
+ & | & \paren{\existskwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
+ & | & \paren{\forallkwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
+ & | & \paren{\letkwd\mbox{ }\paren{\kplus{\varbinding}}\mbox{ }\term}\\[2ex]
+ \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
+ \varbinding & ::= & \paren{\symbol\mbox{ }\term}\\
 \end{array}
 \end{alignat*}
+Like sorts, the identifiers that comprise terms
+can either be defined by the user or 
+
+theories associate identifiers with symbols
+used to construct terms that have an intended semantics.
+Examples are given in Section~\ref{sec:smt-theories}.
+
 
 \subsection{Commands}
 
-A command $\cmd$
-is one of the following.
+A command $\cmd$ is given by the following syntax.
 
 \[
 \begin{array}{rcl}
@@ -256,7 +287,7 @@ is one of the following.
  %\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
 \smtcmd 
  & ::= & \paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
- & | & \paren{\dtdeclkwd\mbox{ }\symbol\mbox{}\dtdec} \\
+ & | & \paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdec} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
  & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
@@ -266,7 +297,7 @@ is one of the following.
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
  & | & \paren{\setoptkwd\mbox{ }\option} \\[2ex]
  \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
- \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
+ %\sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\  %ajr: used above
  %\fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
  %\fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
  \dtdec & ::= & \paren{\kplus{\dtconsdec}} \\
@@ -279,100 +310,166 @@ is one of the following.
  & | & \term\\
 \end{array}
 \]
+For conveinence,
+we distinguish two kinds of commands above.
+The commands listed under $\cmd$ are specific to the SyGuS version 2.0 standard.
+The remaining commands listed under $\smtcmd$
+are borrowed from the SMT LIB version 2.6 standard.
+Details on the semantics of these commands are given in Section~\ref{sec:semantics}.
 
-
-
-
-
-A SyGuS input $\sygus$ is thus a sequence of zero or more commands.
-\[
-\begin{array}{rcl}
-\sygus & ::= & \kstar{\cmd}\\[2ex]
-\end{array}
-\]
-
-\paragraph{Reserved Words}
-All strings mentioned in Section~\ref{ssec:literals}
-
+%\paragraph{Reserved Words}
+%All strings mentioned in Section~\ref{ssec:literals}
 
 
 \section{Semantics of Commands}
 \label{sec:semantics}
 
-A SyGuS input file is a sequence of commands whose syntax is given in
-Figure~\ref{fig:commands}.
-These commands are used for defining a (single) synthesis conjecture
+A SyGuS input file is a sequence of commands,
+which at a high level
+are used for defining a (single) synthesis conjecture
 and invoking a solver for this conjecture.
-As mentioned this conjecture is of the form:
+This conjecture is of the form:
 \begin{alignat*}{1}
- & \exists f_1,\ldots,f_n.\, \forall x_1,\ldots,x_m.\,\varphi[f_1,\ldots,f_n,x_1,\ldots,x_m]
+ & \exists f_1,\ldots,f_n.\, \forall x_1,\ldots,x_m.\,(\varphi_1 \wedge \ldots \wedge \varphi_p )[f_1,\ldots,f_n,x_1,\ldots,x_m]
 \end{alignat*}
-In this section, we define how $f_1, \ldots, f_n, x_1, \ldots, x_m, \varphi$
-are established via SyGuS commands.
+In this section, we define how this conjecture is
+is established via SyGuS commands.
 %At a high level, 
 %functions to synthesize $f_1, \ldots, f_n$ 
+In the following,
+we refer to
+$f_1, \ldots, f_n$ as the current set of \emph{functions to synthesize},
+$x_1, \ldots, x_m$ as the current set of \emph{universal variables}, and 
+$\varphi_1, \ldots, \varphi_p$ as the current set of \emph{constraints}.
+
+We refer to the current \emph{signature}
+as the set of defined symbols in the current scope.
+In this context, 
+a signature is 
+a mapping from symbols to expressions (either sorts or terms).
+
+
+In the following section, we describe how each command updates
+the state of the sets above and the current signature.
 
 \subsection{Setting the Logic}
 
 \begin{itemize}
-\item $\paren{\setlogickwd\mbox{ }\symbol}$
+\item $\paren{\setlogickwd\mbox{ }S}$
 
 
-\item $\paren{\setextensionkwd\mbox{ }\symbol}$
+
+
+\item $\paren{\setextensionkwd\mbox{ }S}$
+
+This
 
 \end{itemize}
 
 \subsection{Declaring Universal Variables}
 
 \begin{itemize}
-\item $\paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
+\item $\paren{\vardeclkwd\mbox{ }S\mbox{ }\sigma}$
 
 %\item $\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
 
-\item $\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr}$
+\item $\paren{\fundeclkwd\mbox{ }S\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
 
 \end{itemize}
 
 \subsection{Declaring Functions-to-Synthesize}
 
 \begin{itemize}
-\item $\paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}$
+\item $\paren{\synthfunkwd\mbox{ }S\mbox{ }
+\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\sigma\mbox{ }
+\koption{G}}$
 
-\item $\paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}}$
+The syntax for the grammar $G$ (if provided)
+consists of two parts: 
+a \emph{predeclaration}
+$\paren{\paren{y_1\mbox{ }\tau_1} \ldots \paren{y_n\mbox{ }\tau_n}}$,
+followed by a \emph{rule list}
+$\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{1m_n} } }}$,
+where notice we require that the same variable symbols
+$y_1, \ldots, y_n$ appear both in the predeclaration and as heads
+of each of the rules.
+If this is not the case, then this command is not well-formed.
+Recall that each $t_{ij}$ is a term or 
+an instance of the special terms $\paren{\constantkwd\mbox{ }\sigma_c}$ 
+and $\paren{\varkwd\mbox{ }\sigma_v}$ denoting respectively
+the (possibly infinte) set of constants whose sort is $\sigma_c$,
+and the set of all variables from $x_1, \ldots, x_n$ whose sort is $\sigma_v$.
+If $t_{ij}$ is neither of these, then it is a term 
+whose free variables may contain $y_1, \ldots, y_n$.
+This command is not well-formed if
+$\tau_1$ is not $\sigma$ \rem{First symbol of grammar instead of distinguished Start keyword?},
+or if any
 
+If $G$ is not provided,
+then this command is syntax
+sugar for
+$\paren{\synthfunkwd\mbox{ }S\mbox{ }
+\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\sigma\mbox{ }
+G_{T,\vec{x},\sigma}}$
+where $G_{T,\sigma,\vec{x}}$ is the \emph{default}
+grammar for theory $T$, sort $\sigma$ and free variables $\vec{x} = ( x_1, \ldots, x_n )$.
+\rem{Explain}
+
+This command adds $S$ to the current set of functions to synthesize,
+where the type of $S$ is $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$.
+
+
+\item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
+
+This is syntax sugar for
+$\paren{\synthfunkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\boolkwd\mbox{ }\koption{G}}$.
 \end{itemize}
 
 \subsection{Defining Sorts}
+\label{ssec:defining-sorts}
 
 \begin{itemize}
-\item $\paren{\dtdeclkwd\mbox{ }\symbol\mbox{}\dtdec}$
+\item $\paren{\dtdeclkwd\mbox{ }S\mbox{ }D}$
 
-\item $\paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}}$
+\item $\paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{D}{n+1}}}$
 
-\item $\paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst}$
+\item $\paren{\sortdeclkwd\mbox{ }S\mbox{ }n}$
+
+This command adds the symbol $S$ to the current signature
+and associates it with an uninterpreted sort of arity $n$.
+
 \end{itemize}
 
 \subsection{Defining Macros}
 
 \begin{itemize}
-\item $\paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term}$
+\item $\paren{\fundefkwd\mbox{ }S\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sigma\mbox{ }t}$
 
-\item $\paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
+\item $\paren{\sortdefkwd\mbox{ }S\mbox{ }\sigma}$
 
-%This command adds the sort specified by the symbol
+This adds the symbol $S$ to the current signature
+and associates it with the sort defined by $\sigma$.
 
 \end{itemize}
 
 \subsection{Asserting Synthesis Constraints}
 
 \begin{itemize}
-\item $\paren{\constraintkwd\mbox{ }\term}$
+\item $\paren{\constraintkwd\mbox{ }t}$
 
-\item $\paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol}$
+This adds $t$ to the set of constraints.
+This command is well formed if $t$ is a formula,
+that is, a term of Boolean sort.
+
+\item $\paren{\constraintinvkwd\mbox{ }S\mbox{ }S_{pre}\mbox{ }S_{trans}\mbox{ }S_{post}}$
 
 This command is syntax-sugar for
-declaring a set of variables and asserting a function.
-A $\constraintinvkwd$ is well-formed if it is of the following form:
+declaring a set of variables 
+and asserting a constraint corresponding to the invariant synthesis
+problem.
+A constraint of this form is well-formed if
+$S$ is function-to-synthesize
+of sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$.
 \rem{TODO}
 
 
@@ -389,7 +486,7 @@ A $\constraintinvkwd$ is well-formed if it is of the following form:
 \subsection{Setting Solver Options}
 
 \begin{itemize}
-\item $\paren{\setoptkwd\mbox{ }\option}$
+\item $\paren{\setoptkwd\mbox{ }O}$
 
 \end{itemize}
 
@@ -419,7 +516,7 @@ and $t_{o1}, \ldots, t_{on}$ are terms.
 To be a well-formed output, 
 for each $j=1, \ldots, n$, it must be the case that
 $t_{oj}$ is a term of $\sigma_{oj}$,
-and the type of $\lambda X_{oj}.\, t_{oj}$ is the same as the type of $f_{oj}$.
+and $X_{oj}$ is identical to the variable list associated with $f_{oj}$.
 
 \item
 The output ${\tt (fail)}$.
@@ -436,6 +533,8 @@ The output ${\tt (fail)}$.
 
 \rem{Formalize fits grammar}
 
+\rem{Logic e.g. Non-linear vs linear: generated terms}
+
 \rem{Summarize logic restrictions regarding what symbols appear where}
 
 \section{SMT LIB Version 2.6 Theory References}
@@ -444,6 +543,20 @@ The output ${\tt (fail)}$.
 In this section, for conveinence, we provide the concrete
 grammar corresponding to the (full) signature
 of a number of theories of interest.
+
+\subsection{Integer Arithmetic}
+
+
+
+\subsection{Real Arithmetic}
+
+
+
+\subsection{Fixed-Width Bit-Vectors}
+
+
+
+\subsection{Strings}
 
 
 \section{Examples}
@@ -458,6 +571,22 @@ of a number of theories of interest.
 A \emph{reserved word} is any of the 
 literals from Section~\ref{ssec:literals},
 or any of the following keywords:
+
+\section{Language Features of SMT LIB not Covered}
+
+For the purpose of self-containment,
+many of the essential language features of SMT LIB version 2.6
+are redefined in this document.
+However, others are omitted.
+%We do not explicitly forbid the language features of SMT LIB .
+We briefly mention other pertinent language features not mentioned in
+this document.
+
+Parametric datatypes
+
+Recursive functions 
+
+Match terms
 
 \end{appendix}
 
