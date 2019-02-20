@@ -364,16 +364,23 @@ the state of the sets above and the current signature.
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
 
-This adds the set of sort and function symbols
-from the logic specified by $S$ to the current signature.
-This command is not well-formed if $S$ is not
-one of the logics allowe
-
-For examples of common SMT theories, see Section~\ref{sec:smt-theories}.
+The logic $S$ can be one defined in SMT-LIB~\cite{},
+but may be solver-specific.
+For examples of common SMT logics, 
+see Section~\ref{sec:smt-theories}.
+If $S$ is an SMT-LIB standard logic,
+then this command adds the set of sort and function symbols
+from that logic to the current signature.
+Additionally, in this case,
+the logic must contain quantifiers,
+that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
 
 \item $\paren{\setextensionkwd\mbox{ }S}$
 
-This enables 
+This enables the extension specified by $S$.
+This may correspond enabling a feature of the language
+or logic that is not supported by default.
+\rem{Details, see}
 
 \end{itemize}
 
@@ -393,7 +400,6 @@ This command adds $S$ to the current set of universal variables.
 The sort of $S$ is $\sigma$ if $n=0$ or
 $\sigma_1 \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
 \rem{Mention this is higher-order quantification}
-The symbol $S$ should not oxx
 
 \end{itemize}
 
@@ -435,13 +441,13 @@ then this command is syntax
 sugar for
 $\paren{\synthfunkwd\mbox{ }S\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\sigma\mbox{ }
-G_{T,\vec{x},\sigma}}$
-where $G_{T,\sigma,\vec{x}}$ is the \emph{default}
-grammar for theory $T$, sort $\sigma$ and free variables $\vec{x} = ( x_1, \ldots, x_n )$.
-In other words, $G_{T,\vec{x},\sigma}$ is a grammar that
-generates all well-sorted terms of sort $\sigma$
-whose symbols belong to the signature of $T$ and whose
-free variables are in $x_1, \ldots, x_n$.
+G_{\mathcal{L},\vec{x},\sigma}}$
+where $G_{\mathcal{L},\vec{x},\sigma}$ is a grammar that
+generates all well-sorted terms of sort $\sigma$ 
+that belong the language of the current background logic $\mathcal{L}$,
+and whose free variables are in $x_1, \ldots, x_n$.
+%We call $G_{\mathcal{L},\sigma,\vec{x}}$ the \emph{default}
+%grammar for $(T,\sigma,\vec{x})$.
 
 This command adds $S$ to the current set of functions to synthesize,
 and adds the symbol $S$ of 
@@ -491,11 +497,19 @@ and associates it with an uninterpreted sort of arity $n$.
 This adds to the current signature
 the symbol $S$ of sort $\sigma$
 if $n=0$ or $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
+The variables $x_1, \ldots, x_n$ may occur freely in $t$.
+It defines $S$ as a term whose semantics
+are $\lambda x_1, \ldots, x_n.\, t$.
+Notice that $t$ may not contain any free occurrences of $S$,
+that is, the definition above is not recursive.
 
-\item $\paren{\sortdefkwd\mbox{ }S\mbox{ }\sigma}$
+\item $\paren{\sortdefkwd\mbox{ }S\mbox{ }\paren{u_1 \ldots u_n}\mbox{ }\sigma}$
 
-This adds the symbol $S$ to the current signature
-and associates it with the sort defined by $\sigma$.
+This adds the symbol $S$ to the current signature.
+It defines $S$ as the sort $\sigma$.
+The sort variables $u_1, \ldots, u_n$
+may occur free in $\sigma$.
+
 
 \end{itemize}
 
@@ -510,13 +524,25 @@ that is, a term of Boolean sort.
 
 \item $\paren{\constraintinvkwd\mbox{ }S\mbox{ }S_{pre}\mbox{ }S_{trans}\mbox{ }S_{post}}$
 
-This command is syntax-sugar for
-declaring a set of variables 
-and asserting a constraint corresponding to the invariant synthesis
-problem.
-A constraint of this form is well-formed if
+%This command is syntax-sugar for
+%declaring a set of variables 
+%and asserting a constraint corresponding to the invariant synthesis problem.
+A constraint of this form is well-formed if:
+\begin{enumerate}
+\item
 $S$ is function-to-synthesize
-of sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$.
+of sort $\sigma_1 \times \ldots \sigma_n \rightarrow $,
+\item
+$S_{pre}$ is a defined symbol 
+whose definition is of the form $\lambda x_1, \ldots, x_m.\, t_{pre}$,
+\item
+$S_{trans}$ is a defined symbol 
+whose definition is of the form $\lambda x_1, \ldots, x_m, y_1, \ldots, y_n.\, t_{trans}$, and
+\item
+$S_{post}$ is a defined symbol 
+whose definition is of the form $\lambda x_1, \ldots, x_m.\, t_{post}$.
+\end{enumerate}
+
 \rem{TODO}
 
 
@@ -538,6 +564,11 @@ The expected output from the synthesis solver is covered in Section~\ref{sec:out
 \begin{itemize}
 \item $\paren{\setoptkwd\mbox{ }O}$
 
+This sets 
+It is recommended that synthesis solvers
+ignore unrecognized options, 
+and choose reasonable defaults when the
+options are left unspecified.
 \end{itemize}
 
 \section{Synthesis Solver Output}
@@ -591,6 +622,7 @@ The output ${\tt (fail)}$.
 
 \rem{Summarize logic restrictions regarding what symbols appear where}
 
+\rem{Special logics: single invariant synthesis}
 
 \subsection{Satisfying Syntactic Specifications}
 \label{ssec:sat-syntactic}
@@ -638,7 +670,7 @@ Note this is not intended to be a complete list of all theories.
 \begin{appendix}
 
 \section{Reserved Words}
-\label{sec:reserved}
+\label{apx:reserved}
 
 A \emph{reserved word} is any of the 
 literals from Section~\ref{ssec:literals},
