@@ -408,6 +408,7 @@ $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$ if $n>0$.
 \end{itemize}
 
 \subsection{Declaring Functions-to-Synthesize}
+\label{ssec:dec-synth-fun}
 
 \begin{itemize}
 \item $\paren{\synthfunkwd\mbox{ }S\mbox{ }
@@ -418,8 +419,8 @@ The syntax for the grammar $G$ (if provided)
 consists of two parts: 
 a \emph{predeclaration}
 $\paren{\paren{y_1\mbox{ }\tau_1} \ldots \paren{y_n\mbox{ }\tau_n}}$,
-followed by a \emph{rule list}
-$\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{1m_n} } }}$
+followed by a \emph{grouped rule list}
+$\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}$
 where $y_1, \ldots, y_n$ are the \emph{non-terminal} symbols of the grammar.
 For all $i,j$, recall that $g_{ij}$ is either a term, or a class of terms
 denoted by $\paren{\constantkwd\mbox{ }\sigma_c}$ 
@@ -435,7 +436,7 @@ Furthermore,
 this command is not well-formed if
 $\tau_1$ is not $\sigma$.\rem{First symbol of grammar instead of distinguished Start keyword?},
 It is also not well-formed if
-it is possible to generate a term $t$ with $G$ starting from $y_i$
+$G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
 Details on grammars and the terms
 they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
@@ -622,6 +623,57 @@ The output ${\tt (fail)}$.
 \section{Logical Semantics and Restrictions}
 \label{sec:logical-semantics}
 
+\subsection{Satisfying Syntactic Specifications}
+\label{ssec:sat-syntactic}
+
+In this section,
+we formalize the notion of satisfying the \emph{syntactic specification}
+of the synthesis conjecture.
+
+As described in Section~\ref{ssec:dec-synth-fun},
+a grammar $G$ is specified as
+a \emph{grouped rule list} of the form
+\[
+\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots 
+\paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}
+\]
+where $y_1, \ldots, y_n$ are variables
+and $g_{11} \ldots g_{1m_1}, \ldots, g_{n1} \ldots g_{nm_n}$
+are grammar terms.
+We associate each grammar with a sorted variable list $X$,
+namely the argument list of the function-to-synthesize.
+
+We interpret $G$ as a (possibly infinite) set of rules 
+of the form $y \mapsto t$ where $t$ is an (ordinary) term
+based on the following definition.
+For each $y_i, g_{ik}$,
+if $g_{ik}$ is $\paren{\constantkwd\mbox{ }\sigma_c}$,
+then $G$ contains the rule $y_i \mapsto c$ for all constants of sort $\sigma_c$.
+If $g_{ik}$ is $\paren{\varkwd\mbox{ }\sigma_v}$,
+then $G$ contains the rule $y_i \mapsto x$
+for all variables $x \in X$ of sort $\sigma_v$.
+Otherwise, if $g_{ik}$ is an ordinary term,
+then $G$ contains the rule $y_i \mapsto g_{ik}$.
+
+We say that $G$ \emph{generates} term $r$ from $s$
+if it is possible to construct a sequence of terms
+$s_1, \ldots, s_n$
+with $s_1 = s$ and $s_n = r$
+where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
+replacing an occurrence of some $y$ by $t$
+where $y \mapsto t$ is a rule in $G$.
+
+Let $f$ be a set of functions to synthesize.
+\rem{More}
+%whose variable lists are $X_1, \ldots, X_n$
+%and whose grammars are $G_1, \ldots, G_n$.
+
+
+\subsection{Satisfying Semantic Specifications}
+\label{ssec:sat-semantic}
+\rem{Reference smt semantics}
+
+
 \subsection{Logic}
 
 \rem{Logic e.g. Non-linear vs linear: generated terms}
@@ -631,17 +683,6 @@ The output ${\tt (fail)}$.
 \rem{Summarize logic restrictions regarding what symbols appear where}
 
 \rem{Special logics: single invariant synthesis}
-
-\subsection{Satisfying Syntactic Specifications}
-\label{ssec:sat-syntactic}
-\rem{Formalize fits grammar}
-
-Given a grammar
-
-
-\subsection{Satisfying Semantic Specifications}
-\label{ssec:sat-semantic}
-\rem{Reference smt semantics}
 
 
 \section{SMT LIB Version 2.6 Theory References}
