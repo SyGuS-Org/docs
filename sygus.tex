@@ -216,7 +216,7 @@ Note this definition coincides with
 symbols in Section 3.1 of the SMT LIB version 2.6 format,
 apart from differences in their reserved words.
 
-\subsection{Identifier}
+\subsection{Identifiers}
 
 An identifier $\identifier$
 is a syntactic extension of symbols 
@@ -236,7 +236,8 @@ identifiers in Section 3.1 of the SMT LIB version 2.6 format.
 
 \subsection{Sorts}
 
-A sort $\sortexpr$ denotes the
+We work in a multi-sorted logic where terms 
+are associated with sorts $\sortexpr$, constructed via the following syntax.
 
 \begin{alignat*}{1}
  & \begin{array}{rcl}
@@ -246,9 +247,9 @@ A sort $\sortexpr$ denotes the
 The \emph{arity} of the sort is the number of (sort) arguments it takes.
 Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
-Examples of such sorts that are defined by theories 
-are given in Section~\ref{sec:smt-theories}.
-Sorts may also be user-defined (see Section~\ref{ssec:defining-sorts}.
+Sorts may be defined by theories (see examples in Section~\ref{sec:smt-theories})
+or may be user-defined in certain logics
+(see Section~\ref{ssec:defining-sorts}).
 
 \subsection{Terms}
 
@@ -269,14 +270,17 @@ Terms $\term$ are used to specify grammars and constraints.
  \varbinding & ::= & \paren{\symbol\mbox{ }\term}\\
 \end{array}
 \end{alignat*}
-Like sorts, the identifiers that comprise terms
+Notice that identifiers that comprise terms
+may be \emph{qualified} with a type-cast, using the keyword $\askwd$.
+Type casts are used for symbols whose type is ambiguous,
+such as parametric datatype constructors, e.g. the nil constructor
+for a parametric list.
+
+Like sorts, the (qualified) identifiers that comprise terms
 can either be defined by the user or by the theory.
 Examples of the latter are given in Section~\ref{sec:smt-theories}.
-
-
-
 We distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax above,
-which do not contain variable bindings.
+which do not contain bound (local) variables.
 
 \subsection{Commands}
 
@@ -398,7 +402,7 @@ and adds the symbol $S$ of sort $\sigma$ to the current signature.
 
 This command adds $S$ to the current set of universal variables.
 The sort of $S$ is $\sigma$ if $n=0$ or
-$\sigma_1 \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
+$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$ if $n>0$.
 \rem{Mention this is higher-order quantification}
 
 \end{itemize}
@@ -444,14 +448,14 @@ $\paren{\synthfunkwd\mbox{ }S\mbox{ }
 G_{\mathcal{L},\vec{x},\sigma}}$
 where $G_{\mathcal{L},\vec{x},\sigma}$ is a grammar that
 generates all well-sorted terms of sort $\sigma$ 
-that belong the language of the current background logic $\mathcal{L}$,
-and whose free variables are in $x_1, \ldots, x_n$.
+that belong to the language of the current background logic $\mathcal{L}$,
+and whose free variables are in $\vec{x} = (x_1, \ldots, x_n)$.
 %We call $G_{\mathcal{L},\sigma,\vec{x}}$ the \emph{default}
 %grammar for $(T,\sigma,\vec{x})$.
 
 This command adds $S$ to the current set of functions to synthesize,
 and adds the symbol $S$ of 
-sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$
+sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
 to the current signature.
 
 
@@ -476,8 +480,8 @@ This command adds the symbols $S_1, \ldots, S_n$ to the current signature
 and associates it with a datatype sorts
 whose definitions are given by $D_1, \ldots, D_n$.
 The integer constant $m_i$ denotes the arity of datatype $D_i$.
-\rem{Details}
-
+Datatypes whose arity is greater than $0$
+are called \emph{parametric datatypes}.
 We provide examples of datatype definitions in Section~\ref{sec:examples}.
 For full details on well-formed datatype declarations,
 refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{}.
@@ -498,8 +502,8 @@ This adds to the current signature
 the symbol $S$ of sort $\sigma$
 if $n=0$ or $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
 The variables $x_1, \ldots, x_n$ may occur freely in $t$.
-It defines $S$ as a term whose semantics
-are $\lambda x_1, \ldots, x_n.\, t$.
+It defines $S$ as a term whose semantics are given by 
+$\lambda x_1, \ldots, x_n.\, t$.
 Notice that $t$ may not contain any free occurrences of $S$,
 that is, the definition above is not recursive.
 
@@ -520,7 +524,7 @@ may occur free in $\sigma$.
 
 This adds $t$ to the set of constraints.
 This command is well formed if $t$ is a formula,
-that is, a term of Boolean sort.
+that is, a term of sort $\sbool$.
 
 \item $\paren{\constraintinvkwd\mbox{ }S\mbox{ }S_{pre}\mbox{ }S_{trans}\mbox{ }S_{post}}$
 
@@ -531,17 +535,20 @@ A constraint of this form is well-formed if:
 \begin{enumerate}
 \item
 $S$ is function-to-synthesize
-of sort $\sigma_1 \times \ldots \sigma_n \rightarrow $,
+of sort $\sigma_1 \times \ldots \sigma_n \rightarrow \sbool$,
 \item
 $S_{pre}$ is a defined symbol 
-whose definition is of the form $\lambda x_1, \ldots, x_m.\, t_{pre}$,
+whose definition is of the form $\lambda x_1, \ldots, x_n.\, t_{pre}$,
 \item
 $S_{trans}$ is a defined symbol 
-whose definition is of the form $\lambda x_1, \ldots, x_m, y_1, \ldots, y_n.\, t_{trans}$, and
+whose definition is of the form $\lambda x_1, \ldots, x_n, y_1, \ldots, y_n.\, t_{trans}$, and
 \item
 $S_{post}$ is a defined symbol 
-whose definition is of the form $\lambda x_1, \ldots, x_m.\, t_{post}$.
+whose definition is of the form $\lambda x_1, \ldots, x_n.\, t_{post}$.
 \end{enumerate}
+Given that this command is well-formed, given the above definitions,
+this command is syntax sugar for:
+
 
 \rem{TODO}
 
@@ -564,7 +571,8 @@ The expected output from the synthesis solver is covered in Section~\ref{sec:out
 \begin{itemize}
 \item $\paren{\setoptkwd\mbox{ }O}$
 
-This sets 
+This enables the solver-specific options specified by $O$.
+We do not give concrete examples of such options in this document.\rem{Any needed?}
 It is recommended that synthesis solvers
 ignore unrecognized options, 
 and choose reasonable defaults when the
