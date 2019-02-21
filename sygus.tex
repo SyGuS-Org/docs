@@ -148,7 +148,8 @@ After encountering a ${\tt ;}$, the rest of the line is ignored.
 \subsection{Literals}
 \label{ssec:literals}
 
-A \emph{literal} $\literal$ is a special sequence of characters.
+A \emph{literal} $\literal$ is a special sequence of characters
+used to denote values.
 The SyGuS format includes syntax for several kinds of literals,
 listed below.
 
@@ -220,7 +221,7 @@ apart from differences in their reserved words.
 
 An identifier $\identifier$
 is a syntactic extension of symbols 
-that includes indexed symbols.
+that includes symbols that are indexed by integer constants or other symbols.
 \[
 \begin{array}{rcl}
 \identifier & ::= & \begin{array}{ccc}
@@ -237,7 +238,8 @@ identifiers in Section 3.1 of the SMT LIB version 2.6 format.
 \subsection{Sorts}
 
 We work in a multi-sorted logic where terms 
-are associated with sorts $\sortexpr$, constructed via the following syntax.
+are associated with sorts $\sortexpr$.
+Sorts are constructed via the following syntax.
 
 \begin{alignat*}{1}
  & \begin{array}{rcl}
@@ -245,6 +247,7 @@ are associated with sorts $\sortexpr$, constructed via the following syntax.
 \end{array}
 \end{alignat*}
 The \emph{arity} of the sort is the number of (sort) arguments it takes.
+A \emph{parametric} sort is one whose arity is greater than zero.
 Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
 Sorts may be defined by theories (see examples in Section~\ref{sec:smt-theories})
@@ -253,7 +256,8 @@ or may be user-defined in certain logics
 
 \subsection{Terms}
 
-Terms $\term$ are used to specify grammars and constraints.
+We use terms $\term$ to specify grammars and constraints,
+which are constructed by the following syntax.
 \begin{alignat*}{1}
  & \begin{array}{rcl}
 \term & ::= & \qualidentifier\\
@@ -270,17 +274,18 @@ Terms $\term$ are used to specify grammars and constraints.
  \varbinding & ::= & \paren{\symbol\mbox{ }\term}\\
 \end{array}
 \end{alignat*}
-Notice that identifiers that comprise terms
+Above,
+we distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax above,
+which do not contain bound (local) variables.
+Identifiers that comprise terms
 may be \emph{qualified} with a type-cast, using the keyword $\askwd$.
 Type casts are used for symbols whose type is ambiguous,
 such as parametric datatype constructors, e.g. the nil constructor
 for a parametric list.
 
-Like sorts, the (qualified) identifiers that comprise terms
+Like sorts, the identifiers that comprise terms
 can either be defined by the user or by the theory.
 Examples of the latter are given in Section~\ref{sec:smt-theories}.
-We distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax above,
-which do not contain bound (local) variables.
 
 \subsection{Commands}
 
@@ -347,20 +352,38 @@ In this section, we define how this conjecture is
 is established via SyGuS commands.
 %At a high level, 
 %functions to synthesize $f_1, \ldots, f_n$ 
-In the following,
-we refer to
-$f_1, \ldots, f_n$ as the current set of \emph{functions to synthesize},
-$x_1, \ldots, x_m$ as the current set of \emph{universal variables}, and 
-$\varphi_1, \ldots, \varphi_p$ as the current set of \emph{constraints}.
-
-We refer to the current \emph{signature}
-as the set of defined symbols in the current scope.
-In this context, 
-a signature is 
+Given a sequence of commands, the current state consists of the following
+information:
+\begin{itemize}
+\item A set
+$f_1, \ldots, f_n$, which we refer to
+as the current set of \emph{functions to synthesize},
+\item A set 
+$x_1, \ldots, x_m$ of variables, 
+which we refer to the current set of \emph{universal variables}, 
+\item A set of formulas
+$\varphi_1, \ldots, \varphi_p$,
+which we refer to as the current set of \emph{constraints},
+\item A \emph{signature}
+denoting the set of defined symbols in the current scope.
+A signature is 
 a mapping from symbols to expressions (either sorts or terms).
-\rem{Details}
+Each of these symbols may have a predefined semantics
+either given by the theory,
+or defined by the user (e.g. symbols that are defined as macros
+fit the latter category).
+\item A \emph{logic} denoting the
+language of terms that may appear in constraints and grammars.
+\end{itemize}
 
-In the following section, we describe how each command updates
+In the initial state of a SyGuS input,
+the sets of functions-to-synthesize, 
+universal variables, constraints, and the signature is empty,
+and the logic is unspecified,
+that is, 
+no restrictions are placed on the set of terms that may appear 
+in constraints and grammars.
+In the following, we describe how each command $\cmd$ updates
 the state of the sets above and the current signature.
 
 \subsection{Setting the Logic}
@@ -368,16 +391,29 @@ the state of the sets above and the current signature.
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
 
-The logic $S$ can be one defined in SMT-LIB~\cite{},
-but may be solver-specific.
+This sets the background logic
+to the one that $S$ refers to,
+which can be a standard one defined in SMT-LIB~\cite{}
+or may be solver-specific.
 For examples of common SMT logics, 
 see Section~\ref{sec:smt-theories}.
-If $S$ is an SMT-LIB standard logic,
+If $S$ is a standard SMT-LIB logic,
 then this command adds the set of sort and function symbols
 from that logic to the current signature.
-Additionally, in this case,
-the logic must contain quantifiers,
+In this case,
+the logic must contain quantifiers or this command is not well-formed,
 that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
+
+In SyGuS, notice that the logic gives
+restrictions on both the kinds of terms that
+may appear in constraints, and may appear in grammars.
+For the former,
+we follow the same conventions as SMT-LIB
+if $S$ is a standard SMT-LIB logic.
+For the latter,
+we give details on the default settings of the logic
+with respect to restrictions on terms that may appear in grammars
+in Section~\ref{ssec:dec-synth-fun}.
 
 \item $\paren{\setextensionkwd\mbox{ }S}$
 
@@ -396,6 +432,7 @@ or logic that is not supported by default.
 This command adds $S$ to the current set of universal variables
 and adds the symbol $S$ of sort $\sigma$ to the current signature.
 
+\rem{Name clashing}
 %\item $\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
 
 \item $\paren{\fundeclkwd\mbox{ }S\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
@@ -403,7 +440,11 @@ and adds the symbol $S$ of sort $\sigma$ to the current signature.
 This command adds $S$ to the current set of universal variables.
 The sort of $S$ is $\sigma$ if $n=0$ or
 $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$ if $n>0$.
-\rem{Mention this is higher-order quantification}
+\rem{This is higher-order quantification}
+
+\rem{Name clashing}
+
+\rem{TODO: rename this ``declare-var-fun''? Parallel with declare-const -> declare-var.}
 
 \end{itemize}
 
@@ -415,11 +456,18 @@ $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$ if $n>0$.
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\sigma\mbox{ }
 \koption{G}}$
 
+This command adds $S$ to the current set of functions to synthesize,
+and adds the symbol $S$ of 
+sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
+to the current signature.
+We describe restrictions and well-formedness requirements for this command
+in the following.
+
 The syntax for the grammar $G$ (if provided)
 consists of two parts: 
 a \emph{predeclaration}
 $\paren{\paren{y_1\mbox{ }\tau_1} \ldots \paren{y_n\mbox{ }\tau_n}}$,
-followed by a \emph{grouped rule list}
+followed by a \emph{grouped rule listing}
 $\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}$
 where $y_1, \ldots, y_n$ are the \emph{non-terminal} symbols of the grammar.
 For all $i,j$, recall that $g_{ij}$ is either a term, or a class of terms
@@ -427,14 +475,16 @@ denoted by $\paren{\constantkwd\mbox{ }\sigma_c}$
 and $\paren{\varkwd\mbox{ }\sigma_v}$ denoting respectively
 the (possibly infinte) set of constants whose sort is $\sigma_c$,
 and the set of all variables from $x_1, \ldots, x_n$ whose sort is $\sigma_v$.
-If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldots, y_n$.
+If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldots, y_n$,
+as well as $S$ itself, although the latter is disallowed in the default logic (see below).
 Note that the same variable symbols
 $y_1, \ldots, y_n$ appear both in the predeclaration and as heads
 of each of the rules.
 If this is not the case, then this command is not well-formed.
 Furthermore,
 this command is not well-formed if
-$\tau_1$ is not $\sigma$.\rem{First symbol of grammar instead of distinguished Start keyword?},
+$\tau_1$ is not $\sigma$.
+\rem{TODO: should we make the first symbol of list the start symbol, instead of distinguished Start keyword?},
 It is also not well-formed if
 $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
@@ -454,14 +504,37 @@ and whose free variables are in $\vec{x} = (x_1, \ldots, x_n)$.
 %We call $G_{\mathcal{L},\sigma,\vec{x}}$ the \emph{default}
 %grammar for $(T,\sigma,\vec{x})$.
 
-This command adds $S$ to the current set of functions to synthesize,
-and adds the symbol $S$ of 
-sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
-to the current signature.
+\rem{Name clashing}
 
-% synth-fun
-\rem{Summarize logic restrictions regarding what symbols appear where}
-\rem{Logic e.g. Non-linear vs linear: terms generated by the grammars must be linear}
+The grammar must also be one that is allowable by the logic.
+This command does not meet the restrictions
+of the background logic if $G$ generates some term $t$
+such that $t$ does not belong to the background logic.
+For instance, 
+this restriction disallows grammars
+in the logic of \emph{linear} integer arithmetic
+for which it is possible to generate a term involving
+the multiplication of two non-constant integer terms.
+Notice, however, that grammar terms $g_{ij}$ may involve
+the multiplication of two non-constant integer terms $t_1$ and $t_2$
+e.g. in the case there one of $t_i$ is a non-terminal symbol
+that generates only constant integer terms.
+Commands where that not meet the restrictions
+of the background logic should be rejected.
+
+The default logic assumed by the SyGuS standard assumes
+additional restrictions on the terms that are generated by grammars.
+Note the following (recursive) definition.
+A symbol $S$ \emph{depends on functions-to-synthesize}
+if $S$ is a function-to-synthesize
+or if it is a defined symbol whose definition $\lambda \vec{x}.\,t$
+is such that $t$ contains a symbol that depends on
+functions-to-synthesize.
+%We say that $G$ has \emph{forward declarations}
+%if 
+%We say that $G$ is \emph{recursive} 
+%if 
+\rem{TODO}
 
 \item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
 
@@ -484,8 +557,8 @@ This command adds the symbols $S_1, \ldots, S_n$ to the current signature
 and associates it with a datatype sorts
 whose definitions are given by $D_1, \ldots, D_n$.
 The integer constant $m_i$ denotes the arity of datatype $D_i$.
-Datatypes whose arity is greater than $0$
-are called \emph{parametric datatypes}.
+%Datatypes whose arity is greater than $0$
+%are called \emph{parametric datatypes}.
 We provide examples of datatype definitions in Section~\ref{sec:examples}.
 For full details on well-formed datatype declarations,
 refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{}.
@@ -494,6 +567,8 @@ refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{}.
 
 This command adds the symbol $S$ to the current signature
 and associates it with an uninterpreted sort of arity $n$.
+
+\rem{Name clashing}
 
 \end{itemize}
 
@@ -506,18 +581,26 @@ This adds to the current signature
 the symbol $S$ of sort $\sigma$
 if $n=0$ or $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
 The variables $x_1, \ldots, x_n$ may occur freely in $t$.
-It defines $S$ as a term whose semantics are given by 
+It defines $S$ as a term whose semantics are given by the function
 $\lambda x_1, \ldots, x_n.\, t$.
 Notice that $t$ may not contain any free occurrences of $S$,
 that is, the definition above is not recursive.
+This command is not well-formed if $t$ is not a well-sorted
+term of sort $\sigma$.
+
+\rem{Name clashing}
 
 \item $\paren{\sortdefkwd\mbox{ }S\mbox{ }\paren{u_1 \ldots u_n}\mbox{ }\sigma}$
 
 This adds the symbol $S$ to the current signature.
 It defines $S$ as the sort $\sigma$.
 The sort variables $u_1, \ldots, u_n$
-may occur free in $\sigma$.
+may occur free in $\sigma$,
+while $S$ may not occur free in $\sigma$.
+This command is not well-formed if $\sigma$
+is not a well-formed sort.
 
+\rem{Name clashing}
 
 \end{itemize}
 
@@ -527,11 +610,12 @@ may occur free in $\sigma$.
 \item $\paren{\constraintkwd\mbox{ }t}$
 
 This adds $t$ to the set of constraints.
-This command is well formed if $t$ is a formula,
+This command is well formed if $t$ is a well-sorted formula,
 that is, a term of sort $\sbool$.
 
 % constraint
 \rem{Quantifiers implicit, but disallowed in contraints}
+%We further require that $t$ is in the logic of 
 
 \item $\paren{\constraintinvkwd\mbox{ }S\mbox{ }S_{pre}\mbox{ }S_{trans}\mbox{ }S_{post}}$
 
@@ -555,7 +639,13 @@ whose definition is of the form $\lambda x_1, \ldots, x_n.\, t_{post}$.
 \end{enumerate}
 Given that this command is well-formed, given the above definitions,
 this command is syntax sugar for:
-
+\[
+\begin{array}{l}
+\paren{\vardeclkwd\mbox{ }v_1\mbox{ }X_{o1}\mbox{ }\sigma_{o1}\mbox{ }t_{o1}}\\
+\ldots\\
+\paren{\fundefkwd\mbox{ }f_{on}\mbox{ }X_{on}\mbox{ }\sigma_{on}\mbox{ }t_{on}}
+\end{array}
+\]
 
 \rem{TODO}
 
@@ -602,9 +692,9 @@ A well-formed response to $\checksynthkwd$ is one of the following:
 A list of $\fundefkwd$ commands of the form:
 \[
 \begin{array}{l}
-{\tt (}\fundefkwd\mbox{ }f_{o1}\mbox{ }X_{o1}\mbox{ }\sigma_{o1}\mbox{ }t_{o1}{\tt )}\\
+\paren{\fundefkwd\mbox{ }f_{o1}\mbox{ }X_{o1}\mbox{ }\sigma_{o1}\mbox{ }t_{o1}}\\
 \ldots\\
-{\tt (}\fundefkwd\mbox{ }f_{on}\mbox{ }X_{on}\mbox{ }\sigma_{on}\mbox{ }t_{on}{\tt )}
+\paren{\fundefkwd\mbox{ }f_{on}\mbox{ }X_{on}\mbox{ }\sigma_{on}\mbox{ }t_{on}}
 \end{array}
 \]
 where functions $\{ f_{o1}, \ldots, f_{on} \}$
@@ -641,7 +731,7 @@ of the synthesis conjecture.
 
 As described in Section~\ref{ssec:dec-synth-fun},
 a grammar $G$ is specified as
-a \emph{grouped rule list} of the form
+a \emph{grouped rule listing} of the form
 \[
 \paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots 
 \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}
