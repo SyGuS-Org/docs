@@ -490,7 +490,7 @@ a symbol in the current signature.
 We describe restrictions and well-formedness requirements for this command
 in the following.
 
-The syntax for the grammar $G$ (if provided)
+If provided, the syntax for the grammar $G$
 consists of two parts: 
 a \emph{predeclaration}
 $\paren{\paren{y_1\mbox{ }\tau_1} \ldots \paren{y_n\mbox{ }\tau_n}}$,
@@ -508,8 +508,8 @@ the set of constants whose sort is $\sigma_c$,
 and the set of all variables from $x_1, \ldots, x_n$ whose sort is $\sigma_v$.
 If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldots, y_n$,
 as well as $S$ itself, although the latter is disallowed in the default logic (see Section~\ref{sec:sygus-logic}).
-Furthermore,
-this command is not well-formed if
+
+This command is not well-formed if
 $\tau_1$ is not $\sigma$.
 \rem{TODO: should we make the first symbol of list the start symbol, instead of distinguished Start keyword?},
 It is also not well-formed if
@@ -517,7 +517,8 @@ $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
 Details on grammars and the terms
 they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
-The grammar must also be one that is allowable by $\mathcal{L}$.
+
+The grammar $G$ must also be one that is allowable by $\mathcal{L}$.
 For more details on the restrictions imposed on grammars by the logic,
 see Section~\ref{sec:sygus-logic}.
 If $G$ does not meet the restrictions
