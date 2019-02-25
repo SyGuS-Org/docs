@@ -517,6 +517,11 @@ $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
 Details on grammars and the terms
 they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
+The grammar must also be one that is allowable by $\mathcal{L}$.
+For more details on the restrictions imposed on grammars by the logic,
+see Section~\ref{sec:sygus-logic}.
+If $G$ does not meet the restrictions
+of the background logic, it should be rejected.
 
 If $G$ is not provided,
 then this command is syntax
@@ -530,11 +535,6 @@ that belong to the language of the current background logic $\mathcal{L}$,
 and whose free variables are in $\vec{x} = (x_1, \ldots, x_n)$.
 %We call $G_{\mathcal{L},\sigma,\vec{x}}$ the \emph{default}
 %grammar for $(T,\sigma,\vec{x})$.
-The grammar must also be one that is allowable by $\mathcal{L}$.
-For more details on the restrictions imposed on grammars by the logic,
-see Section~\ref{sec:sygus-logic}.
-If this command does not meet the restrictions
-of the background logic, it should be rejected.
 
 \item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
 
@@ -950,7 +950,7 @@ after beta-reduction.
 The notion of satisfying semantic restrictions for background theories
 that not specified in the SMT-LIB standard are not covered by this document.
 
-\section{SMT LIB Version 2.6 Theory References}
+\section{SMT LIB Theory References}
 \label{sec:smt-theories}
 
 In this section, for conveinence, we provide the concrete
