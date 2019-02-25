@@ -112,10 +112,10 @@ way ${\tt (let\ ((x\ t)) ...)}$.
 \item The command $\primedvardeclkwd$, which is syntax
 sugar for two $\vardeclkwd$ commands, has been removed
 for the sake of simplicity.
-\rem{This command is not used properly in current
+\rem{TODO: This command is not used properly in current
 invariant synthesis benchmarks (since variables cannot be passed
 to inv-constraint commands), and only contributes
-to confusion, in my opinion. Remove?
+to confusion, in my opinion. Ok to remove?
 }
 
 %\item Change (fail)?
@@ -351,7 +351,6 @@ Details on the semantics of these commands are given in Section~\ref{sec:semanti
 %\paragraph{Reserved Words}
 %All strings mentioned in Section~\ref{ssec:literals}
 
-
 \section{Semantics of Commands}
 \label{sec:semantics}
 
@@ -398,12 +397,23 @@ and the logic is unspecified,
 that is, 
 no restrictions are placed on the set of terms that may appear 
 in constraints and grammars.
-In the following, we describe how each command $\cmd$ updates
+
+In the following, we first describe restrictions
+on the order in which commands can be specified in SyGuS inputs.
+We then describe how each command $\cmd$ updates
 the state of the sets above and the current signature.
 
-\rem{Order of commands}
+\subsection{Command Ordering}
+
+A SyGuS input is not well-formed
+if it specifies a list of commands that do not meet
+the restrictions given in this section regarding their order.
+
+\rem{(Set logic | set extension | set option )* ( everything else )* ( check-synth )? }
+%\rem{Order of commands}
 
 \subsection{Setting the Logic}
+\label{ssec:set-logic}
 
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
@@ -424,12 +434,7 @@ that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
 In SyGuS, notice that the logic gives
 restrictions on both the kinds of terms that
 may appear in constraints, and may appear in grammars.
-For the former,
-we follow the same conventions as SMT-LIB
-if $S$ is a standard SMT-LIB logic.
-For the latter,
-we give details on the default settings of the logic
-with respect to restrictions on terms that may appear in grammars
+We give details on the default settings of the logic for SyGuS inputs
 in Section~\ref{sec:sygus-logic}.
 
 \item $\paren{\setextensionkwd\mbox{ }S}$
@@ -766,25 +771,61 @@ We describe this in more detail in Section~\ref{sec:logical-semantics}.
 
 %\section{
 
-\section{Standard SyGuS Logic}
+\section{SyGuS Background Logics}
 \label{sec:sygus-logic}
 
 In this section,
 we describe how the background logic
 restricts the constraints and grammars that are allowable as inputs.
-
+As mentioned in Section~\ref{ssec:set-logic},
+a SyGuS input may be given a background logic
+specified by a symbol $S$,
+where $S$ may be a standard SMT-LIB logic
+or may be solver-specific.
+We refer to $S$ as the \emph{base logic}
+of a SyGuS input.
+\rem{Standard extension to base logic + extensions?}
+%This section pertains only to 
 
 \subsection{Logical Restrictions on Constraints}
 
-\rem{Quantifiers implicit, but disallowed in contraints}
+%For the former,
+%we follow the same conventions as SMT-LIB
+%if $S$ is a standard SMT-LIB logic.
+%For the latter,
+%we give details on the default settings of the logic
+%with respect to restrictions on terms that may appear in grammars
+%in Section~\ref{sec:sygus-logic}.
 
+This section defines restrictions on the terms $t$
+that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
+Assuming our base logic is a standard SMT-LIB background logic,
+a term $t$ is allowable in this context
+generally if it belongs to that logic, as prescribed by the SMT-LIB standard.
+Exceptions to this rule are described in this section.
 
+By convention as stated in Section~\ref{ssec:set-logic}, 
+the base logic specified
+by a $\setlogickwd$ in a SyGuS file must allow quantifiers.
+This is due to the fact that
+the synthesis conjecture implicit in the state
+contains universal quantification on the universal variables of our state.
+However, by default,
+constraints \emph{cannot} themselves contain 
+formulas with quantifiers.
+\rem{Reference extension?}
 
 \subsection{Logical Restrictions on Grammars}
 
-A grammar $G$ is not allowable by the logic
-This command does not meet the restrictions
-it generates some term $t$ that does not belong to the background logic.
+This section defines restrictions on the terms
+that may appear in grammars
+
+%The base logic affects the kinds of grammars that
+%are allowable in SyGuS inputs.
+
+First,
+a grammar $G$ is not allowable by the base logic if
+it generates some term $t$ that does not belong to that logic.
 For instance, 
 this restriction disallows grammars
 in the logic of \emph{linear} integer arithmetic
@@ -794,19 +835,17 @@ Notice, however, that grammar terms $g_{ij}$ may involve
 the multiplication of two non-constant integer terms $t_1$ and $t_2$
 e.g. in the case there one of $t_i$ is a non-terminal symbol $y$
 for which $G$ generates only constant integer terms from $y$.
-If this command does not meet the restrictions
-of the background logic, it should be rejected.
 
 The default logic assumed by the SyGuS standard assumes
 additional restrictions on the terms that are generated by grammars.
 
 \rem{forward declarations, recursion}
-Note the following (recursive) definition.
-A symbol $S$ \emph{depends on functions-to-synthesize}
-if $S$ is a function-to-synthesize
-or if it is a defined symbol whose definition $\lambda \vec{x}.\,t$
-is such that $t$ contains a symbol that depends on
-functions-to-synthesize.
+%Note the following (recursive) definition.
+%A symbol $S$ \emph{depends on functions-to-synthesize}
+%if $S$ is a function-to-synthesize
+%or if it is a defined symbol whose definition $\lambda \vec{x}.\,t$
+%is such that $t$ contains a symbol that depends on
+%functions-to-synthesize.
 %We say that $G$ has \emph{forward declarations}
 %if 
 %We say that $G$ is \emph{recursive} 
@@ -963,7 +1002,7 @@ However, others are omitted.
 We briefly mention other pertinent language features not mentioned in
 this document.
 
-Parametric datatypes
+Parametric datatype definitions
 
 Recursive functions 
 
