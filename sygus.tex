@@ -481,18 +481,18 @@ a symbol in the current signature.
 
 %\item $\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
 
-\item $\paren{\fundeclkwd\mbox{ }S\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
+%\item $\paren{\fundeclkwd\mbox{ }S\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
 
-This command adds $S$ to the current set of universal variables.
-The sort of $S$ is $\sigma$ if $n=0$ or
-$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$ if $n>0$.
-This command should be rejected if $S$ is already
-a symbol in the current signature.
+%This command adds $S$ to the current set of universal variables.
+%The sort of $S$ is $\sigma$ if $n=0$ or
+%$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$ if $n>0$.
+%This command should be rejected if $S$ is already
+%a symbol in the current signature.
 
-\rem{This is higher-order quantification.
-TODO: rename this ``declare-var-fun''? Parallel with declare-const -> declare-var.
-Maybe remove this command.
-}
+%\rem{This is higher-order quantification.
+%TODO: rename this ``declare-var-fun''? Parallel with declare-const -> declare-var.
+%Maybe remove this command.
+%}
 
 \end{itemize}
 
@@ -909,9 +909,16 @@ is the (unique) term obtained
 by replacing all functions $f$ in $t$ that are defined as macros
 %in the current signature
 with their corresponding definition until a fixed point is reached.
-A grammar $G$ is not allowed by the extended logic
-if there exists a 
-\rem{TODO}
+A grammar for function-to-synthesize $f$ is not allowed by the extended logic
+if it contains a rule whose conclusion is a term $t$
+whose expanded form contains applications of functions-to-synthesize
+unless $\efwddeclskwd$ is enabled in the extended logic;
+it is not allowed by the extended logic if $t$ 
+contains $f$ itself unless $\erecursionkwd$ is enabled in the extended logic.
+%Similarly, a grammar for function-to-synthesize $f$
+%is not allowed by the extended logic
+%if it contains a rule whose conclusion is a term $t$
+%\rem{TODO}
 %A grammar that generates a term whose expanded
 %form contains a function-to-synthesize
 %is not allowed unless $\efwddeclskwd$ is enabled in the extended logic.
@@ -930,7 +937,7 @@ if there exists a
 %if 
 %We say that $G$ is \emph{recursive} 
 %if 
-\rem{TODO}
+%\rem{TODO}
 
 
 
