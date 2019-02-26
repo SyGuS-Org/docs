@@ -71,7 +71,13 @@ and the extensions described in~\cite{}.
 
 \item The concrete syntax for the $\synthfunkwd$
 was changed so that non-terminal symbols are declared upfront.
-\rem{Mention Start symbol change if applicable.}
+%\rem{Mention Start symbol change if applicable.}
+
+\item The symbol ${\tt Start}$, which 
+denoted the starting (non-terminal) symbol of
+grammars in this previous standard, has been removed.
+Instead, the first symbol listed in the grammar is assumed
+to be the starting symbol.
 
 \item 
 Terms that occur as the right hand side of production rules in
@@ -109,18 +115,29 @@ way ${\tt (let\ ((x\ t)) ...)}$.
 %from other SMT theories assumes the syntax
 %prescribed in theory definitions from SMT LIB~\cite{}.
 
-\item The command $\primedvardeclkwd$, which is syntax
-sugar for two $\vardeclkwd$ commands, has been removed
+\item The command $\primedvardeclkwd$, which was syntax
+sugar for two $\vardeclkwd$ commands in the previous standard, has been removed
 for the sake of simplicity.
-\rem{TODO: This command is not used properly in current
-invariant synthesis benchmarks (since variables cannot be passed
-to inv-constraint commands), and only contributes
-to confusion, in my opinion. Ok to remove?
-}
+This command did not provide any benefit to
+invariant synthesis problems, since invariant constraints $\constraintinvkwd$
+do not accept global variables.
+%\rem{TODO: This command is not used properly in current
+%invariant synthesis benchmarks (since variables cannot be passed
+%to inv-constraint commands), and only contributes
+%to confusion, in my opinion. Ok to remove?
+%}
 
 %\item Change (fail)?
 
 %\item Elaborations on the well-formedness of all commands.
+
+\item 
+The command $\fundeclkwd$,
+which declared a universal variable of function type
+in the previous standard,
+has been removed.
+%Solvers that wish to support synthesis conjectures
+%with higher-order quantification
 
 \end{enumerate}
 
@@ -415,10 +432,14 @@ the restrictions given in this section regarding their order.
 \subsection{Setting the Logic}
 \label{ssec:set-logic}
 
+The logic of SyGuS consists of two parts,
+a \emph{base logic} and an \emph{extended logic},
+which are described in detail in Section~\ref{sec:sygus-logic}.
+
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
 
-This sets the background logic
+This sets the base logic of the background logic
 to the one that $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{}
 or may be solver-specific.
@@ -439,10 +460,12 @@ in Section~\ref{sec:sygus-logic}.
 
 \item $\paren{\setextensionkwd\mbox{ }S}$
 
-This enables the extension specified by $S$.
+This adds the extension specified by $S$
+to the extended logic of the background logic.
 This may correspond enabling or disabling a feature of the language 
 or a modification to the current logic.
-\rem{For examples, see ...}
+All extensions standardized by this document 
+are given in Section~\ref{sec:sygus-logic}.
 
 \end{itemize}
 
@@ -510,8 +533,8 @@ If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldot
 as well as $S$ itself, although the latter is disallowed in the default logic (see Section~\ref{sec:sygus-logic}).
 
 This command is not well-formed if
-$\tau_1$ is not $\sigma$.
-\rem{TODO: should we make the first symbol of list the start symbol, instead of distinguished Start keyword?},
+$\tau_1$ (the type of the start symbol) is not $\sigma$.
+%\rem{TODO: should we make the first symbol of list the start symbol, instead of distinguished Start keyword?},
 It is also not well-formed if
 $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
@@ -581,12 +604,13 @@ is defined as a \emph{constructor}
 of sort $\sigma_{j1} \times \ldots \times \sigma_{jm_j} \rightarrow D_i$,
 \item 
 For each $j = 1, \ldots, k$, $\ell = 1, \ldots m_j$, symbol $s_{j\ell}$
-is defined as a \emph{selector}
+is added to the signature,
+defined as a \emph{selector}
 of sort $D_i \rightarrow \sigma_{j\ell}$.
 %For each $j = 1, \ldots, k$, 
 \end{enumerate}
 
-\rem{Explain symbols?}
+%\rem{Explain symbols?}
 This command should be rejected if any of the above symbols this command
 adds to the signature are already
 a symbol in the current signature.
@@ -719,7 +743,7 @@ The expected output from the synthesis solver is covered in Section~\ref{sec:out
 \item $\paren{\setoptkwd\mbox{ }O}$
 
 This enables the solver-specific options specified by $O$.
-We do not give concrete examples of such options in this document.\rem{Any needed?}
+We do not give concrete examples of such options in this document. %\rem{Any needed?}
 It is recommended that synthesis solvers
 ignore unrecognized options, 
 and choose reasonable defaults when the
@@ -778,17 +802,52 @@ We describe this in more detail in Section~\ref{sec:logical-semantics}.
 In this section,
 we describe how the background logic
 restricts the constraints and grammars that are allowable as inputs.
-As mentioned in Section~\ref{ssec:set-logic},
-a SyGuS input may be given a background logic
-specified by a symbol $S$,
-where $S$ may be a standard SMT-LIB logic
-or may be solver-specific.
-We refer to $S$ as the \emph{base logic}
-of a SyGuS input.
-\rem{Standard extension to base logic + extensions?}
+%As mentioned in Section~\ref{ssec:set-logic},
+%a SyGuS input may be given a background logic
+%specified by a symbol $S$,
+%where $S$ may be a standard SMT-LIB logic
+%or may be solver-specific.
+%We refer to $S$ as the \emph{base logic}
+%of a SyGuS input.
+
+The background logic of SyGuS consists of two parts:
+\begin{enumerate}
+\item A \emph{base logic}, which can be set via a $\setlogickwd$ command.
+This corresponds to a SMT-LIB standard logic or may be solver specific.
+
+\item An \emph{extended logic}, which augments the background
+logic with additional restrictions.
+\end{enumerate}
+Both components of the logic affect the kinds of terms that may appear
+in constraints and in grammars.
+The purpose of the extended logic is to specify
+restrictions that are not expressible in a base logic
+and are parametric to the base logic.
+%We give more detail on what consistutes an extended logic in the following.
+
+For the purposes of this document, 
+an extended logic can be seen as a set of values
+taken from the following enumeration.
+\[
+\equantifierskwd\mbox{ }|\mbox{ }\efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd
+\]
+We refer to the above values as \emph{flags} of the extended logic.
+They indicate (respectively) whether
+arbitrary quantification is allowed in constraints,
+grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
+and whether grammars can generate terms that correspond to recursive definitions.
+The default extended logic is the empty set and can be modified
+by the $\setextensionkwd$ command.
+
+In the following, we summarize how the base logic and extended
+logic restrict the set of terms that may appear in constraints and grammars.
+%We give three such examples in Section~\ref{ssec:logicr-grammars}
+%below.
+%\rem{Standard extension to base logic + extensions?}
 %This section pertains only to 
 
 \subsection{Logical Restrictions on Constraints}
+\label{ssec:logicr-constraints}
 
 %For the former,
 %we follow the same conventions as SMT-LIB
@@ -811,12 +870,15 @@ by a $\setlogickwd$ in a SyGuS file must allow quantifiers.
 This is due to the fact that
 the synthesis conjecture implicit in the state
 contains universal quantification on the universal variables of our state.
-However, by default,
+However,
 constraints \emph{cannot} themselves contain 
-formulas with quantifiers.
-\rem{Reference extension?}
+formulas with quantifiers
+unless the flag $\equantifierskwd$ is enabled in the extended logic.
+
+%\rem{Reference extension?}
 
 \subsection{Logical Restrictions on Grammars}
+\label{ssec:logicr-grammars}
 
 This section defines restrictions on the terms
 that may appear in grammars
@@ -837,10 +899,27 @@ the multiplication of two non-constant integer terms $t_1$ and $t_2$
 e.g. in the case there one of $t_i$ is a non-terminal symbol $y$
 for which $G$ generates only constant integer terms from $y$.
 
-The default logic assumed by the SyGuS standard assumes
-additional restrictions on the terms that are generated by grammars.
+%The default logic assumed by the SyGuS standard assumes
+%additional restrictions on the terms that are generated by grammars.
+The extended logic may impose additional restrictions
+on the terms that are generated by grammars.
+Note the following definition.
+The \emph{expanded form} of a term $t$
+is the (unique) term obtained
+by replacing all functions $f$ in $t$ that are defined as macros
+%in the current signature
+with their corresponding definition until a fixed point is reached.
+A grammar $G$ is not allowed by the extended logic
+if there exists a 
+\rem{TODO}
+%A grammar that generates a term whose expanded
+%form contains a function-to-synthesize
+%is not allowed unless $\efwddeclskwd$ is enabled in the extended logic.
+%A grammar for a function-to-synthesize $f$
+%that generates a term that contains $f$
+%is not allowed unless $\
 
-\rem{forward declarations, recursion}
+%\rem{forward declarations, recursion}
 %Note the following (recursive) definition.
 %A symbol $S$ \emph{depends on functions-to-synthesize}
 %if $S$ is a function-to-synthesize
@@ -917,11 +996,11 @@ where $y_1$ is the start symbol of $G$.
 
 %\begin{def}
 A tuple of functions 
-$( \lambda X_1.\, t_1, \ldots, \lambda X_1.\, t_1 )$
+$( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n )$
 satisfies the syntactic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
 in conjecture $\exists f_1, \ldots, f_n \varphi$
-if $\lambda X_1.\, t_i$
+if $\lambda X_i.\, t_i$
 satisfies the syntactic specification for $f_i$
 for each $i=1,\ldots,n$.
 %\end{def}
@@ -937,7 +1016,7 @@ for background theories from the SMT-LIB standard.
 
 %\begin{def}
 A tuple of functions 
-$( \lambda X_1.\, t_1, \ldots, \lambda X_1.\, t_1 )$
+$( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n)$
 satisfies the semantic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
 in conjecture $\exists f_1, \ldots, f_n \varphi$ in background theory $T$
