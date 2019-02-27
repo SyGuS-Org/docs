@@ -94,7 +94,7 @@ The standard SMT LIB version 2.6 commands
 for declaring datatypes are adopted.
 
 \item The $\setoptskwd$ has been renamed $\setoptkwd$ to 
-correlate to the existing SMT LIB version 2.6 command.\rem{TODO: Objection?}
+correlate to the existing SMT LIB version 2.6 command.
 
 \item 
 The syntax for existing terms and sorts
@@ -1047,29 +1047,167 @@ after beta-reduction.
 The notion of satisfying semantic restrictions for background theories
 that not specified in the SMT-LIB standard are not covered by this document.
 
-\section{SMT LIB Theory References}
+\section{Reference Grammars for SMT LIB Logics}
 \label{sec:smt-theories}
 
 In this section, for conveinence, we provide the concrete
-grammar corresponding to the (full) signature
-of a number of theories of interest.
-Note this is not intended to be a complete list of all theories.
+grammar corresponding to the (most liberal) grammars corresponding
+to all terms that belong to logics of interest.
+Note this is not intended to be a complete list of all logics.
+
+For each logic, we give a grammar for
+Notice that all logics include the if-then-else term ${\tt ite}$
+as well as the equality predicate ${\tt =}$.
+Each of these grammars are derived
+based on the definition of logics and theories
+described in the theory and logic declaration documents
+available at \url{www.smt-lib.org}.
+More details on the theory and logic declarations
+can be found in Sections 3.7 and 3.8
+of the SMT-LIB version 2.6 standard~\cite{}.
+
+Each grammar omits the predicate symbols that are shared by all logics
+according to the SMT-LIB standard. This includes:
+\begin{enumerate}
+\item A binary equality predicate
+${\tt =}$ of sort $\sigma \times \sigma \rightarrow \sbool$
+for each sort $\sigma$,
+%\item An if-then-else term ${\tt ite}$
+\item All Boolean connectives, including 
+${\tt and}$, ${\tt or}$, ${\tt =>}$, ${\tt xor}$.
+\end{enumerate}
+We provide the grammar
+for a single function $f$ over one of the sorts in the logic,
+and assume it has one variable in its argument list
+for each non-Boolean sort that the grammar contains.
 
 \subsection{Integer Arithmetic}
 
-
+The following grammar for $f$
+admits exactly the integer-typed terms in the logic of
+linear integer arithmetic (LIA).
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic LIA)
+(synth-fun f ((x Int)) Int
+   ((y_term Int) (y_const Int) (y_pred Bool))
+   ((y_term Int  (y_const 
+                  (Variable Int)
+                  (- y_term)
+                  (+ y_term y_term)
+                  (- y_term y_term)
+                  (* y_const y_term)
+                  (* y_term y_const)
+                  (div y_term y_cons)
+                  (mod y_term y_cons)
+                  (abs y_term)
+                  (ite y_pred y_term y_term)))
+    (y_cons Int  ((Constant Int)))
+    (y_pred Bool ((> y_term y_term)
+                  (>= y_term y_term)
+                  (< y_term y_term
+                  (<= y_term y_term))))))
+\end{lstlisting}
+The grammar for $g$ admits exactly the integer-typed terms in the logic of
+non-linear integer arithmetic (NIA).
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic NIA)
+(synth-fun g ((x Int)) Int
+   ((y_term Int) (y_pred Bool))
+   ((y_term Int  ((Constant Real) 
+                  (Variable Int)
+                  (- y_term)
+                  (+ y_term y_term)
+                  (- y_term y_term)
+                  (* y_term y_term)
+                  (div y_term y_term)
+                  (mod y_term y_term)
+                  (abs y_term)
+                  (ite y_pred y_term y_term)))
+    (y_pred Bool (...
+                  (> y_term y_term)
+                  (>= y_term y_term)
+                  (< y_term y_term
+                  (<= y_term y_term))))))
+\end{lstlisting}
 
 \subsection{Real Arithmetic}
 
-
+The following grammar for $f$
+admits exactly the real-typed terms in the logic of
+linear real arithmetic (LRA).
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic LRA)
+(synth-fun f ((x Real)) Real
+   ((y_term Real) (y_const Real) (y_pred Bool))
+   ((y_term Real (y_const 
+                  (Variable Real) 
+                  (- y_term)
+                  (+ y_term y_term)
+                  (- y_term y_term)
+                  (* y_cons y_term)
+                  (* y_term y_const)
+                  (ite y_pred y_term y_term)))
+    (y_cons Real ((Constant Real)))
+    (y_pred Bool (...
+                  (> y_term y_term)
+                  (>= y_term y_term)
+                  (< y_term y_term
+                  (<= y_term y_term))))))
+\end{lstlisting}
+The grammar for $g$
+admits exactly the real-typed terms in the logic of
+non-linear real arithmetic (NRA).
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic NRA)
+(synth-fun g ((x Real)) Real
+   ((y_term Real) (y_const Real) (y_pred Bool))
+   ((y_term Real ((Constant Real) 
+                  (Variable Real)
+                  (- y_term)
+                  (+ y_term y_term)
+                  (- y_term y_term)
+                  (* y_term y_term)
+                  (/ y_term y_term)
+                  (ite y_pred y_term y_term)))
+    (y_pred Bool (...
+                  (= y_term y_term)
+                  (> y_term y_term)
+                  (>= y_term y_term)
+                  (< y_term y_term
+                  (<= y_term y_term))))))
+\end{lstlisting}
 
 \subsection{Fixed-Width Bit-Vectors}
 
+The signature of bit-vectors includes an indexed sort
+${\tt Bitvec}$, which is indexed by an integer constant that denotes
+its bit-width. We show a grammar below for one particular
+choice of this bitwidth, $32$.
+We further omit
+the functions ${\tt (_ extract n m)}$ and ${\tt concat}$,
+since they are polymorphic.
 
-\rem{extract/concat: multiple types}
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic BV)
+(synth-fun f ((x1 (_ BitVec 32)) (x2 (_ BitVec 32))) Real
+   ((y_term (_ BitVec 32)) (y_pred Bool))
+   ((y_term (_ BitVec 32) (x1 x2 
+                           (Constant (_ BitVec 32))
+                           (ite yp y_term y_term)
+                           ...
+                           ))
+    (y_pred Bool (...
+                  )))))
+\end{lstlisting}
 
 
 \subsection{Strings}
+
+Notice that there is no
+officially adopted SMT-LIB standard for strings at the time
+this document was written.
+Thus, we adopt the proposed standard~\cite{}
+as of \rem{fixed time}.
 
 
 \section{Examples}
@@ -1077,8 +1215,11 @@ Note this is not intended to be a complete list of all theories.
 
 \rem{Simple LIA example}
 
+\rem{extract/concat: multiple types}
+
 \rem{Datatypes}
 
+\rem{Multiple check-synth}
 
 \begin{appendix}
 
