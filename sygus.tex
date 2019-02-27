@@ -1093,15 +1093,12 @@ of the SMT-LIB version 2.6 standard~\cite{}.
 
 For each grammar, we omit some 
 of the predicate symbols that are shared by all logics
-according to the SMT-LIB standard. This includes:
-\begin{enumerate}
-\item A binary equality predicate
-${\tt =}$ of sort $\sigma \times \sigma \rightarrow \sbool$
-for each sort $\sigma$,
+according to the SMT-LIB standard. This includes
+the equality predicate
+${\tt =}$ for each sort,
 %\item An if-then-else term ${\tt ite}$
-\item All Boolean connectives, including 
-${\tt and}$, ${\tt or}$, ${\tt =>}$, ${\tt xor}$.
-\end{enumerate}
+and Boolean connectives such as
+${\tt and}$, ${\tt or}$, ${\tt =>}$ and ${\tt xor}$.
 We provide the grammar
 for a single function $f$ over one of the sorts in the logic,
 and assume it has one variable in its argument list
