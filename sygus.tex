@@ -1210,19 +1210,19 @@ ${\tt Bitvec}$, which is indexed by an integer constant that denotes
 its bit-width. We show a grammar below for one particular
 choice of this bitwidth, $32$.
 We further omit
-the functions ${\tt (_ extract n m)}$ and ${\tt concat}$,
+the indexed bit-vector extraction function ${\tt (\_\ extract\ n\ m)}$ and 
+the concatenation function ${\tt concat}$,
 since they are polymorphic.
-We instead give examples of these operators in Section~\ref{sec:examples}.
+Examples of these operators are given in Section~\ref{sec:examples}.
 
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic BV)
-(synth-fun f ((x1 (_ BitVec 32)) (x2 (_ BitVec 32))) Real
+(synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
    ((y_term (_ BitVec 32)) (y_pred Bool))
-   ((y_term (_ BitVec 32) (x1 x2 
-                           (Constant (_ BitVec 32))
-                           (ite yp y_term y_term)
+   ((y_term (_ BitVec 32) ((Constant (_ BitVec 32))
+                           (Variable (_ BitVec 32))
                            ...
-                           ))
+                           (ite y_pred y_term y_term)))
     (y_pred Bool (...
                   )))))
 \end{lstlisting}
