@@ -231,8 +231,7 @@ The theory of bit-vectors uses both
 hexidecimal and binary constants in the above syntax
 to denote bit-vector vectors.
 For more details on concrete theory definitions,
-see Section~\ref{sec:smt-theories}.
-
+see Appendix~\ref{sec:smt-logic}.
 
 \subsection{Symbols}
 
@@ -282,8 +281,8 @@ The \emph{arity} of the sort is the number of (sort) arguments it takes.
 A \emph{parametric} sort is one whose arity is greater than zero.
 Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
-Sorts may be defined by theories (see examples in Section~\ref{sec:smt-theories})
-or may be user-defined in certain logics
+Sorts may be defined by theories (see examples in Appendix~\ref{sec:smt-logics})
+or may be user-defined
 (see Section~\ref{ssec:defining-sorts}).
 
 \subsection{Terms}
@@ -317,7 +316,7 @@ for a parametric list.
 
 Like sorts, the identifiers that comprise terms
 can either be defined by the user or by the theory.
-Examples of the latter are given in Section~\ref{sec:smt-theories}.
+Examples of the latter are given in Appendix~\ref{sec:smt-logics}.
 
 \subsection{Commands}
 
@@ -444,7 +443,7 @@ to the one that $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{}
 or may be solver-specific.
 For examples of common SMT logics, 
-see Section~\ref{sec:smt-theories}.
+see Section~\ref{sec:smt-logic}.
 If $S$ is a standard SMT-LIB logic,
 then this command adds the set of sort and function symbols
 from that logic to the current signature.
@@ -838,12 +837,25 @@ and whether grammars can generate terms that correspond to recursive definitions
 The default extended logic is the empty set and can be modified
 by the $\setextensionkwd$ command.
 
-In the following, we summarize how the base logic and extended
-logic restrict the set of terms that may appear in constraints and grammars.
+In the following, 
+we first give an overview of the kinds of base logics that
+are defined in SMT-LIB.
+We then summarize how the base logic and extended
+logic restrict the set of terms that may appear 
+in constraints and grammars in SyGuS inputs.
 %We give three such examples in Section~\ref{ssec:logicr-grammars}
 %below.
 %\rem{Standard extension to base logic + extensions?}
 %This section pertains only to 
+
+\subsection{Base Logics in the SMT-LIB standard}
+\label{sec:smt-logic}
+
+SMT-LIB provides a catalog of standard logics,
+available at \url{www.smt-lib.org}.
+We briefly review these in the following.
+
+
 
 \subsection{Logical Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -871,7 +883,7 @@ the synthesis conjecture implicit in the state
 contains universal quantification on the universal variables of our state.
 However,
 constraints \emph{cannot} themselves contain 
-formulas with quantifiers
+formulas with quantifierstheory
 unless the flag $\equantifierskwd$ is enabled in the extended logic.
 
 %\rem{Reference extension?}
@@ -1047,8 +1059,25 @@ after beta-reduction.
 The notion of satisfying semantic restrictions for background theories
 that not specified in the SMT-LIB standard are not covered by this document.
 
-\section{Reference Grammars for SMT LIB Logics}
-\label{sec:smt-theories}
+
+\section{Examples}
+\label{sec:examples}
+
+\rem{Simple LIA example}
+
+\rem{extract/concat: multiple types}
+
+\rem{Datatypes}
+
+\rem{Multiple check-synth}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\begin{appendix}
+
+\section{Reference Grammars}
+\label{apx:ref-grammars}
 
 In this section, for conveinence, we provide the concrete
 grammar corresponding to the most premissive grammars for generating
@@ -1208,19 +1237,6 @@ Thus, we adopt the proposed standard~\cite{}
 as of \rem{fixed time}.
 
 
-\section{Examples}
-\label{sec:examples}
-
-\rem{Simple LIA example}
-
-\rem{extract/concat: multiple types}
-
-\rem{Datatypes}
-
-\rem{Multiple check-synth}
-
-\begin{appendix}
-
 \section{Reserved Words}
 \label{apx:reserved}
 
@@ -1248,7 +1264,5 @@ Attribute annotations
 
 \end{appendix}
 
-\bibliographystyle{plain}
-\bibliography{references}
 
 \end{document}
