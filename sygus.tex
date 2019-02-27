@@ -1051,13 +1051,9 @@ that not specified in the SMT-LIB standard are not covered by this document.
 \label{sec:smt-theories}
 
 In this section, for conveinence, we provide the concrete
-grammar corresponding to the (most liberal) grammars corresponding
-to all terms that belong to logics of interest.
-Note this is not intended to be a complete list of all logics.
-
-For each logic, we give a grammar for
-Notice that all logics include the if-then-else term ${\tt ite}$
-as well as the equality predicate ${\tt =}$.
+grammar corresponding to the most premissive grammars for generating
+terms that belong to SMT-LIB logics of interest.
+Note this is not intended to be a complete list.
 Each of these grammars are derived
 based on the definition of logics and theories
 described in the theory and logic declaration documents
@@ -1066,7 +1062,8 @@ More details on the theory and logic declarations
 can be found in Sections 3.7 and 3.8
 of the SMT-LIB version 2.6 standard~\cite{}.
 
-Each grammar omits the predicate symbols that are shared by all logics
+For each grammar, we omit some 
+of the predicate symbols that are shared by all logics
 according to the SMT-LIB standard. This includes:
 \begin{enumerate}
 \item A binary equality predicate
@@ -1084,8 +1081,8 @@ for each non-Boolean sort that the grammar contains.
 \subsection{Integer Arithmetic}
 
 The following grammar for $f$
-admits exactly the integer-typed terms in the logic of
-linear integer arithmetic (LIA).
+generates exactly the integer-typed terms in the logic of
+linear integer arithmetic (LIA) with one free integer variable ${\tt x}$.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LIA)
 (synth-fun f ((x Int)) Int
@@ -1107,7 +1104,7 @@ linear integer arithmetic (LIA).
                   (< y_term y_term
                   (<= y_term y_term))))))
 \end{lstlisting}
-The grammar for $g$ admits exactly the integer-typed terms in the logic of
+The grammar for $g$ generates exactly the integer-typed terms in the logic of
 non-linear integer arithmetic (NIA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic NIA)
@@ -1133,7 +1130,7 @@ non-linear integer arithmetic (NIA).
 \subsection{Real Arithmetic}
 
 The following grammar for $f$
-admits exactly the real-typed terms in the logic of
+generates exactly the real-typed terms in the logic of
 linear real arithmetic (LRA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LRA)
@@ -1155,7 +1152,7 @@ linear real arithmetic (LRA).
                   (<= y_term y_term))))))
 \end{lstlisting}
 The grammar for $g$
-admits exactly the real-typed terms in the logic of
+generates exactly the real-typed terms in the logic of
 non-linear real arithmetic (NRA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic NRA)
@@ -1186,6 +1183,7 @@ choice of this bitwidth, $32$.
 We further omit
 the functions ${\tt (_ extract n m)}$ and ${\tt concat}$,
 since they are polymorphic.
+We instead give examples of these operators in Section~\ref{sec:examples}.
 
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic BV)
