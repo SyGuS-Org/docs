@@ -1115,14 +1115,14 @@ linear integer arithmetic (LIA) with one free integer variable ${\tt x}$.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LIA)
 (synth-fun f ((x Int)) Int
-   ((y_term Int) (y_const Int) (y_pred Bool))
-   ((y_term Int  (y_const 
+   ((y_term Int) (y_cons Int) (y_pred Bool))
+   ((y_term Int  (y_cons
                   (Variable Int)
                   (- y_term)
                   (+ y_term y_term)
                   (- y_term y_term)
-                  (* y_const y_term)
-                  (* y_term y_const)
+                  (* y_cons y_term)
+                  (* y_term y_cons)
                   (div y_term y_cons)
                   (mod y_term y_cons)
                   (abs y_term)
@@ -1164,14 +1164,14 @@ linear real arithmetic (LRA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LRA)
 (synth-fun f ((x Real)) Real
-   ((y_term Real) (y_const Real) (y_pred Bool))
-   ((y_term Real (y_const 
+   ((y_term Real) (y_cons Real) (y_pred Bool))
+   ((y_term Real (y_cons 
                   (Variable Real) 
                   (- y_term)
                   (+ y_term y_term)
                   (- y_term y_term)
                   (* y_cons y_term)
-                  (* y_term y_const)
+                  (* y_term y_cons)
                   (ite y_pred y_term y_term)))
     (y_cons Real ((Constant Real)))
     (y_pred Bool (...
@@ -1186,7 +1186,7 @@ non-linear real arithmetic (NRA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic NRA)
 (synth-fun g ((x Real)) Real
-   ((y_term Real) (y_const Real) (y_pred Bool))
+   ((y_term Real) (y_cons Real) (y_pred Bool))
    ((y_term Real ((Constant Real) 
                   (Variable Real)
                   (- y_term)
