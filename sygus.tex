@@ -851,12 +851,13 @@ and whether grammars can generate terms that correspond to recursive definitions
 The default extended logic is the empty set and can be modified
 by the $\setfeaturekwd$ command.
 
-In the following, 
-we first give an overview of the kinds of base logics that
+The following
+subsection gives an overview of the kinds of base logics that
 are defined in SMT-LIB.
-We then summarize how the base logic and extended
-logic restrict the set of terms that may appear 
-in constraints and grammars in SyGuS inputs.
+The next two subsections 
+summarize how the SyGuS background logic 
+restricts the set of terms that may appear 
+in constraints and grammars.
 %We give three such examples in Section~\ref{ssec:logicr-grammars}
 %below.
 %\rem{Standard extension to base logic + extensions?}
@@ -901,7 +902,6 @@ decimals using the syntax $\realconst$
 or as rational terms of the form ${\tt (/\ m\ n)}$.
 
 
-
 The theory of fixed-width bit-vectors
 is included in logics specified 
 by symbols that include the substring ${\tt BV}$.
@@ -912,6 +912,10 @@ The functions in this signature include various operations on bit-vectors,
 including bit-wise, arithmetic, and shifting operations.
 
 \rem{more}
+
+More details on the concrete signatures introduced by
+standard SMT-LIB logics can be found in the reference
+grammars in Appendix~\ref{apx:ref-grammars}.
 
 \subsection{Logical Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -924,12 +928,12 @@ including bit-wise, arithmetic, and shifting operations.
 %with respect to restrictions on terms that may appear in grammars
 %in Section~\ref{sec:sygus-logic}.
 
-This section defines restrictions on the terms $t$
-that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
+%This section defines restrictions on the terms $t$
+%that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
 Assuming our base logic is a standard SMT-LIB background logic,
 a term $t$ is allowable in this context
 generally if it belongs to that logic, as prescribed by the SMT-LIB standard.
-Exceptions to this rule are described in this section.
+Exceptions to this rule are described here.
 
 By convention as stated in Section~\ref{ssec:set-logic}, 
 the base logic specified
@@ -947,14 +951,11 @@ unless the feature $\equantifierskwd$ is enabled in the background logic.
 \subsection{Logical Restrictions on Grammars}
 \label{ssec:logicr-grammars}
 
-This section defines restrictions on the terms
-that may appear in grammars.
-
+%This section defines restrictions on the terms
+%that may appear in grammars.
 %The base logic affects the kinds of grammars that
 %are allowable in SyGuS inputs.
-
-First,
-a grammar $G$ is not allowable by the base logic if
+A grammar $G$ is not allowable by the base logic if
 it generates some term $t$ that does not belong to that logic.
 %For instance, 
 %this restriction disallows grammars
@@ -991,9 +992,9 @@ with their corresponding definition until a fixed point is reached.
 A grammar for function-to-synthesize $f$ is not allowed
 if it contains a rule whose conclusion is a term $t$
 whose expanded form contains applications of functions-to-synthesize
-unless feature $\efwddeclskwd$ is enabled;
-it is not allowed by the extended logic if $t$ 
-contains $f$ itself unless feature $\erecursionkwd$ is enabled.
+unless the feature $\efwddeclskwd$ is enabled;
+it is not allowed if $t$ 
+contains $f$ itself unless the feature $\erecursionkwd$ is enabled.
 %Similarly, a grammar for function-to-synthesize $f$
 %is not allowed by the extended logic
 %if it contains a rule whose conclusion is a term $t$
