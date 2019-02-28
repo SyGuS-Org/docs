@@ -328,6 +328,19 @@ Like sorts, the identifiers that comprise terms
 can either be defined by the user or by the theory.
 Examples of the latter are given in Section~\ref{ssec:smt-logic}.
 
+\subsection{Features}
+\label{ssec:syntax-features}
+
+A feature $\feature$ denotes a restriction or extension
+on the kinds of SyGuS commands that are allowable in an input.
+It is an enumeration in the following syntax.
+\begin{alignat*}{1}
+ & \begin{array}{rcl}
+ \feature & ::= & \equantifierskwd\mbox{ }|\mbox{ }\efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd
+\end{array}
+\end{alignat*}
+More details on features are given in Section~\ref{sec:sygus-logic}.
+
 \subsection{Commands}
 
 A command $\cmd$ is given by the following syntax.
@@ -339,7 +352,7 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\checksynthkwd} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
- & | & \paren{\setfeaturekwd\mbox{ }:\symbol\mbox{ }\boolconst} \\
+ & | & \paren{\setfeaturekwd\mbox{ }:\feature\mbox{ }\boolconst} \\
  & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
  & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
@@ -490,6 +503,8 @@ in this document.
 We remark that a feature set may correspond to a class of synthesis problems,
 for example, synthesis conjectures having
 a single non-recursive function-to-synthesize.
+Setting a feature set is syntax sugar
+for the appropriate sequence of $\setfeaturekwd$ commands.
 
 \end{itemize}
 
@@ -924,12 +939,10 @@ appear, nor are any symbols predefined.
 \label{ssec:feature-sets}
 
 For the purposes of this document, 
-a feature set can be seen as a set of values, called \emph{features},
-taken from the following enumeration.
-\[
-\equantifierskwd\mbox{ }|\mbox{ }\efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd
-\]
-\rem{TODO: move to syntax section?}
+a feature set can be seen as a set of values, called \emph{features}.
+Their syntax is given by the enumeration in Section~\ref{ssec:syntax-features}.
+
+\rem{TODO}
 We say that a feature $F$ is enabled in the background logic
 if its feature set contains $F$.
 The above features indicate (respectively) whether
