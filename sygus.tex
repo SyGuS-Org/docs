@@ -32,6 +32,7 @@
 \usepackage{microtype}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{comment}
 
 \usetikzlibrary{automata}
 \usetikzlibrary{backgrounds}
@@ -1131,14 +1132,16 @@ based on the definition of logics and theories
 described in the theory and logic declaration documents
 available at \url{www.smt-lib.org}.
 
-For each grammar, we omit some 
-of the predicate symbols that are shared by all logics
+For each grammar, we omit 
+the predicate symbols that are shared by all logics
 according to the SMT-LIB standard. This includes
 the equality predicate
 ${\tt =}$ for each sort,
 %\item An if-then-else term ${\tt ite}$
 and Boolean connectives such as
 ${\tt and}$, ${\tt or}$, ${\tt =>}$ and ${\tt xor}$.
+%All logics include an if-then-else term ${\tt ite}$,
+%which are included 
 We provide the grammar
 for a single function over one of the sorts in the logic,
 and assume it has one variable in its argument list
@@ -1255,23 +1258,85 @@ The signature of bit-vectors includes an indexed sort
 ${\tt Bitvec}$, which is indexed by an integer constant that denotes
 its bit-width. We show a grammar below for one particular
 choice of this bitwidth, $32$.
-We further omit
-the indexed bit-vector extraction function ${\tt (\_\ extract\ n\ m)}$ and 
+For brevity,
+we omit indexed bit-vector operators
+such as extraction function ${\tt (\_\ extract\ n\ m)}$, 
 the concatenation function ${\tt concat}$,
-since they are polymorphic.
-Examples of these operators are given in Section~\ref{sec:examples}.
+since these operators are polymorphic.
+We also omit the extended operators of this theory
+which includes functions like
+bit-vector subtraction ${\tt bvsub}$,
+xor ${\tt bvxor}$,
+signed division ${\tt bvsdiv}$,
+and predicates like
+unsigned-greater-than-or-equal ${\tt bvuge}$
+and signed-less-than ${\tt bvslt}$.
+These extended operators can be seen as syntax sugar for the
+operators in the grammar below.
+Examples of some of the omitted operators are given in Section~\ref{sec:examples}.
 
+% ajr: full grammar 
+\begin{comment}
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
    ((y_term (_ BitVec 32)) (y_pred Bool))
    ((y_term (_ BitVec 32) ((Constant (_ BitVec 32))
                            (Variable (_ BitVec 32))
-                           ...
+                           (bvnot y_term)
+                           (bvand y_term y_term)
+                           (bvor y_term y_term)
+                           (bvneg y_term)
+                           (bvadd y_term y_term)
+                           (bvmul y_term y_term)
+                           (bvudiv y_term y_term)
+                           (bvurem y_term y_term)
+                           (bvshl y_term y_term)
+                           (bvlshr y_term y_term)
+                           (bvnand y_term y_term)
+                           (bvnor y_term y_term)
+                           (bvxor y_term y_term)
+                           (bvxnor y_term y_term)
+                           (bvsub y_term y_term)
+                           (bvsdiv y_term y_term)
+                           (bvsrem y_term y_term)
+                           (bvsmod y_term y_term)
+                           (bvashr y_term y_term)
                            (ite y_pred y_term y_term)))
     (y_pred Bool (...
-                  )))))
+                  (bvult y_pred y_pred)
+                  (bvule y_pred y_pred)
+                  (bvugt y_pred y_pred)
+                  (bvuge y_pred y_pred)
+                  (bvslt y_pred y_pred)
+                  (bvsle y_pred y_pred)
+                  (bvsgt y_pred y_pred)
+                  (bvsge y_pred y_pred))))))
 \end{lstlisting}
+\end{comment}
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic BV)
+(synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
+   ((y_term (_ BitVec 32)) (y_pred Bool))
+   ((y_term (_ BitVec 32) ((Constant (_ BitVec 32))
+                           (Variable (_ BitVec 32))
+                           (bvnot y_term)
+                           (bvand y_term y_term)
+                           (bvor y_term y_term)
+                           (bvneg y_term)
+                           (bvadd y_term y_term)
+                           (bvmul y_term y_term)
+                           (bvudiv y_term y_term)
+                           (bvurem y_term y_term)
+                           (bvshl y_term y_term)
+                           (bvlshr y_term y_term)
+                           (ite y_pred y_term y_term)))
+    (y_pred Bool (...
+                  (bvult y_pred y_pred))))))
+\end{lstlisting}
+Constants may be specified
+using either the hexidecimal format $\hexconst$
+or the binary format $\binaryconst$.
 
 
 \subsection{Strings}
