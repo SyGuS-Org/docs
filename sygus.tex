@@ -232,7 +232,7 @@ The theory of bit-vectors uses both
 hexidecimal and binary constants in the above syntax
 to denote bit-vector vectors.
 For more details on concrete theory definitions,
-see Appendix~\ref{sec:smt-logic}.
+see Appendix~\ref{ssec:smt-logic}.
 
 \subsection{Symbols}
 
@@ -282,7 +282,7 @@ The \emph{arity} of the sort is the number of (sort) arguments it takes.
 A \emph{parametric} sort is one whose arity is greater than zero.
 Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
-Sorts may be defined by theories (see examples in Appendix~\ref{sec:smt-logics})
+Sorts may be defined by theories (see examples in Appendix~\ref{ssec:smt-logics})
 or may be user-defined
 (see Section~\ref{ssec:defining-sorts}).
 
@@ -317,7 +317,7 @@ for a parametric list.
 
 Like sorts, the identifiers that comprise terms
 can either be defined by the user or by the theory.
-Examples of the latter are given in Appendix~\ref{sec:smt-logics}.
+Examples of the latter are given in Appendix~\ref{ssec:smt-logics}.
 
 \subsection{Commands}
 
@@ -444,7 +444,7 @@ to the one that $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{}
 or may be solver-specific.
 For examples of common SMT logics, 
-see Section~\ref{sec:smt-logic}.
+see Section~\ref{ssec:smt-logic}.
 If $S$ is a standard SMT-LIB logic,
 then this command adds the set of sort and function symbols
 from that logic to the current signature.
@@ -850,13 +850,55 @@ in constraints and grammars in SyGuS inputs.
 %This section pertains only to 
 
 \subsection{Base Logics in the SMT-LIB standard}
-\label{sec:smt-logic}
+\label{ssec:smt-logic}
 
 SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
-We briefly review these in the following.
+Further details on the formal definition of 
+theory and logic declarations can be found in Sections 3.7 and 3.8
+of the SMT-LIB version 2.6 standard~\cite{}.
+At a high level, a \emph{logic}
+enables a set of theories.
+If a logic enables a theory, then its symbols are added
+to the current signature when a $\setlogickwd$ command is issued.
+We briefly review some of the important theories and logics in the following.
 
-\rem{TODO}
+The theory of integers is enabled 
+in logics like linear integer arithmetic ${\tt LIA}$
+or non-linear integer arithmetic ${\tt NIA}$.
+The signature of this theory includes the integer sort ${\tt Int}$ and
+typical function symbols of arithmetic, including
+addition ${\tt +}$
+and multiplication ${\tt *}$.
+Unary negation and subtraction are specified by ${\tt -}$.
+Constants of the theory are integer constants whose syntax
+is given by $\intconst$ from Section~\ref{ssec:literals}.
+Analogously, 
+the theory of reals is enabled
+in logics like linear real arithmetic ${\tt LRA}$
+or non-linear real arithmetic ${\tt NRA}$.
+It signature includes the real sort ${\tt Real}$.
+Some of the function symbols of arithmetic are syntacticaly identical to
+those from the theory of integers, including
+${\tt +}$, ${\tt -}$ and ${\tt *}$.
+The signature of the theory of reals additionally includes
+real division ${\tt /}$.
+Constants in this theory can either be specified as
+decimals using the syntax $\realconst$
+or as rational terms of the form ${\tt (/\ m\ n)}$.
+
+
+
+The theory of fixed-width bit-vectors
+is included in logics specified 
+by symbols that include the substring ${\tt BV}$.
+The signature of this theory includes a family of 
+indexed sorts ${\tt (\_\ BitVec\ n)}$
+denoting bit-vectors of width $n$.
+The functions in this signature include various operations on bit-vectors,
+including bit-wise, arithmetic, and shifting operations.
+
+\rem{more}
 
 \subsection{Logical Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -1088,9 +1130,6 @@ Each of these grammars are derived
 based on the definition of logics and theories
 described in the theory and logic declaration documents
 available at \url{www.smt-lib.org}.
-More details on the theory and logic declarations
-can be found in Sections 3.7 and 3.8
-of the SMT-LIB version 2.6 standard~\cite{}.
 
 For each grammar, we omit some 
 of the predicate symbols that are shared by all logics
@@ -1131,6 +1170,11 @@ linear integer arithmetic (LIA) with one free integer variable ${\tt x}$.
                   (< y_term y_term
                   (<= y_term y_term))))))
 \end{lstlisting}
+Above, ${\tt div}$
+denotes integer division (
+
+For more details, see
+
 The grammar for $g$ generates exactly the integer-typed terms in the logic of
 non-linear integer arithmetic (NIA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
@@ -1178,6 +1222,11 @@ linear real arithmetic (LRA).
                   (< y_term y_term
                   (<= y_term y_term))))))
 \end{lstlisting}
+Notice that real constants can either be specified 
+as decimal values using the syntax $\realconst$
+or as rationals, e.g. the division of two integer constants
+${\tt (/\ m\ n)}$.
+
 The grammar for $g$
 generates exactly the real-typed terms in the logic of
 non-linear real arithmetic (NRA).
