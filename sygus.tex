@@ -140,6 +140,13 @@ has been removed.
 %Solvers that wish to support synthesis conjectures
 %with higher-order quantification
 
+\item
+A formal notion of features have been added to the background logic,
+and the command $\setfeaturekwd$
+have been added to the language,
+which is used for further refining restrictions
+on the kinds of constraints and grammars that may appear in an input.
+
 \end{enumerate}
 
 \section{Syntax}
@@ -331,14 +338,15 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\checksynthkwd} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
- & | & \paren{\setextensionkwd\mbox{ }\symbol} \\
+ & | & \paren{\setfeaturekwd\mbox{ }\symbol\mbox{ }\boolconst} \\
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
  & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \smtcmd \\[2ex]
  %\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
+ % ajr: removed
+ %\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
 \smtcmd 
- & ::= & \paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
- & | & \paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdec} \\
+ & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdec} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
  & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
@@ -434,7 +442,7 @@ the restrictions given in this section regarding their order.
 \label{ssec:set-logic}
 
 The logic of SyGuS consists of two parts,
-a \emph{base logic} and an \emph{extended logic},
+a \emph{base logic} and a \emph{feature set},
 which are described in detail in Section~\ref{sec:sygus-logic}.
 
 \begin{itemize}
@@ -459,13 +467,15 @@ may appear in constraints, and may appear in grammars.
 We give details on the default settings of the logic for SyGuS inputs
 in Section~\ref{sec:sygus-logic}.
 
-\item $\paren{\setextensionkwd\mbox{ }S}$
+\item $\paren{\setfeaturekwd\mbox{ }S\mbox{ }\boolconst}$
 
-This adds the extension specified by $S$
-to the extended logic of the background logic.
-This may correspond enabling or disabling a feature of the language 
-or a modification to the current logic.
-All extensions standardized by this document 
+This enables or disables the feature specified by $S$
+in the feature set of the background logic.
+This may correspond to affect the set of commands 
+allowable in an input,
+or further refinements to the restrictions placed
+on the set of allowable constraints and grammars.
+All features standardized by this document 
 are given in Section~\ref{sec:sygus-logic}.
 
 \end{itemize}
@@ -816,28 +826,30 @@ The background logic of SyGuS consists of two parts:
 \item A \emph{base logic}, which can be set via a $\setlogickwd$ command.
 This corresponds to a SMT-LIB standard logic or may be solver specific.
 
-\item An \emph{extended logic}, which augments the background
-logic with additional restrictions that are not expressible in a base logic
-and are parametric to the base logic.
+\item A \emph{feature set}, 
+which augments the background
+logic with additional restrictions or language constructs.
+Features are not expressible in a base logic
+and are generally parametric to the base logic.
 \end{enumerate}
 Both components of the logic affect the kinds of terms that may appear
 in constraints and in grammars.
 %We give more detail on what consistutes an extended logic in the following.
 
 For the purposes of this document, 
-an extended logic can be seen as a set of values
+a feature set can be seen as a set of values, called \emph{features},
 taken from the following enumeration.
 \[
 \equantifierskwd\mbox{ }|\mbox{ }\efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd
 \]
-We refer to the above values as \emph{flags} of the extended logic,
-and say that a flag is enabled in the extended logic if it contains that flag.
-The above flags indicate (respectively) whether
+We say that a feature $F$ is enabled in the background logic
+if its feature set contains $F$.
+The above features indicate (respectively) whether
 arbitrary quantification is allowed in constraints,
 grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
 and whether grammars can generate terms that correspond to recursive definitions.
 The default extended logic is the empty set and can be modified
-by the $\setextensionkwd$ command.
+by the $\setfeaturekwd$ command.
 
 In the following, 
 we first give an overview of the kinds of base logics that
@@ -928,7 +940,7 @@ contains universal quantification on the universal variables of our state.
 However,
 constraints \emph{cannot} themselves contain 
 formulas with quantifiers
-unless the flag $\equantifierskwd$ is enabled in the extended logic.
+unless the feature $\equantifierskwd$ is enabled in the background logic.
 
 %\rem{Reference extension?}
 
@@ -967,7 +979,8 @@ provided that no non-linear terms can be generated from $t$.
 
 %The default logic assumed by the SyGuS standard assumes
 %additional restrictions on the terms that are generated by grammars.
-The extended logic may impose additional restrictions
+The feature set component of the background logic 
+may impose additional restrictions
 on the terms that are generated by grammars.
 Note the following definition.
 The \emph{expanded form} of a term $t$
@@ -975,12 +988,12 @@ is the (unique) term obtained
 by replacing all functions $f$ in $t$ that are defined as macros
 %in the current signature
 with their corresponding definition until a fixed point is reached.
-A grammar for function-to-synthesize $f$ is not allowed by the extended logic
+A grammar for function-to-synthesize $f$ is not allowed
 if it contains a rule whose conclusion is a term $t$
 whose expanded form contains applications of functions-to-synthesize
-unless $\efwddeclskwd$ is enabled in the extended logic;
+unless feature $\efwddeclskwd$ is enabled;
 it is not allowed by the extended logic if $t$ 
-contains $f$ itself unless $\erecursionkwd$ is enabled in the extended logic.
+contains $f$ itself unless feature $\erecursionkwd$ is enabled.
 %Similarly, a grammar for function-to-synthesize $f$
 %is not allowed by the extended logic
 %if it contains a rule whose conclusion is a term $t$
@@ -1258,12 +1271,13 @@ The signature of bit-vectors includes an indexed sort
 ${\tt Bitvec}$, which is indexed by an integer constant that denotes
 its bit-width. We show a grammar below for one particular
 choice of this bitwidth, $32$.
-For brevity,
-we omit indexed bit-vector operators
+We omit indexed bit-vector operators
 such as extraction function ${\tt (\_\ extract\ n\ m)}$, 
 the concatenation function ${\tt concat}$,
 since these operators are polymorphic.
-We also omit the extended operators of this theory
+For brevity,
+we also omit the \emph{extended} operators of this theory
+as denoted by SMT-LIB,
 which includes functions like
 bit-vector subtraction ${\tt bvsub}$,
 xor ${\tt bvxor}$,
