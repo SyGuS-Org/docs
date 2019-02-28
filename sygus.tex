@@ -811,7 +811,9 @@ A list of $\fundefkwd$ commands of the form:
 \end{array}
 \]
 where functions $\{ f_{o1}, \ldots, f_{on} \}$
-are the functions-to-synthesize $\{ f_1,\ldots,f_n \}$ (in any order), 
+are the functions-to-synthesize $\{ f_1,\ldots,f_n \}$ (in any order)
+\rem{Probably should be in order declared, 
+or otherwise would have to enforce dependent definitions are ordered properly}, 
 $X_{o1}, \ldots, X_{on}$ are sorted variable lists,
 $\sigma_{o1}, \ldots, \sigma_{on}$ are types,
 and $t_{o1}, \ldots, t_{on}$ are terms.
@@ -1149,6 +1151,7 @@ $\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t
 after beta-reduction.
 %which notice contains no 
 %\end{def}
+\rem{Reference formal definition of $T$-valid}
 
 The notion of satisfying semantic restrictions for background theories
 that not specified in the SMT-LIB standard are not covered by this document.
