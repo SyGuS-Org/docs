@@ -143,7 +143,7 @@ has been removed.
 
 \item
 A formal notion of features have been added to the background logic,
-and the command $\setfeaturekwd$
+and the commands $\setfeaturekwd$ and $\setfeaturesetkwd$
 have been added to the language,
 which is used for further refining restrictions or extensions
 regarding the kinds of constraints and grammars that may appear in an input.
@@ -339,7 +339,8 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\checksynthkwd} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
- & | & \paren{\setfeaturekwd\mbox{ }\symbol\mbox{ }\boolconst} \\
+ & | & \paren{\setfeaturekwd\mbox{ }:\symbol\mbox{ }\boolconst} \\
+ & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
  & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \smtcmd \\[2ex]
@@ -449,7 +450,7 @@ which are described in detail in Section~\ref{sec:sygus-logic}.
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
 
-This sets the base logic of the background logic
+This sets the base logic component of the SyGuS background logic
 to the one that $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{}
 or may be solver-specific.
@@ -468,16 +469,27 @@ may appear in constraints, and may appear in grammars.
 We give details on the default settings of the logic for SyGuS inputs
 in Section~\ref{sec:sygus-logic}.
 
-\item $\paren{\setfeaturekwd\mbox{ }S\mbox{ }\boolconst}$
+\item $\paren{\setfeaturekwd\mbox{ }:S\mbox{ }b}$
 
-This enables or disables the feature specified by $S$
-in the feature set of the background logic.
+This enables the feature specified by $S$
+in the feature set of the background logic
+if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
 This may correspond to affect the set of commands 
 allowable in an input,
 or further refinements to the restrictions placed
 on the set of allowable constraints and grammars.
 All features standardized by this document 
-are given in Section~\ref{sec:sygus-logic}.
+are given in Section~\ref{ssec:feature-sets}.
+
+\item $\paren{\setfeaturesetkwd\mbox{ }S}$
+
+This set the feature set component of the SyGuS background logic
+to the one specified by $S$.
+We do not standardize any concrete examples of feature sets
+in this document.
+We remark that a feature set may correspond to a class of synthesis problems,
+for example, synthesis conjectures having
+a single non-recursive function-to-synthesize.
 
 \end{itemize}
 
@@ -1151,7 +1163,7 @@ that not specified in the SMT-LIB standard are not covered by this document.
 In this section, for conveinence, we provide the concrete
 grammar corresponding to the most premissive grammars for generating
 terms that belong to SMT-LIB logics of interest.
-Note this is not intended to be a complete list.
+Note this is not intended to be a complete list of logics.
 Each of these grammars are derived
 based on the definition of logics and theories
 described in the theory and logic declaration documents
