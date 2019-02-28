@@ -897,11 +897,15 @@ denoting bit-vectors of width $n$.
 The functions in this signature include various operations on bit-vectors,
 including bit-wise, arithmetic, and shifting operations.
 
-\rem{more}
+\rem{strings? all?}
 
 More details on the concrete signatures introduced by
 standard SMT-LIB logics can be found in the reference
 grammars in Appendix~\ref{apx:ref-grammars}.
+
+The default logic is the empty logic,
+that is, no restrictions are placed on the set of terms that may 
+appear, nor are any symbols predefined.
 
 \subsection{Feature Sets}
 \label{ssec:feature-sets}
@@ -919,6 +923,7 @@ The above features indicate (respectively) whether
 arbitrary quantification is allowed in constraints,
 grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
 and whether grammars can generate terms that correspond to recursive definitions.
+
 The default extended logic is the empty set and can be modified
 by the $\setfeaturekwd$ command.
 
