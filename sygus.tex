@@ -944,7 +944,8 @@ Their syntax is given in Section~\ref{ssec:syntax-features}.
 The meaning of all features standardized by this document are listed below.
 \begin{itemize}
 \item $\efwddeclskwd$: if enabled,
-grammars of $\synthfunkwd$ may refer to previously declared synthesis functions.
+grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
+called \emph{forward declarations}.
 \item $\erecursionkwd$: if enabled,
 grammars can generate terms that correspond to recursive definitions.
 \item $\equantifierskwd$: if enabled,
@@ -955,7 +956,9 @@ remainder of this section.
 Other features may be given that are solver specific, which are not covered
 here.
 
-The feature set component of the default SyGuS logic is the empty set.
+The feature set component of the default SyGuS logic is the empty set,
+in other words, forward declarations, recursion, and arbitrary quantification
+is not permitted by default.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
