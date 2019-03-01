@@ -336,7 +336,7 @@ on the kinds of SyGuS commands that are allowable in an input.
 It is an enumeration in the following syntax.
 \begin{alignat*}{1}
  & \begin{array}{rcl}
- \feature & ::= & \equantifierskwd\mbox{ }|\mbox{ }\efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd
+ \feature & ::= & efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd\mbox{ }|\mbox{ }\equantifierskwd
 \end{array}
 \end{alignat*}
 More details on features are given in Section~\ref{sec:sygus-logic}.
@@ -943,21 +943,19 @@ which for the purposes of this document can be seen as an enumeration type.
 Their syntax is given in Section~\ref{ssec:syntax-features}.
 The meaning of all features standardized by this document are listed below.
 \begin{itemize}
-\item $\equantifierskwd$: if enabled,
-arbitrary quantification is allowed in constraints.
 \item $\efwddeclskwd$: if enabled,
 grammars of $\synthfunkwd$ may refer to previously declared synthesis functions.
 \item $\erecursionkwd$: if enabled,
 grammars can generate terms that correspond to recursive definitions.
+\item $\equantifierskwd$: if enabled,
+arbitrary quantification is allowed in constraints.
 \end{itemize}
-
-Formal definition of these features are given in references in the 
+Formal definition of these features are given within the 
 remainder of this section.
 Other features may be given that are solver specific, which are not covered
 here.
 
-The feature set component of the default SyGuS logic is the empty set. It can be modified
-by the $\setfeaturekwd$ command.
+The feature set component of the default SyGuS logic is the empty set.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
