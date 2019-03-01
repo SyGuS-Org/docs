@@ -584,7 +584,7 @@ that does not have type $\tau_i$ for some $i$.
 Details on grammars and the terms
 they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
 
-The grammar $G$ must also be one that is allowable by $\mathcal{L}$.
+The grammar $G$ must also be one that is allowable by the SyGuS background logic.
 For more details on the restrictions imposed on grammars by the logic,
 see Section~\ref{sec:sygus-logic}.
 If $G$ does not meet the restrictions
@@ -809,23 +809,23 @@ A well-formed response to $\checksynthkwd$ is one of the following:
 A list of $\fundefkwd$ commands of the form:
 \[
 \begin{array}{l}
-\paren{\fundefkwd\mbox{ }f_{o1}\mbox{ }X_{o1}\mbox{ }\sigma_{o1}\mbox{ }t_{o1}}\\
+\paren{\fundefkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
 \ldots\\
-\paren{\fundefkwd\mbox{ }f_{on}\mbox{ }X_{on}\mbox{ }\sigma_{on}\mbox{ }t_{on}}
+\paren{\fundefkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}
 \end{array}
 \]
-where functions $\{ f_{o1}, \ldots, f_{on} \}$
-are the functions-to-synthesize $\{ f_1,\ldots,f_n \}$ (in any order)
-\rem{Probably should be in order declared, 
-or otherwise would have to enforce dependent definitions are ordered properly}, 
-$X_{o1}, \ldots, X_{on}$ are sorted variable lists,
-$\sigma_{o1}, \ldots, \sigma_{on}$ are types,
-and $t_{o1}, \ldots, t_{on}$ are terms.
+where functions $f_{1}, \ldots, f_{n}$
+are the functions-to-synthesize in the current state,
+%\rem{Probably should be in order declared, 
+%or otherwise would have to enforce dependent definitions are ordered properly}, 
+$X_{1}, \ldots, X_{n}$ are sorted variable lists,
+$\sigma_{1}, \ldots, \sigma_{n}$ are types,
+and $t_{1}, \ldots, t_{n}$ are terms.
 To be a well-formed output, 
 for each $j=1, \ldots, n$, it must be the case that
-$t_{oj}$ is a term of $\sigma_{oj}$,
-and $X_{oj}$ is identical to the sorted variable list
-used when introducing the function-to-synthesize $f_{oj}$.
+$t_{j}$ is a term of $\sigma_{j}$,
+and $X_{j}$ is identical to the sorted variable list
+used when introducing the function-to-synthesize $f_{j}$.
 
 \item
 The output ${\tt (fail)}$.
@@ -863,7 +863,7 @@ This corresponds to a SMT-LIB standard logic or may be solver specific.
 which augments the background
 logic with additional restrictions or language constructs.
 Features are not expressible in a base logic
-and are generally parametric to the base logic.
+and are generally independent of the base logic.
 \end{enumerate}
 Both components of the logic affect the kinds of terms that may appear
 in constraints and in grammars.
@@ -965,7 +965,7 @@ here.
 
 The feature set component of the default SyGuS logic is the empty set,
 in other words, forward declarations, recursion, and arbitrary quantification
-is not permitted by default.
+are not permitted by default.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -1427,18 +1427,18 @@ or any of the following keywords:
 For the purpose of self-containment,
 many of the essential language features of SMT LIB version 2.6
 are redefined in this document.
-However, others are omitted.
+However, other less essential ones are omitted.
 %We do not explicitly forbid the language features of SMT LIB .
-We briefly mention other pertinent language features not mentioned in
+We briefly mention other language features not mentioned in
 this document.
 
-Parametric datatype definitions
+\subsection{Parametric Datatype Definitions}
 
-Recursive functions 
+\subsection{Recursive Functions}
 
-Match terms
+\subsection{Match Terms}
 
-Attribute annotations
+\subsection{Attribute Annotations}
 
 \end{appendix}
 
