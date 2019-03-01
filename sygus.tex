@@ -584,12 +584,16 @@ that does not have type $\tau_i$ for some $i$.
 Details on grammars and the terms
 they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
 
-The grammar $G$ must also be one that is allowable by the SyGuS background logic.
+If provided, the grammar $G$ must also be one that is allowable by the SyGuS background logic.
 For more details on the restrictions imposed on grammars by the logic,
 see Section~\ref{sec:sygus-logic}.
 If $G$ does not meet the restrictions
 of the background logic, it should be rejected.
 
+If no grammar is provided,
+then any term may be given in the body of a solution for $S$.
+
+\begin{comment}
 If $G$ is not provided,
 then this command is syntax
 sugar for
@@ -602,6 +606,7 @@ that belong to the language of the current background logic $\mathcal{L}$,
 and whose free variables are in $\vec{x} = (x_1, \ldots, x_n)$.
 %We call $G_{\mathcal{L},\sigma,\vec{x}}$ the \emph{default}
 %grammar for $(T,\sigma,\vec{x})$.
+\end{comment}
 
 \item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
 
@@ -1120,18 +1125,23 @@ where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
 replacing an occurrence of some $y$ by $t$
 where $y \mapsto t$ is a rule in $G$.
 
-Let $f$ be a function to synthesize,
-which recall is a grammar $G$
-that are both associated with a common variable list $X$.
+Let $f$ be a function to synthesize.
 A term $\lambda X.\, t$
 satisfies the syntactic specification for $f$
-if $G$ generates $t$ starting from $y_1$,
+if one of the following hold:
+\begin{enumerate}
+\item 
+A grammar $G$ is provided for $f$ that is associated with $X$,
+and $G$ generates $t$ starting from $y_1$,
 where $y_1$ is the start symbol of $G$.
+
+\item
+No grammar is provided for $f$, and $t$ is any
+term allowable in the background logic.
+\end{enumerate}
 %\rem{More}
 %whose variable lists are $X_1, \ldots, X_n$
 %and whose grammars are $G_1, \ldots, G_n$.
-
-%\begin{def}
 A tuple of functions 
 $( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n )$
 satisfies the syntactic restrictions
@@ -1150,6 +1160,8 @@ we formalize the notion of satisfying the \emph{semantic specification}
 of the synthesis conjecture
 for background theories from the SMT-LIB standard.
 %\rem{Reference smt semantics}
+The notion of satisfying semantic restrictions for background theories
+that not specified in the SMT-LIB standard are not covered by this document.
 
 %\begin{def}
 A tuple of functions 
@@ -1163,10 +1175,8 @@ $\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t
 after beta-reduction.
 %which notice contains no 
 %\end{def}
-\rem{Reference formal definition of $T$-valid}
-
-The notion of satisfying semantic restrictions for background theories
-that not specified in the SMT-LIB standard are not covered by this document.
+The formal definition for $T$-valid
+corresponds to the given by SMT-LIB for theories $T$.
 
 
 \section{Examples}
