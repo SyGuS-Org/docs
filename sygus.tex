@@ -581,8 +581,6 @@ $\tau_1$ (the type of the start symbol) is not $\sigma$.
 It is also not well-formed if
 $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
-Details on grammars and the terms
-they generate is discussed in more detail in Section~\ref{ssec:sat-syntactic}.
 
 If provided, the grammar $G$ must also be one that is allowable by the SyGuS background logic.
 For more details on the restrictions imposed on grammars by the logic,
@@ -591,7 +589,12 @@ If $G$ does not meet the restrictions
 of the background logic, it should be rejected.
 
 If no grammar is provided,
-then any term may be given in the body of a solution for $S$.
+then any term may be given in the body of a solution for $S$
+
+More details on grammars and the terms
+they generate, as well as what denotes a term that meets the syntactic
+restrictions of a function-to-synthesize
+is discussed in detail in Section~\ref{ssec:sat-syntactic}.
 
 \begin{comment}
 If $G$ is not provided,
@@ -1136,7 +1139,7 @@ and $G$ generates $t$ starting from $y_1$,
 where $y_1$ is the start symbol of $G$.
 
 \item
-No grammar is provided for $f$, and $t$ is any
+No grammar is provided for $f$, and $t$ is a
 term allowable in the background logic.
 \end{enumerate}
 %\rem{More}
