@@ -892,6 +892,9 @@ enables a set of theories.
 If a logic enables a theory, then its symbols are added
 to the current signature when a $\setlogickwd$ command is issued.
 We briefly review some of the important theories and logics in the following.
+More details on the concrete signatures introduced by
+standard SMT-LIB logics can be found in the reference
+grammars in Appendix~\ref{apx:ref-grammars}.
 
 The theory of integers is enabled 
 in logics like linear integer arithmetic ${\tt LIA}$
@@ -917,7 +920,6 @@ Constants in this theory can either be specified as
 decimals using the syntax $\realconst$
 or as rational terms of the form ${\tt (/\ m\ n)}$.
 
-
 The theory of fixed-width bit-vectors
 is included in logics specified 
 by symbols that include the substring ${\tt BV}$.
@@ -929,30 +931,30 @@ including bit-wise, arithmetic, and shifting operations.
 
 \rem{strings? all?}
 
-More details on the concrete signatures introduced by
-standard SMT-LIB logics can be found in the reference
-grammars in Appendix~\ref{apx:ref-grammars}.
-
-The default logic is the empty logic,
+The base logic of the default SyGuS logic is the empty logic,
 that is, no restrictions are placed on the set of terms that may 
 appear, nor are any symbols predefined.
 
-\subsection{Feature Sets}
+\subsection{Features}
 \label{ssec:feature-sets}
 
 For the purposes of this document, 
 a feature set can be seen as a set of values, called \emph{features}.
 Their syntax is given by the enumeration in Section~\ref{ssec:syntax-features}.
+The meaning of the features standardized by this document are listed below.
+\begin{itemize}
+\item $\equantifierskwd$: if enabled,
+arbitrary quantification is allowed in constraints.
+\item $\efwddeclskwd$: if enabled,
+grammars of $\synthfunkwd$ may refer to previously declared synthesis functions.
+\item $\erecursionkwd$: if enabled,
+grammars can generate terms that correspond to recursive definitions.
+\end{itemize}
 
-\rem{TODO}
-We say that a feature $F$ is enabled in the background logic
-if its feature set contains $F$.
-The above features indicate (respectively) whether
-arbitrary quantification is allowed in constraints,
-grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
-and whether grammars can generate terms that correspond to recursive definitions.
+Formal definition of these features are given in references in the 
+remainder of this section.
 
-The default extended logic is the empty set and can be modified
+The features set of the default SyGuS logic is the empty set. It can be modified
 by the $\setfeaturekwd$ command.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
