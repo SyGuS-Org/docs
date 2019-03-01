@@ -896,6 +896,7 @@ More details on the concrete signatures introduced by
 standard SMT-LIB logics can be found in the reference
 grammars in Appendix~\ref{apx:ref-grammars}.
 
+\paragraph{Arithmetic}
 The theory of integers is enabled 
 in logics like linear integer arithmetic ${\tt LIA}$
 or non-linear integer arithmetic ${\tt NIA}$.
@@ -920,6 +921,7 @@ Constants in this theory can either be specified as
 decimals using the syntax $\realconst$
 or as rational terms of the form ${\tt (/\ m\ n)}$.
 
+\paragraph{Bit-Vectors}
 The theory of fixed-width bit-vectors
 is included in logics specified 
 by symbols that include the substring ${\tt BV}$.
@@ -929,7 +931,8 @@ denoting bit-vectors of width $n$.
 The functions in this signature include various operations on bit-vectors,
 including bit-wise, arithmetic, and shifting operations.
 
-\rem{strings? all?}
+\paragraph{Strings}
+\rem{TODO}
 
 The base logic component of the default SyGuS logic is the empty logic,
 that is, no restrictions are placed on the set of terms that may 
