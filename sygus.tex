@@ -46,7 +46,7 @@
 
 \begin{document}
 
-\title{SyGuS Input Language Standard Version 2.0}
+\title{The SyGuS Input Language Standard Version 2.0}
 
 
 \author{Mukund Raghothaman \and Andrew Reynolds \and Abhishek Udupa}
@@ -150,9 +150,22 @@ regarding the kinds of constraints and grammars that may appear in an input.
 
 \end{enumerate}
 
-\subsection{Outline}
+\subsection{Outline of This Document}
 
-\rem{TODO}
+In Section~\ref{sec:syntax},
+we give the concrete syntax for commands in the SyGuS input language.
+In Section~\ref{sec:semantics},
+we document the well-formedness and the semantics of input commands.
+In Section~\ref{sec:output},
+we document the expected output of synthesis solvers in response to these commands.
+In Section~\ref{sec:sygus-logic},
+we describe formally the notion of a \emph{SyGuS logic} and how it restricts
+the set of commands that are allowable in an input.
+In Section~\ref{sec:logical-semantics},
+we formalize what consistutes correct response to a SyGuS input.
+Finally, in Section~\ref{sec:examples},
+we provide examples of possible inputs in the SyGuS language
+and solvers responses to them.
 
 \section{Syntax}
 \label{sec:syntax}
@@ -340,7 +353,7 @@ on the kinds of SyGuS commands that are allowable in an input.
 It is an enumeration in the following syntax.
 \begin{alignat*}{1}
  & \begin{array}{rcl}
- \feature & ::= & \efwddeclskwd\mbox{ }|\mbox{ }\erecursionkwd\mbox{ }|\mbox{ }\equantifierskwd
+ \feature & ::= & \fgrammarskwd\mbox{ }|\mbox{ }\ffwddeclskwd\mbox{ }|\mbox{ }\frecursionkwd\mbox{ }|\mbox{ }\fquantifierskwd
 \end{array}
 \end{alignat*}
 More details on features are given in Section~\ref{sec:sygus-logic}.
@@ -958,12 +971,14 @@ which for the purposes of this document can be seen as an enumeration type.
 Their syntax is given in Section~\ref{ssec:syntax-features}.
 The meaning of all features standardized by this document are listed below.
 \begin{itemize}
-\item $\efwddeclskwd$: if enabled,
+\item $\fgrammarskwd$: if enabled, 
+then grammars may be provided for functions-to-synthesize.
+\item $\ffwddeclskwd$: if enabled,
 grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
 called \emph{forward declarations}.
-\item $\erecursionkwd$: if enabled,
+\item $\frecursionkwd$: if enabled,
 grammars can generate terms that correspond to recursive definitions.
-\item $\equantifierskwd$: if enabled,
+\item $\fquantifierskwd$: if enabled,
 arbitrary quantification is allowed in constraints.
 \end{itemize}
 Formal definition of these features are given within the 
@@ -971,9 +986,10 @@ remainder of this section.
 Other features may be given that are solver specific, which are not covered
 here.
 
-The feature set component of the default SyGuS logic is the empty set,
-in other words, forward declarations, recursion, and arbitrary quantification
-are not permitted by default.
+The feature set component of the default SyGuS logic is the set $\{ \fgrammarskwd \}$.
+In other words, grammars may be provided, but those involving
+forward declarations and recursion are not permitted by default;
+arbitrary quantification is also not permitted by default.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -1002,7 +1018,7 @@ contains universal quantification on the universal variables of our state.
 However,
 constraints \emph{cannot} themselves contain 
 formulas with quantifiers
-unless the feature $\equantifierskwd$ is enabled in the background logic.
+unless the feature $\fquantifierskwd$ is enabled in the background logic.
 
 %\rem{Reference extension?}
 
@@ -1050,16 +1066,16 @@ with their corresponding definition until a fixed point is reached.
 A grammar for function-to-synthesize $f$ is not allowed
 if it contains a rule whose conclusion is a term $t$
 whose expanded form contains applications of functions-to-synthesize
-unless the feature $\efwddeclskwd$ is enabled;
+unless the feature $\ffwddeclskwd$ is enabled;
 it is not allowed if $t$ 
-contains $f$ itself unless the feature $\erecursionkwd$ is enabled.
+contains $f$ itself unless the feature $\frecursionkwd$ is enabled.
 %Similarly, a grammar for function-to-synthesize $f$
 %is not allowed by the extended logic
 %if it contains a rule whose conclusion is a term $t$
 %\rem{TODO}
 %A grammar that generates a term whose expanded
 %form contains a function-to-synthesize
-%is not allowed unless $\efwddeclskwd$ is enabled in the extended logic.
+%is not allowed unless $\ffwddeclskwd$ is enabled in the extended logic.
 %A grammar for a function-to-synthesize $f$
 %that generates a term that contains $f$
 %is not allowed unless $\
