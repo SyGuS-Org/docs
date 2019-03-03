@@ -1068,7 +1068,8 @@ if it contains a rule whose conclusion is a term $t$
 whose expanded form contains applications of functions-to-synthesize
 unless the feature $\ffwddeclskwd$ is enabled;
 it is not allowed if $t$ 
-contains $f$ itself unless the feature $\frecursionkwd$ is enabled.
+contains $f$ itself unless the feature $\frecursionkwd$ is enabled;
+it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is enabled.
 %Similarly, a grammar for function-to-synthesize $f$
 %is not allowed by the extended logic
 %if it contains a rule whose conclusion is a term $t$
