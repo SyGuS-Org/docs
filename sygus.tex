@@ -310,7 +310,7 @@ Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
 Sorts may be defined by theories (see examples in Section~\ref{ssec:smt-logic})
 or may be user-defined
-(see Section~\ref{ssec:defining-sorts}).
+(see Section~\ref{ssec:declaring-sorts}).
 
 \subsection{Terms}
 
@@ -630,8 +630,11 @@ This is syntax sugar for
 $\paren{\synthfunkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\boolkwd\mbox{ }\koption{G}}$.
 \end{itemize}
 
-\subsection{Defining Sorts}
-\label{ssec:defining-sorts}
+\subsection{Declaring Sorts}
+\label{ssec:declaring-sorts}
+
+In certain logics, 
+it is possible for the user to declare user-defined sorts.
 
 \begin{itemize}
 \item $\paren{\dtdeclkwd\mbox{ }S\mbox{ }D}$
@@ -903,23 +906,27 @@ in constraints and grammars.
 %\rem{Standard extension to base logic + extensions?}
 %This section pertains only to 
 
-\subsection{Base Logics}
+\subsection{Base Logics and Theories}
 \label{ssec:smt-logic}
 
 %This section covers only base logics defined in the SMT-LIB standard.
 SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
+At a high level, a \emph{logic} enables a set of theories.
+If a logic enables a theory, then its symbols are added
+to the current signature when a $\setlogickwd$ command is issued.
 Further details on the formal definition of 
 theory and logic declarations can be found in Sections 3.7 and 3.8
 of the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
-At a high level, a \emph{logic}
-enables a set of theories.
-If a logic enables a theory, then its symbols are added
-to the current signature when a $\setlogickwd$ command is issued.
-We briefly review some of the important theories and logics in the following.
+
+We briefly review some of the important logics and theories in the following.
 More details on the concrete signatures introduced by
 standard SMT-LIB logics can be found in the reference
 grammars in Appendix~\ref{apx:ref-grammars}.
+
+The base logic component of the default SyGuS logic is the empty logic,
+that is, no restrictions are placed on the set of terms that may 
+appear, nor are any symbols predefined.
 
 \paragraph{Arithmetic}
 The theory of integers is enabled 
@@ -957,11 +964,63 @@ The functions in this signature include various operations on bit-vectors,
 including bit-wise, arithmetic, and shifting operations.
 
 \paragraph{Strings}
-\rem{TODO}
+The theory of (unbounded) strings and regular expressions
+is included in some logics specifed with ${\tt S}$ as a prefix,
+such as ${\tt S}$ (strings) or ${\tt SLIA}$ (strings
+with linear integer arithmetic).
+The string of this theory includes the string sort ${\tt String}$,
+interpreted as the set of all unicode strings.
+Functions in this signature include string concatenation ${\tt str.++}$,
+length ${\tt str.len}$ as well as many extended functions
+such as ${\tt str.contains}$, ${\tt str.indexof}$, and so on.
 
-The base logic component of the default SyGuS logic is the empty logic,
-that is, no restrictions are placed on the set of terms that may 
-appear, nor are any symbols predefined.
+\paragraph{Arrays}
+The theory of arrays is included in logics specifed with ${\tt A}$ as a prefix,
+such as ${\tt ABV}$ or ${\tt ALIA}$.
+The signature of this theory includes a parametric sort ${\tt Array}$
+of arity two.
+It has two function symbols, ${\tt select}$ and ${\tt store}$,
+interpreted as array select and array store.
+
+\paragraph{Datatypes}
+The theory of datatypes
+is included in logics specified 
+by symbols that include the substring ${\tt DT}$.
+Logics that include datatypes permit
+$\dtsdeclkwd$ commands, whereas all others do not.
+The signature used in inputs where the theory of datatypes is enabled
+is largely determined by the concrete datatypes definitions
+which append datatype sorts, 
+constructors and selectors to the current signature.
+The only fixed symbol of the theory of datatypes is the unary
+indexed \emph{discriminator} predicate ${\tt(\_\ is\ C)}$,
+which holds if and only if its argument is an application of constructor $C$.
+For example, assuming the standard definition of a list datatype
+with constructors ${\tt cons}$ and ${\tt nil}$,
+we have that ${\tt ((\_\ is\ nil)\ x)}$ holds if and only if
+$x$ is the nil list.
+
+\paragraph{Uninterpreted Functions}
+In SMT-LIB, \emph{uninterpreted} functions and sorts may be declared in
+logics that include the substring ${\tt UF}$,
+whose interpretations are not fixed.
+These declarations are made via SMT-LIB commands 
+$\fundeclkwd$ and $\sortdeclkwd$ respectively.
+In the SyGuS standard language, we do not permit
+the declaration of functions with $\fundeclkwd$ command.
+Instead, the language includes only the latter command.
+Thus, the only effect that specifying ${\tt UF}$ in the logic string has is
+that user-defined sorts may be declared via $\sortdeclkwd$, where
+variables and functions-to-synthesize may involve these sorts in the usual way.
+
+We remark here that
+synthesis conjectures that involve (existentially quantified)
+uninterpreted functions
+can equivalently be represented by declaring those functions
+using $\synthfunkwd$ commands where no grammar is provided;
+conjectures that involve universally quantified variables of function sort
+are planned to be incorporated in a future revision of this document
+that includes concrete syntax for function sorts.
 
 \subsection{Features}
 \label{ssec:feature-sets}
@@ -1199,6 +1258,8 @@ In this section, for conveinence, we provide the concrete
 grammar corresponding to the most premissive grammars for generating
 terms that belong to SMT-LIB logics of interest.
 Note this is not intended to be a complete list of logics.
+In particular, we focus on logics that consist of a single theory
+whose sorts are not parametric.
 Each of these grammars are derived
 based on the definition of logics and theories
 described in the theory and logic declaration documents
@@ -1466,6 +1527,8 @@ Here, we omit discussion of regular expressions and characters.
 %str.is-digit
 %char.code
 %char.from-int
+String constants may be specified by text delimited by double quotes
+based on the syntax $\stringconst$ described in Section~\ref{ssec:literals}.
 Notice that since the logic specified above in ${\tt S}$,
 meaning that certain functions involving the integer sort like
 ${\tt str.len}$ are included in its signature.
@@ -1475,7 +1538,6 @@ ${\tt +}, {\tt -}$, ${\tt >=}$ and so on.
 Thus in pratice, 
 the string theory is frequently combined with the theory of integers
 in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
-
 
 \section{Reserved Words}
 \label{apx:reserved}
