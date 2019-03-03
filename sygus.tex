@@ -65,7 +65,7 @@
 
 In this section, we cover the differences
 in this format with respect to the one described in the previous
-SyGuS standard document~\cite{},
+SyGuS standard document~\cite{sygusFormat},
 and the extensions described in~\cite{}.
 
 \begin{enumerate}
@@ -160,7 +160,7 @@ regarding the kinds of constraints and grammars that may appear in an input.
 In this section, we describe the concrete syntax
 of SyGuS version 2.0 inputs.
 This syntax borrows many definitions
-from the SMT-LIB version 2.6 format~\cite{}.
+from the SMT-LIB version 2.6 format~\cite{BarFT-RR-17}.
 In the following description,
 italicized text within angle-brackets represents EBNF non-terminals,
 and text in typewriter font represents terminal symbols.
@@ -234,7 +234,7 @@ as a sequence of two characters ${\tt \backslash}$ and ${\tt n}$.
 %\rem{TODO: double quotes within strings escape, no other escape}
 This treatment of string literals coincides with
 string literals in the SMT LIB version 2.6 format.
-For full details, see Section 3.1 of~\cite{}.
+For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
 
 Literals are commonly
 used for denoting 0-ary symbols of a theory.
@@ -469,7 +469,7 @@ which are described in detail in Section~\ref{sec:sygus-logic}.
 
 This sets the base logic component of the SyGuS background logic
 to the one that $S$ refers to,
-which can be a standard one defined in SMT-LIB~\cite{}
+which can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
 or may be solver-specific.
 For examples of common SMT logics, 
 see Section~\ref{ssec:smt-logic}.
@@ -667,7 +667,7 @@ adds to the signature are already
 a symbol in the current signature.
 We provide examples of datatype definitions in Section~\ref{sec:examples}.
 For full details on well-formed datatype declarations,
-refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{}.
+refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{BarFT-RR-17}.
 
 \item $\paren{\sortdeclkwd\mbox{ }S\mbox{ }n}$
 
@@ -898,7 +898,7 @@ SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
 Further details on the formal definition of 
 theory and logic declarations can be found in Sections 3.7 and 3.8
-of the SMT-LIB version 2.6 standard~\cite{}.
+of the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
 At a high level, a \emph{logic}
 enables a set of theories.
 If a logic enables a theory, then its symbols are added
@@ -1426,7 +1426,7 @@ or the binary format $\binaryconst$.
 Notice that there is no
 officially adopted SMT-LIB standard for strings at the time
 this document was written.
-Thus, we adopt the proposed standard~\cite{}
+Thus, we adopt the proposed standard~\cite{smtlibStrings}
 as of \rem{fixed time}.
 
 
