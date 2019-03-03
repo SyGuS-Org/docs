@@ -1070,31 +1070,6 @@ unless the feature $\ffwddeclskwd$ is enabled;
 it is not allowed if $t$ 
 contains $f$ itself unless the feature $\frecursionkwd$ is enabled;
 it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is enabled.
-%Similarly, a grammar for function-to-synthesize $f$
-%is not allowed by the extended logic
-%if it contains a rule whose conclusion is a term $t$
-%\rem{TODO}
-%A grammar that generates a term whose expanded
-%form contains a function-to-synthesize
-%is not allowed unless $\ffwddeclskwd$ is enabled in the extended logic.
-%A grammar for a function-to-synthesize $f$
-%that generates a term that contains $f$
-%is not allowed unless $\
-
-%\rem{forward declarations, recursion}
-%Note the following (recursive) definition.
-%A symbol $S$ \emph{depends on functions-to-synthesize}
-%if $S$ is a function-to-synthesize
-%or if it is a defined symbol whose definition $\lambda \vec{x}.\,t$
-%is such that $t$ contains a symbol that depends on
-%functions-to-synthesize.
-%We say that $G$ has \emph{forward declarations}
-%if 
-%We say that $G$ is \emph{recursive} 
-%if 
-%\rem{TODO}
-
-
 
 \rem{Special logics: single invariant synthesis?}
 
@@ -1181,7 +1156,6 @@ In this section,
 we formalize the notion of satisfying the \emph{semantic specification}
 of the synthesis conjecture
 for background theories from the SMT-LIB standard.
-%\rem{Reference smt semantics}
 The notion of satisfying semantic restrictions for background theories
 that not specified in the SMT-LIB standard are not covered by this document.
 
@@ -1198,7 +1172,8 @@ after beta-reduction.
 %which notice contains no 
 %\end{def}
 The formal definition for $T$-valid
-corresponds to the given by SMT-LIB for theories $T$.
+corresponds to the given by SMT-LIB,
+for details see Section 5 of~\cite{BarFT-RR-17}.
 
 
 \section{Examples}
@@ -1443,8 +1418,63 @@ or the binary format $\binaryconst$.
 Notice that there is no
 officially adopted SMT-LIB standard for strings at the time
 this document was written.
-Thus, we adopt the proposed standard~\cite{smtlibStrings}
+Thus, we adopt (a subset of) the proposed standard~\cite{smtlibStrings}
 as of \rem{fixed time}.
+Here, we omit discussion of regular expressions and characters.
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic S)
+(synth-fun f ((xs String) (xi Int)) String
+   ((y_term_str String) (y_term_int String) (y_pred Bool))
+   ((y_term_str String ((Constant String)
+                        (Variable String)
+                        (str.++ y_term_str y_term_str)
+                        (str.at y_term_str y_term_str)
+                        (str.substr y_term_str y_term_int y_term_int)
+                        (str.indexof y_term_str y_term_str y_term_int)
+                        (str.replace y_term_str y_term_str y_term_str)
+                        (str.from-int y_term_int)
+                        (ite y_pred y_term_str y_term_str)))
+   ((y_term_int String ((Variable Int)
+                        (str.len y_term_str)
+                        (str.to-int y_term_str)
+                        (ite y_pred y_term_int y_term_int)))
+    (y_pred Bool (...
+                  (str.contains y_term_str y_term_str)
+                  (str.prefixof y_term_str y_term_str)
+                  (str.suffixof y_term_str y_term_str)
+                  (str.< y_term_str y_term_str)
+                  (str.<= y_term_str y_term_str))))))
+\end{lstlisting}
+% ===== RE
+%str.to-re
+%str.from-re
+%re.none
+%re.all
+%re.allchar
+%re.++
+%re.union
+%re.inter
+%re.*
+%str.<=
+%re.+
+%re.opt
+%re.range
+%re.^
+%re.loop
+% ===== characters
+%str.char
+%str.is-digit
+%char.code
+%char.from-int
+Notice that since the logic specified above in ${\tt S}$,
+meaning that certain functions involving the integer sort like
+${\tt str.len}$ are included in its signature.
+However, the above logic does not permit inputs containing
+integer constants or the standard symbols of arithmetic like 
+${\tt +}, {\tt -}$, ${\tt >=}$ and so on.
+Thus in pratice, 
+the string theory is frequently combined with the theory of integers
+in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
 
 
 \section{Reserved Words}
