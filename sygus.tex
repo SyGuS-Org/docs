@@ -877,8 +877,11 @@ are the functions-to-synthesize in the current state,
 $X_{1}, \ldots, X_{n}$ are sorted variable lists,
 $\sigma_{1}, \ldots, \sigma_{n}$ are types,
 and $t_{1}, \ldots, t_{n}$ are terms.
-Notice that we require that $f_1, \ldots, f_n$ be
-provided in the order in which they were declared.
+It is required that $f_1, \ldots, f_n$ be
+provided in the order in which they were declared.\footnote{
+This is to ensure that the definition of $f_i$, which may depend on a definition
+of $f_j$ for $j<i$, is given in the correct order.
+}
 To be a well-formed output, 
 for each $j=1, \ldots, n$, it must be the case that
 $t_{j}$ is a term of $\sigma_{j}$,
