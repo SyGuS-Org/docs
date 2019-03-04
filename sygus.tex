@@ -436,6 +436,8 @@ A command $\cmd$ is given by the following syntax.
  %& | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
  & | & \paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
+ & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
+ & | & \paren{\setlogicoutputkwd\mbox{ }\symbol} \\
  & | & \paren{\setoptkwd\mbox{ }\option} \\[2ex]
  \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
  %\sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\  %ajr: used above
@@ -525,31 +527,57 @@ the restrictions given in this section regarding their order.
 \subsection{Setting the Logic}
 \label{ssec:set-logic}
 
-The logic of SyGuS consists of two parts,
-a \emph{base logic} and a \emph{feature set},
-which are described in detail in Section~\ref{sec:sygus-logic}.
+The logic of SyGuS consists of three parts,
+an \emph{input logic}, an \emph{output logic} and a \emph{feature set}.
+Roughly, 
+the input logic determines what terms
+can appear in constraints and
+the output logic determines
+what terms can appear in grammars and solutions.
+The feature set places additional restrictions or extensions 
+on the terms, grammars and commands that are allowed in an input.
+These are described in detail in Section~\ref{sec:sygus-logic}.
 
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
 
-This sets the base logic component of the SyGuS background logic
-to the one that $S$ refers to,
+This sets the SyGuS background logic
+to the one that $S$ refers to.
+%which can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
+%or may be solver-specific.
+%For examples of common SMT logics, 
+%see Section~\ref{ssec:smt-logic}.
+%If $S$ is a standard SMT-LIB logic,
+%then this command adds the set of sort and function symbols
+%from that logic to the current signature.
+%In this case,
+%the logic must contain quantifiers or this command is not well-formed,
+%that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
+%In SyGuS, notice that the logic gives
+%restrictions on both the kinds of terms that
+%may appear in constraints, and may appear in grammars.
+%We give details on the default settings of the logic for SyGuS inputs
+%in Section~\ref{sec:sygus-logic}.
+
+\item $\paren{\setlogicinputkwd\mbox{ }S}$
+
+This sets the input logic component of the SyGuS background logic
+to the one $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
 or may be solver-specific.
-For examples of common SMT logics, 
-see Section~\ref{ssec:smt-logic}.
-If $S$ is a standard SMT-LIB logic,
-then this command adds the set of sort and function symbols
-from that logic to the current signature.
-In this case,
-the logic must contain quantifiers or this command is not well-formed,
-that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
+The logic must contain quantifiers or this command is not well-formed,
+that is, logics from the SMT-LIB standard 
+with the prefix ``${\tt QF\_}$'' are not allowed.
+This command adds the set of sort and function symbols
+from the logic to the current signature.
 
-In SyGuS, notice that the logic gives
-restrictions on both the kinds of terms that
-may appear in constraints, and may appear in grammars.
-We give details on the default settings of the logic for SyGuS inputs
-in Section~\ref{sec:sygus-logic}.
+\item $\paren{\setlogicoutputkwd\mbox{ }S}$
+
+This sets the output logic component of the SyGuS background logic
+to the one $S$ refers to.
+This command imposes the same restrictions on logics
+as the previous command, and adds the set of sort and function symbols
+from the logic to the current signature.
 
 \item $\paren{\setfeaturekwd\mbox{ }:F\mbox{ }b}$
 
@@ -648,7 +676,8 @@ It is also not well-formed if
 $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
 
-If provided, the grammar $G$ must also be one that is allowed by the SyGuS background logic.
+If provided, the grammar $G$ must also be one that is allowed
+by the output logic component of the current SyGuS background logic.
 For more details on the restrictions imposed on grammars by the logic,
 see Section~\ref{sec:sygus-logic}.
 If $G$ does not meet the restrictions
@@ -949,10 +978,13 @@ restricts the constraints and grammars that are allowed as inputs.
 %or may be solver-specific.
 %We refer to $S$ as the \emph{base logic}
 %of a SyGuS input.
-A SyGuS background logic consists of two parts:
+A SyGuS background logic consists of three parts:
 \begin{enumerate}
-\item A \emph{base logic}, which can be set via a $\setlogickwd$ command.
+\item An \emph{input logic}, which can be set via a $\setlogicinputkwd$ command.
 This corresponds to a SMT-LIB standard logic or may be solver specific.
+
+\item An \emph{output logic}, which can be set via a $\setlogicoutputkwd$ command,
+which like input logics can correspond to an SMT-LIB standard logic or may be solver specific.
 
 \item A \emph{feature set}, 
 which augments the background
@@ -1363,6 +1395,8 @@ $\letkwd$,
 $\setfeaturekwd$,
 $\setfeaturesetkwd$,
 $\setlogickwd$,
+$\setlogicinputkwd$,
+$\setlogicoutputkwd$,
 $\setoptkwd$,
 $\synthfunkwd$,
 $\synthinvkwd$, and
