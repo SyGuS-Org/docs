@@ -982,18 +982,22 @@ A SyGuS background logic consists of three parts:
 \begin{enumerate}
 \item An \emph{input logic}, which can be set via a $\setlogicinputkwd$ command.
 This corresponds to a SMT-LIB standard logic or may be solver specific.
+The input logic determines the set of terms that are allowed in 
+constraints.
 
 \item An \emph{output logic}, which can be set via a $\setlogicoutputkwd$ command,
 which like input logics can correspond to an SMT-LIB standard logic or may be solver specific.
+The output logic determines the set of terms that are allowed in
+grammars and solutions.
 
 \item A \emph{feature set}, 
 which augments the background
 logic with additional restrictions or language constructs.
 Features are not expressible in a base logic
 and are generally independent of the base logic.
+The feature set places additional restrictions or extensions 
+on the terms, grammars and commands that are allowed in an input.
 \end{enumerate}
-Both components of the logic affect the kinds of terms that may appear
-in constraints and in grammars.
 %We give more detail on what consistutes an extended logic in the following.
 
 The following
@@ -1009,12 +1013,14 @@ in constraints and grammars.
 %\rem{Standard extension to base logic + extensions?}
 %This section pertains only to 
 
-\subsection{Base Logics and Theories}
+\subsection{Input/Output Logics and Theories}
 \label{ssec:smt-logic}
 
 %This section covers only base logics defined in the SMT-LIB standard.
 SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
+These logics may be provided either as an input logic or an output logic.
+
 At a high level, a \emph{logic} includes a set of theories.
 If a logic includes a theory, then its symbols are added
 to the current signature when a $\setlogickwd$ command is issued.
@@ -1185,9 +1191,9 @@ arbitrary quantification is also not permitted by default.
 
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
-Assuming our base logic is a standard SMT-LIB background logic,
-a term $t$ is allowed in this context
-generally if it is allowed by that logic, as prescribed by the SMT-LIB standard.
+Assuming our input logic is a standard SMT-LIB background logic,
+a term $t$ is allowed to be a subterm within a $\constraintkwd$ command
+if it is allowed by that logic, as prescribed by the SMT-LIB standard.
 Exceptions to this rule are described here.
 
 By convention, as stated in Section~\ref{ssec:set-logic}, 
@@ -1211,7 +1217,7 @@ unless the feature $\fquantifierskwd$ is enabled in the background logic.
 %The base logic affects the kinds of grammars that
 %are allowed in SyGuS inputs.
 A grammar $G$ is not allowed by the base logic if
-it generates some term $t$ that does not belong to that logic.
+it generates some term $t$ that does not belong to the output logic.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
@@ -1219,7 +1225,7 @@ it generates some term $t$ that does not belong to that logic.
 %the multiplication of two non-constant integer terms.
 It may be the case that a grammar $G$
 contains a rule whose conclusion does not itself meet the restrictions 
-of the background logic.
+of the output logic.
 For example, consider the logic of \emph{linear} integer arithmetic
 and a grammar $G$ containing a non-terminal symbol $y_c$ of integer type
 such that $G$ generates only constants from $y_c$.
