@@ -543,8 +543,20 @@ These are described in detail in Section~\ref{sec:sygus-logic}.
 
 This sets the SyGuS background logic
 to the one that $S$ refers to.
-%which can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
-%or may be solver-specific.
+The logic $S$ can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
+or may be solver-specific.
+If $S$ is an SMT-LIB standard logic,
+then the logic must 
+contain quantifiers or this command is not well-formed,
+that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
+If this command is well-formed and $S$ is an SMT-LIB standard logic,
+then this command is syntactic sugar for:
+\[
+\begin{array}{l}
+\paren{\setlogicinputkwd\ {\tt QF\_}S} \\
+\paren{\setlogicoutputkwd\ S}
+\end{array}
+\]
 %For examples of common SMT logics, 
 %see Section~\ref{ssec:smt-logic}.
 %If $S$ is a standard SMT-LIB logic,
@@ -558,6 +570,10 @@ to the one that $S$ refers to.
 %may appear in constraints, and may appear in grammars.
 %We give details on the default settings of the logic for SyGuS inputs
 %in Section~\ref{sec:sygus-logic}.
+In other words, the input logic is set to the quantifier-free
+version of the logic $S$, indicating that quantified formulas
+cannot appear in constraints;
+the output logic is set to $S$ itself.
 
 \item $\paren{\setlogicinputkwd\mbox{ }S}$
 
@@ -565,11 +581,13 @@ This sets the input logic component of the SyGuS background logic
 to the one $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
 or may be solver-specific.
-The logic must contain quantifiers or this command is not well-formed,
-that is, logics from the SMT-LIB standard 
-with the prefix ``${\tt QF\_}$'' are not allowed.
+%The logic must contain quantifiers or this command is not well-formed,
+%that is, logics from the SMT-LIB standard 
+%with the prefix ``${\tt QF\_}$'' are not allowed.
 This command adds the set of sort and function symbols
 from the logic to the current signature.
+Some of the standard logics defined by SMT-LIB that can be an argument of this
+command are given in Section~\ref{ssec:smt-logic}.
 
 \item $\paren{\setlogicoutputkwd\mbox{ }S}$
 
@@ -993,16 +1011,16 @@ grammars and solutions.
 \item A \emph{feature set}, 
 which augments the background
 logic with additional restrictions or language constructs.
-Features are not expressible in a base logic
-and are generally independent of the base logic.
-The feature set places additional restrictions or extensions 
-on the terms, grammars and commands that are allowed in an input.
+Features are not expressible as an input or output logic
+and are generally independent of them.
+The feature set further refines
+the terms, grammars or commands that are allowed in an input.
 \end{enumerate}
 %We give more detail on what consistutes an extended logic in the following.
 
 The following
-two subsections gives an overview of the kinds of base logics that
-are defined in SMT-LIB and the feature sets
+two subsections gives an overview of some of the logics that
+are defined in SMT-LIB, and the feature sets
 standardized by this document.
 The next two subsections 
 then summarize how these
@@ -1165,8 +1183,8 @@ grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
 called \emph{forward declarations}.
 \item $\frecursionkwd$: if enabled,
 grammars can generate terms that correspond to recursive definitions.
-\item $\fquantifierskwd$: if enabled,
-arbitrary quantification is allowed in constraints.
+%\item $\fquantifierskwd$: if enabled,
+%arbitrary quantification is allowed in constraints.
 \end{itemize}
 Formal definition of these features are given within the 
 remainder of this section.
