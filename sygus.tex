@@ -209,10 +209,9 @@ After encountering a semicolon, the rest of the line is ignored.
 \subsection{Literals}
 \label{ssec:literals}
 
-A \emph{literal} $\literal$ is a special sequence of characters
-used to denote values.
-The SyGuS format includes syntax for several kinds of literals,
-listed below.
+A \emph{literal} $\literal$ is a special sequence of characters,
+typically used to denote constant values.
+The SyGuS format includes syntax for several kinds of literals, listed below.
 This treatment of each of these literals coincides with
 those in the SMT-LIB version 2.6 format.
 For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
@@ -231,26 +230,26 @@ either the digit $0$,
 or a non-empty sequence of digits $\left[{\tt 0}-{\tt 9}\right]$
 that does not begin with $0$.
 
-\paragraph{Decimal Constants ($\realconst$)}
+\paragraph{Decimals ($\realconst$)}
 Real numbers are written using their decimal expansion.
 Their syntax is $\intconst{\tt .\kstar{0}}\intconst$.
 
-\paragraph{Boolean Constants ($\boolconst$)}
+\paragraph{Booleans ($\boolconst$)}
 Symbols $\truekwd$ and $\falsekwd$ denote the Boolean constants true and false.
 
-\paragraph{Hexidecimal Constants ($\hexconst$)}
-Hexidecimal constants are written in their
+\paragraph{Hexidecimals ($\hexconst$)}
+Hexidecimals are written in their
 traditional representation, with ${\tt \#x}$
 followed by a non-empty sequence of (case-insensitive) 
 digits and letters taken from the ranges $\left[{\tt A}-{\tt F}\right]$
 and $\left[{\tt 0}-{\tt 9}\right]$.
 
-\paragraph{Binary Constants ($\hexconst$)}
-Binary constants are written in their
+\paragraph{Binaries ($\hexconst$)}
+Binaries are written in their
 traditional representation, with ${\tt \#b}$
 followed by a non-empty sequence of bits $\left[{\tt 0}-{\tt 1}\right]$.
 
-\paragraph{String Constant ($\stringconst$)}
+\paragraph{Strings ($\stringconst$)}
 A string literal $\stringconst$
 is any sequence of printable characters
 delimited by double quotes $\texttt{"}$ $\texttt{"}$.
