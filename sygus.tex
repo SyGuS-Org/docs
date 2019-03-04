@@ -70,7 +70,7 @@ and the extensions described in~\cite{}.
 
 \begin{enumerate}
 
-\item The concrete syntax for the $\synthfunkwd$
+\item The syntax for the $\synthfunkwd$
 was changed so that non-terminal symbols are declared upfront.
 %\rem{Mention Start symbol change if applicable.}
 
@@ -83,8 +83,8 @@ to be the starting symbol.
 
 \item 
 Terms that occur as the right hand side of production rules in
-SyGuS grammars are now assumed to be binder-free,
-in particular, this means that let-terms in this context are now disallowed.
+SyGuS grammars are now required to be binder-free.
+In particular, this means that let-terms in this context are now disallowed.
 Accordingly,
 the keywords $\inputvarkwd$ and $\localvarkwd$,
 which were used to specify input and local variables in grammars
@@ -92,16 +92,17 @@ respectively, have been removed.
 
 \item The datatype keyword $\enumkwd$
 and related syntactic features were removed.
-The standard SMT LIB version 2.6 commands
+The standard SMT-LIB version 2.6 commands
 for declaring datatypes are adopted.
 
 \item The $\setoptskwd$ has been renamed $\setoptkwd$ to 
-correlate to the existing SMT LIB version 2.6 command.
+correlate to the existing SMT-LIB version 2.6 command.
 
 \item 
-The syntax for existing terms and sorts
-that was not compliant with SMT LIB versions 2.0 and later have been removed.
-This includes two notable exceptions from the previous format.
+The syntax for terms and sorts
+is now the same one from SMT-LIB versions 2.0 and later.
+There are two notable changes
+with respect to the previous format as a result of this change.
 First,
 the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$
 is now written  ${\tt (\_\ BitVec\ n)}$.
@@ -112,10 +113,23 @@ where ${\tt T}$ indicates the type of ${\tt t}$.
 Now, it must be written in the SMT-LIB compliant
 way ${\tt (let\ ((x\ t)) ...)}$.
 
+\item
+The signature, syntax, and semantics for the theory of strings 
+is now the one given in an initial proposal to SMT-LIB~\cite{smtlibStrings}.
+This means that certain symbols have been added to the signature,
+and some existing ones have changed names.
+For example,
+the conversion functions between strings and their integer representations
+${\tt str.to.int}$ and ${\tt int.to.str}$ have been renamed
+${\tt str.to-int}$ and ${\tt str.from-int}$.
+The semantics of all operators,
+which was not specified previously,
+is now the one given by~\cite{smtlibStrings}.
+
 %Furthermore, wherever applicable,
 %the syntax for sorts and terms
 %from other SMT theories assumes the syntax
-%prescribed in theory definitions from SMT LIB~\cite{}.
+%prescribed in theory definitions from SMT-LIB~\cite{}.
 
 \item The command $\primedvardeclkwd$, which was syntax
 sugar for two $\vardeclkwd$ commands in the previous standard, has been removed
@@ -142,7 +156,7 @@ has been removed.
 %with higher-order quantification
 
 \item
-A formal notion of features have been added to the background logic,
+A formal notion of features has been added to the background logic,
 and the commands $\setfeaturekwd$ and $\setfeaturesetkwd$
 have been added to the language,
 which is used for further refining restrictions or extensions
@@ -246,7 +260,7 @@ meaning the above sequence should be interpreted
 as a sequence of two characters ${\tt \backslash}$ and ${\tt n}$.
 %\rem{TODO: double quotes within strings escape, no other escape}
 This treatment of string literals coincides with
-string literals in the SMT LIB version 2.6 format.
+string literals in the SMT-LIB version 2.6 format.
 For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
 
 Literals are commonly
@@ -273,7 +287,7 @@ A special character is any of the following:
 {\tt \_}\mbox{ }{\tt +}\mbox{ }{\tt -}\mbox{ }{\tt *}\mbox{ }{\tt \&}\mbox{ }{\tt |}\mbox{ }{\tt !}\mbox{ }{\tt \sim}\mbox{ }{\tt <}\mbox{ }{\tt >}\mbox{ }{\tt =}\mbox{ }{\tt /}\mbox{ }{\tt \%}\mbox{ }{\tt ?}\mbox{ }{\tt .}\mbox{ }{\tt \$}\mbox{ }{\tt \mathcircumflex}
 \]
 Note this definition coincides with
-symbols in Section 3.1 of the SMT LIB version 2.6 format,
+symbols in Section 3.1 of the SMT-LIB version 2.6 format,
 apart from differences in their reserved words.
 
 \subsection{Identifiers}
@@ -292,7 +306,7 @@ that includes symbols that are indexed by integer constants or other symbols.
 \end{array}
 \]
 Note this definition coincides with
-identifiers in Section 3.1 of the SMT LIB version 2.6 format.
+identifiers in Section 3.1 of the SMT-LIB version 2.6 format.
 
 \subsection{Sorts}
 
@@ -403,7 +417,7 @@ For conveinence,
 we distinguish two kinds of commands above.
 The commands listed under $\cmd$ are specific to the SyGuS version 2.0 standard.
 The remaining commands listed under $\smtcmd$
-are borrowed from the SMT LIB version 2.6 standard.
+are borrowed from the SMT-LIB version 2.6 standard.
 Details on the semantics of these commands are given in Section~\ref{sec:semantics}.
 
 %\paragraph{Reserved Words}
@@ -683,7 +697,7 @@ adds to the signature are already
 a symbol in the current signature.
 We provide examples of datatype definitions in Section~\ref{sec:examples}.
 For full details on well-formed datatype declarations,
-refer to Section 4.2.3 of the SMT LIB version 2.6~\cite{BarFT-RR-17}.
+refer to Section 4.2.3 of the SMT-LIB version 2.6~\cite{BarFT-RR-17}.
 
 \item $\paren{\sortdeclkwd\mbox{ }S\mbox{ }n}$
 
@@ -1544,13 +1558,13 @@ A \emph{reserved word} is any of the
 literals from Section~\ref{ssec:literals},
 or any of the following keywords:
 
-\section{Language Features of SMT LIB not Covered}
+\section{Language Features of SMT-LIB not Covered}
 
 For the purpose of self-containment,
-many of the essential language features of SMT LIB version 2.6
+many of the essential language features of SMT-LIB version 2.6
 are redefined in this document.
 However, other less essential ones are omitted.
-%We do not explicitly forbid the language features of SMT LIB .
+%We do not explicitly forbid the language features of SMT-LIB .
 We briefly mention other language features not mentioned in
 this document.
 
