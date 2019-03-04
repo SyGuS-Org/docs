@@ -942,8 +942,8 @@ in constraints and grammars.
 %This section covers only base logics defined in the SMT-LIB standard.
 SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
-At a high level, a \emph{logic} enables a set of theories.
-If a logic enables a theory, then its symbols are added
+At a high level, a \emph{logic} includes a set of theories.
+If a logic includes a theory, then its symbols are added
 to the current signature when a $\setlogickwd$ command is issued.
 Further details on the formal definition of 
 theory and logic declarations can be found in Sections 3.7 and 3.8
@@ -981,7 +981,7 @@ Analogously,
 the theory of reals is enabled
 in logics like linear real arithmetic ${\tt LRA}$
 or non-linear real arithmetic ${\tt NRA}$.
-It signature includes the real sort ${\tt Real}$.
+Its signature includes the real sort ${\tt Real}$.
 Some of the function symbols of arithmetic are syntacticaly identical to
 those from the theory of integers, including
 ${\tt +}$, ${\tt -}$ and ${\tt *}$.
@@ -1002,7 +1002,7 @@ The functions in this signature include various operations on bit-vectors,
 including bit-wise, arithmetic, and shifting operations.
 
 \paragraph{Strings}
-The theory of (unbounded) strings and regular expressions
+The theory of (unbounded) unicode strings and regular expressions
 is included in some logics specifed with ${\tt S}$ as a prefix,
 such as ${\tt S}$ (strings) or ${\tt SLIA}$ (strings
 with linear integer arithmetic).
@@ -1011,6 +1011,7 @@ interpreted as the set of all unicode strings.
 Functions in this signature include string concatenation ${\tt str.++}$,
 length ${\tt str.len}$ as well as many extended functions
 such as ${\tt str.contains}$, ${\tt str.indexof}$, and so on.
+A full description of this theory is given by the proposal in~\cite{smtlibStrings}.
 
 \paragraph{Arrays}
 The theory of arrays is included in logics specifed with ${\tt A}$ as a prefix,
@@ -1101,16 +1102,16 @@ arbitrary quantification is also not permitted by default.
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
 Assuming our base logic is a standard SMT-LIB background logic,
-a term $t$ is allowable in this context
+a term $t$ is allowed in this context
 generally if it belongs to that logic, as prescribed by the SMT-LIB standard.
 Exceptions to this rule are described here.
 
-By convention as stated in Section~\ref{ssec:set-logic}, 
+By convention, as stated in Section~\ref{ssec:set-logic}, 
 the base logic specified
 by a $\setlogickwd$ in a SyGuS file must allow quantifiers.
-This is due to the fact that
-the synthesis conjecture implicit in the state
-contains universal quantification on the universal variables of our state.
+%This is due to the fact that
+%the synthesis conjecture implicit in the state
+%contains universal quantification on the universal variables of our state.
 However,
 constraints \emph{cannot} themselves contain 
 formulas with quantifiers
@@ -1125,7 +1126,7 @@ unless the feature $\fquantifierskwd$ is enabled in the background logic.
 %that may appear in grammars.
 %The base logic affects the kinds of grammars that
 %are allowable in SyGuS inputs.
-A grammar $G$ is not allowable by the base logic if
+A grammar $G$ is not allowed by the base logic if
 it generates some term $t$ that does not belong to that logic.
 %For instance, 
 %this restriction disallows grammars
@@ -1173,7 +1174,7 @@ it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is
 \label{sec:logical-semantics}
 
 Here we give the formal semantics
-for what consistites a correct solution for synthesis conjecture.
+for what constitutes a correct solution for synthesis conjecture.
 
 \subsection{Satisfying Syntactic Specifications}
 \label{ssec:sat-syntactic}
@@ -1239,7 +1240,7 @@ A tuple of functions
 $( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n )$
 satisfies the syntactic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n \varphi$
+in conjecture $\exists f_1, \ldots, f_n.\, \varphi$
 if $\lambda X_i.\, t_i$
 satisfies the syntactic specification for $f_i$
 for each $i=1,\ldots,n$.
@@ -1260,7 +1261,7 @@ A tuple of functions
 $( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n)$
 satisfies the semantic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n \varphi$ in background theory $T$
+in conjecture $\exists f_1, \ldots, f_n.\,  \varphi$ in background theory $T$
 if $\psi$ is $T$-valid formula,
 where $\psi$ is the formula
 $\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t_n \}$
@@ -1268,7 +1269,7 @@ after beta-reduction.
 %which notice contains no 
 %\end{def}
 The formal definition for $T$-valid
-corresponds to the given by SMT-LIB,
+corresponds to the definition given by SMT-LIB,
 for details see Section 5 of~\cite{BarFT-RR-17}.
 
 
@@ -1291,7 +1292,7 @@ for details see Section 5 of~\cite{BarFT-RR-17}.
 \section{Reference Grammars}
 \label{apx:ref-grammars}
 
-In this section, for conveinence, we provide the concrete
+In this section, for convenience, we provide the concrete
 grammar corresponding to the most premissive grammars for generating
 terms that belong to SMT-LIB logics of interest.
 Note this is not intended to be a complete list of logics.
@@ -1420,9 +1421,9 @@ non-linear real arithmetic (NRA).
 \subsection{Fixed-Width Bit-Vectors}
 
 The signature of bit-vectors includes an indexed sort
-${\tt Bitvec}$, which is indexed by an integer constant that denotes
+${\tt BitVec}$, which is indexed by an integer constant that denotes
 its bit-width. We show a grammar below for one particular
-choice of this bitwidth, $32$.
+choice of this bit-width, $32$.
 We omit indexed bit-vector operators
 such as extraction function ${\tt (\_\ extract\ n\ m)}$, 
 the concatenation function ${\tt concat}$,
@@ -1437,7 +1438,7 @@ signed division ${\tt bvsdiv}$,
 and predicates like
 unsigned-greater-than-or-equal ${\tt bvuge}$
 and signed-less-than ${\tt bvslt}$.
-These extended operators can be seen as syntax sugar for the
+These extended operators can be seen as syntactic sugar for the
 operators in the grammar below.
 Example inputs that involve 
 some of the omitted operators are given in Section~\ref{sec:examples}.
@@ -1502,7 +1503,7 @@ some of the omitted operators are given in Section~\ref{sec:examples}.
                   (bvult y_pred y_pred))))))
 \end{lstlisting}
 Constants may be specified
-using either the hexidecimal format $\hexconst$
+using either the hexadecimal format $\hexconst$
 or the binary format $\binaryconst$.
 
 
