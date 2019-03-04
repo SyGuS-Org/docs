@@ -415,8 +415,8 @@ A command $\cmd$ is given by the following syntax.
 \[
 \begin{array}{rcl}
 \cmd 
- & ::= & \paren{\constraintkwd\mbox{ }\term} \\
- & | & \paren{\checksynthkwd} \\
+ & ::= & \paren{\checksynthkwd} \\
+ & | & \paren{\constraintkwd\mbox{ }\term} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
  & | & \paren{\setfeaturekwd\mbox{ }:\feature\mbox{ }\boolconst} \\
@@ -1341,6 +1341,34 @@ for details see Section 5 of~\cite{BarFT-RR-17}.
 
 \begin{appendix}
 
+\section{Reserved Words}
+\label{apx:reserved}
+
+A \emph{reserved word} is any of the 
+literals from Section~\ref{ssec:literals},
+or any of the following keywords:
+$\checksynthkwd$,
+$\constantkwd$,
+$\constraintkwd$,
+$\dtdeclkwd$,
+$\dtsdeclkwd$,
+$\sortdeclkwd$,
+$\vardeclkwd$,
+$\fundefkwd$,
+$\sortdefkwd$,
+$\existskwd$,
+$\forallkwd$,
+$\constraintinvkwd$,
+$\letkwd$,
+$\setfeaturekwd$,
+$\setfeaturesetkwd$,
+$\setlogickwd$,
+$\setoptkwd$,
+$\synthfunkwd$,
+$\synthinvkwd$, and
+$\varkwd$.
+
+
 \section{Reference Grammars}
 \label{apx:ref-grammars}
 
@@ -1630,12 +1658,6 @@ Thus in pratice,
 the string theory is frequently combined with the theory of integers
 in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
 
-\section{Reserved Words}
-\label{apx:reserved}
-
-A \emph{reserved word} is any of the 
-literals from Section~\ref{ssec:literals},
-or any of the following keywords:
 
 \section{Language Features of SMT-LIB not Covered}
 
