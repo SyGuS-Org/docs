@@ -1209,21 +1209,21 @@ arbitrary quantification is also not permitted by default.
 
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
-Assuming our input logic is a standard SMT-LIB background logic,
+If our input logic is a standard SMT-LIB background logic,
 a term $t$ is allowed to be a subterm within a $\constraintkwd$ command
 if it is allowed by that logic, as prescribed by the SMT-LIB standard.
-Exceptions to this rule are described here.
+%Exceptions to this rule are described here.
 
-By convention, as stated in Section~\ref{ssec:set-logic}, 
-the base logic specified
-by a $\setlogickwd$ in a SyGuS file must allow quantifiers.
-%This is due to the fact that
-%the synthesis conjecture implicit in the state
-%contains universal quantification on the universal variables of our state.
-However,
-constraints \emph{cannot} themselves contain 
-formulas with quantifiers
-unless the feature $\fquantifierskwd$ is enabled in the background logic.
+%By convention, as stated in Section~\ref{ssec:set-logic}, 
+%the base logic specified
+%by a $\setlogickwd$ in a SyGuS file must allow quantifiers.
+%%This is due to the fact that
+%%the synthesis conjecture implicit in the state
+%%contains universal quantification on the universal variables of our state.
+%However,
+%constraints \emph{cannot} themselves contain 
+%formulas with quantifiers
+%unless the feature $\fquantifierskwd$ is enabled in the background logic.
 
 %\rem{Reference extension?}
 
