@@ -70,8 +70,10 @@ and the extensions described in~\cite{sygusSyntax2015,sygusSyntax2016}.
 
 \begin{enumerate}
 
-\item The syntax for the $\synthfunkwd$
-now requires that non-terminal symbols are declared upfront.
+\item The syntax for providing grammars inside the $\synthfunkwd$ command
+now requires that non-terminal symbols are declared upfront
+in a \emph{predeclaration}, see Section~\ref{ssec:dec-synth-fun}
+for details.
 %\rem{Mention Start symbol change if applicable.}
 
 \item 
@@ -120,7 +122,7 @@ Now, it must be written in the SMT-LIB compliant
 way ${\tt (let\ ((x\ t)) ...)}$.
 
 \item
-The signature, syntax, and semantics for the theory of strings 
+The signature, syntax and semantics for the theory of strings 
 is now the one given in an initial proposal to SMT-LIB~\cite{smtlibStrings}.
 Thus, certain new symbols are now present in the signature,
 and some existing ones have changed names.
@@ -988,7 +990,7 @@ Further details on the formal definition of
 theory and logic declarations can be found in Sections 3.7 and 3.8
 of the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
 We briefly review some of the important logics and theories in the following.
-More details on the concrete signatures introduced by
+More details on the terms allowed by
 standard SMT-LIB logics can be found in the reference
 grammars in Appendix~\ref{apx:ref-grammars}.
 
@@ -999,13 +1001,13 @@ The signature of the core theory
 has the Boolean sort ${\tt Bool}$,
 the Boolean constants ${\tt true}$ and ${\tt false}$, the
 usual logical Boolean connectives 
-${\tt not}$, ${\tt and}$, ${\tt or}$, ${\tt =>}$, ${\tt xor}$,
+${\tt not}$, ${\tt and}$, ${\tt or}$, implication ${\tt =>}$, ${\tt xor}$,
 and the parametric symbols ${\tt =}$ and ${\tt ite}$
 denoting equality and if-then-else terms for all sorts in the signature.
 %that is, no restrictions are placed on the set of terms that may 
 %appear, nor are any symbols predefined.
-The logics mentioned in this section supplement the signature of the
-core theory with additional sorts and symbols.
+The logics mentioned in this section supplement the signature
+of the current state with additional sorts and symbols.
 
 \paragraph{Arithmetic}
 The theory of integers is enabled 
@@ -1078,6 +1080,9 @@ is largely determined by the concrete datatypes definitions provided
 by the user.
 As mentioned, these commands append datatype sorts, 
 constructors and selectors to the current signature.
+Constructor symbols are used for constructing
+values (e.g. ${\tt cons}$ constructs a list from an element and another list),
+and selectors access subfields (e.g. ${\tt tail}$ returns its second argument).
 The only fixed symbol of the theory of datatypes is the unary
 indexed \emph{discriminator} predicate ${\tt(\_\ is\ C)}$,
 which holds if and only if its argument is an application of constructor $C$.
@@ -1090,7 +1095,7 @@ $x$ is the nil list.
 In SMT-LIB, \emph{uninterpreted} functions and sorts may be declared in
 logics that include the substring ${\tt UF}$,
 whose interpretations are not fixed.
-These declarations are made via SMT-LIB commands 
+Declarations for functions and sorts are made via SMT-LIB commands 
 $\fundeclkwd$ and $\sortdeclkwd$ respectively.
 In the SyGuS standard language, we do not permit
 the declaration of functions with $\fundeclkwd$ command.
@@ -1107,7 +1112,7 @@ conjectures that involve universally quantified variables of function sort
 are planned to be incorporated in a future revision of this document
 that includes concrete syntax for function sorts.
 
-\subsection{Features}
+\subsection{Features and Feature Sets}
 \label{ssec:feature-sets}
 
 A feature set is a set of values, called \emph{features},
@@ -1651,6 +1656,8 @@ this document.
 \subsection{Recursive Functions}
 
 \subsection{Attribute Annotations}
+
+\subsection{The Theory of Mixed Integers and Reals}
 
 \end{appendix}
 
