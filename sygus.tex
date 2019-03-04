@@ -213,41 +213,49 @@ A \emph{literal} $\literal$ is a special sequence of characters
 used to denote values.
 The SyGuS format includes syntax for several kinds of literals,
 listed below.
+This treatment of each of these literals coincides with
+those in the SMT-LIB version 2.6 format.
+For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
 
 \begin{alignat*}{1}
  & \begin{array}{rcl}
 \literal & ::= & \begin{array}{ccccccccccc}
 \intconst & | & \realconst & | & \boolconst & | \\
 \hexconst & | & \binaryconst & | & \stringconst\end{array}\\
-\intconst & ::= & \begin{array}{ccc}
-\kplus{\left[{\tt 0}-{\tt 9}\right]}\end{array}\\
-\realconst & ::= & \begin{array}{ccc}
-\kplus{\left[{\tt 0}-{\tt 9}\right]}{\tt .}\kplus{\left[{\tt 0}-{\tt 9}\right]}\end{array}\\
-\boolconst & ::= & \begin{array}{ccc}
-\truekwd & | & \falsekwd\end{array}\\
-\hexconst & ::= & \begin{array}{c}
-{\tt \#x}\kplus{\left(\begin{array}{ccccc}
-\left[{\tt 0-9}\right] & | & \left[{\tt a}-{\tt f}\right] & | & \left[{\tt A}-{\tt F}\right]\end{array}\right)}\end{array}\\
-\binaryconst & ::= & \begin{array}{c}
-{\tt \#b}\kplus{\left[{\tt 0}-{\tt 1}\right]}\end{array}\\
 \end{array}
 \end{alignat*}
 
-Integer constants are written as usual, in decimal, with an optional
-minus at the beginning to denote a negative number. Real numbers are
-written using their decimal expansion: at least one decimal digit
-before and after a mandatory period, and an optional minus sign at
-the beginning. $\truekwd$ and $\falsekwd$ are the predefined boolean
-constants.
-Hexidecimal and binary constants are written in their
-traditional representations.
+\paragraph{Numerals ($\intconst$)}
+Numerals are written as usual,
+either the digit $0$,
+or a non-empty sequence of digits $\left[{\tt 0}-{\tt 9}\right]$
+that does not begin with $0$.
 
-Additionally,
-a string literal $\stringconst$
+\paragraph{Decimal Constants ($\realconst$)}
+Real numbers are written using their decimal expansion.
+Their syntax is $\intconst{\tt .\kstar{0}}\intconst$.
+
+\paragraph{Boolean Constants ($\boolconst$)}
+Symbols $\truekwd$ and $\falsekwd$ denote the Boolean constants true and false.
+
+\paragraph{Hexidecimal Constants ($\hexconst$)}
+Hexidecimal constants are written in their
+traditional representation, with ${\tt \#x}$
+followed by a non-empty sequence of (case-insensitive) 
+digits and letters taken from the ranges $\left[{\tt A}-{\tt F}\right]$
+and $\left[{\tt 0}-{\tt 9}\right]$.
+
+\paragraph{Binary Constants ($\hexconst$)}
+Binary constants are written in their
+traditional representation, with ${\tt \#b}$
+followed by a non-empty sequence of bits $\left[{\tt 0}-{\tt 1}\right]$.
+
+\paragraph{String Constant ($\stringconst$)}
+A string literal $\stringconst$
 is any sequence of printable characters
 delimited by double quotes $\texttt{"}$ $\texttt{"}$.
 The characters within these delimiters
-are interpreted as denoting characters of the string,
+are interpreted as denoting characters of the string in a one-to-one correspondence,
 with one exception:
 two consecutive double quotes within a string
 denote a single double quotes character.
@@ -259,10 +267,10 @@ interpreted as escape sequences are not handled specially,
 meaning the above sequence should be interpreted 
 as a sequence of two characters ${\tt \backslash}$ and ${\tt n}$.
 %\rem{TODO: double quotes within strings escape, no other escape}
-This treatment of string literals coincides with
-string literals in the SMT-LIB version 2.6 format.
-For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
 
+\ 
+
+\noindent
 Literals are commonly
 used for denoting 0-ary symbols of a theory.
 For example, 
@@ -271,8 +279,8 @@ uses integer constants to denote integer values.
 The theory of bit-vectors uses both
 hexadecimal and binary constants in the above syntax
 to denote bit-vector vectors.
-For more details on common theories,
-see Section~\ref{ssec:smt-logic}.
+%For more details on common theories,
+%see Section~\ref{ssec:smt-logic}.
 
 \subsection{Symbols}
 
@@ -975,8 +983,10 @@ typical function symbols of arithmetic, including
 addition ${\tt +}$
 and multiplication ${\tt *}$.
 Unary negation and subtraction are specified by ${\tt -}$.
-Constants of the theory are integer constants whose syntax
-is given by $\intconst$ from Section~\ref{ssec:literals}.
+Constants of the theory are integer constants.
+Positive integers and zero are specified by the syntax $\intconst$ from Section~\ref{ssec:literals},
+whereas negative integers are specified as the unary negation of positive integer,
+that is, ${\tt (-\ 2)}$ denotes negative two.
 Analogously, 
 the theory of reals is enabled
 in logics like linear real arithmetic ${\tt LRA}$
@@ -987,9 +997,10 @@ those from the theory of integers, including
 ${\tt +}$, ${\tt -}$ and ${\tt *}$.
 The signature of the theory of reals additionally includes
 real division ${\tt /}$.
-Constants in this theory can either be specified as
+Positive reals and zero in this theory can either be specified as
 decimals using the syntax $\realconst$
 or as rational terms of the form ${\tt (/\ m\ n)}$.
+Negative reals are specified as the unary negation of a positive real.
 
 \paragraph{Bit-Vectors}
 The theory of fixed-width bit-vectors
