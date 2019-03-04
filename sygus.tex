@@ -231,17 +231,16 @@ For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
 \end{alignat*}
 
 \paragraph{Numerals ($\intconst$)}
-Numerals are written as usual,
+Numerals are
 either the digit $0$,
 or a non-empty sequence of digits $\left[{\tt 0}-{\tt 9}\right]$
 that does not begin with $0$.
 
 \paragraph{Decimals ($\realconst$)}
-Real numbers are written using their decimal expansion.
-Their syntax is $\intconst{\tt .\kstar{0}}\intconst$.
+The syntax for decimal numbers is $\intconst{\tt .\kstar{0}}\intconst$.
 
 \paragraph{Booleans ($\boolconst$)}
-Symbols $\truekwd$ and $\falsekwd$ denote the Boolean constants true and false.
+Symbols $\truekwd$ and $\falsekwd$ denote the Booleans true and false.
 
 \paragraph{Hexidecimals ($\hexconst$)}
 Hexidecimals are written in their
@@ -280,10 +279,10 @@ Literals are commonly
 used for denoting 0-ary symbols of a theory.
 For example, 
 the theory of integer arithmetic 
-uses integer constants to denote integer values.
+uses numerals to denote non-negative integer values.
 The theory of bit-vectors uses both
 hexadecimal and binary constants in the above syntax
-to denote bit-vector vectors.
+to denote bit-vector values.
 %For more details on common theories,
 %see Section~\ref{ssec:smt-logic}.
 
