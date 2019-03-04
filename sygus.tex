@@ -342,6 +342,8 @@ or may be user-defined
 
 We use terms $\term$ to specify grammars and constraints,
 which are constructed by the following syntax.
+% ajr: version including qualified identifiers (perhaps too verbose)
+\begin{comment}
 \begin{alignat*}{1}
  & \begin{array}{rcl}
 \term & ::= & \qualidentifier\\
@@ -370,6 +372,28 @@ for a parametric list.
 Like sorts, the identifiers that comprise terms
 can either be defined by the user or by the theory.
 Examples of the latter are given in Section~\ref{ssec:smt-logic}.
+\end{comment}
+\begin{alignat*}{1}
+ & \begin{array}{rcl}
+\term & ::= & \identifier\\
+ & | & \literal\\
+ & | & \paren{\identifier\mbox{ }\kplus{\term}}\\
+ & | & \paren{\existskwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
+ & | & \paren{\forallkwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
+ & | & \paren{\letkwd\mbox{ }\paren{\kplus{\varbinding}}\mbox{ }\term}\\[2ex]
+ \bfterm & ::= & \identifier\\
+ & | & \literal\\
+ & | & \paren{\identifier\mbox{ }\kplus{\bfterm}}\\[2ex]
+ \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
+ \varbinding & ::= & \paren{\symbol\mbox{ }\term}\\
+\end{array}
+\end{alignat*}
+Above,
+we distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax above,
+which do not contain bound (local) variables.
+Like sorts, the identifiers that comprise terms
+can either be defined by the user or by the theory.
+%Examples of the latter are given in Section~\ref{ssec:smt-logic}.
 
 \subsection{Features}
 \label{ssec:syntax-features}
@@ -1619,9 +1643,11 @@ this document.
 
 \subsection{Parametric Datatype Definitions}
 
-\subsection{Recursive Functions}
-
 \subsection{Match Terms}
+
+\subsection{Qualified Identifiers}
+
+\subsection{Recursive Functions}
 
 \subsection{Attribute Annotations}
 
