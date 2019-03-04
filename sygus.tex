@@ -972,6 +972,8 @@ and the parametric symbols ${\tt =}$ and ${\tt ite}$
 denoting equality and if-then-else terms for all sorts in the signature.
 %that is, no restrictions are placed on the set of terms that may 
 %appear, nor are any symbols predefined.
+The logics mentioned in this section supplement the signature of the
+core theory with sorts and symbols.
 
 \paragraph{Arithmetic}
 The theory of integers is enabled 
@@ -1353,6 +1355,10 @@ Above, ${\tt div}$
 denotes integer division,
 ${\tt mod}$ denotes integer modulus and ${\tt abs}$ denotes
 the absolute value function.
+Positive integer constants and zero are written using the syntax
+for numerals $\intconst$. Negative integer constants
+are written as the unary negation of a positive integer constant.
+
 The following grammar for $g$ generates exactly the integer-typed terms in the logic of
 non-linear integer arithmetic (NIA).
 \begin{lstlisting}[basicstyle={\ttfamily}]
@@ -1400,10 +1406,11 @@ linear real arithmetic (LRA).
                   (< y_term y_term
                   (<= y_term y_term))))))
 \end{lstlisting}
-Notice that real constants can either be specified 
+Notice that positive real constants and zero can either be written 
 as decimal values using the syntax $\realconst$
 or as rationals, e.g. the division of two integer constants
-${\tt (/\ m\ n)}$.
+${\tt (/\ m\ n)}$ where $n$ is non-zero.
+Negative reals are written as the unary negation of a positive real constant.
 
 The grammar for $g$
 generates exactly the real-typed terms in the logic of
@@ -1512,7 +1519,7 @@ some of the omitted operators are given in Section~\ref{sec:examples}.
     (y_pred Bool (...
                   (bvult y_pred y_pred))))))
 \end{lstlisting}
-Constants may be specified
+Bit-vector constants may be specified
 using either the hexadecimal format $\hexconst$
 or the binary format $\binaryconst$.
 
@@ -1572,6 +1579,7 @@ Here, we omit discussion of regular expressions and characters.
 %char.from-int
 String constants may be specified by text delimited by double quotes
 based on the syntax $\stringconst$ described in Section~\ref{ssec:literals}.
+
 Notice that since the logic specified above in ${\tt S}$,
 meaning that certain functions involving the integer sort like
 ${\tt str.len}$ are included in its signature.
