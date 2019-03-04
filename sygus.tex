@@ -450,15 +450,15 @@ is established via SyGuS commands.
 Given a sequence of commands, the current state consists of the following
 information:
 \begin{itemize}
-\item A set
+\item A list
 $f_1, \ldots, f_n$, which we refer to
-as the current set of \emph{functions to synthesize},
-\item A set 
+as the current list of \emph{functions to synthesize},
+\item A list 
 $x_1, \ldots, x_m$ of variables, 
-which we refer to the current set of \emph{universal variables}, 
-\item A set of formulas
+which we refer to the current list of \emph{universal variables}, 
+\item A list of formulas
 $\varphi_1, \ldots, \varphi_p$,
-which we refer to as the current set of \emph{constraints},
+which we refer to as the current list of \emph{constraints},
 \item A \emph{signature}
 denoting the set of defined symbols in the current scope.
 A signature is 
@@ -553,7 +553,7 @@ a single non-recursive function-to-synthesize.
 \begin{itemize}
 \item $\paren{\vardeclkwd\mbox{ }S\mbox{ }\sigma}$
 
-This command adds $S$ to the current set of universal variables
+This command appends $S$ to the current list of universal variables
 and adds the symbol $S$ of sort $\sigma$ to the current signature.
 This command should be rejected if $S$ is already
 a symbol in the current signature.
@@ -583,7 +583,7 @@ a symbol in the current signature.
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\sigma\mbox{ }
 \koption{G}}$
 
-This command adds $S$ to the current set of functions to synthesize,
+This command adds $S$ to the current list of functions to synthesize,
 and adds the symbol $S$ of 
 sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
 to the current signature.
@@ -831,7 +831,7 @@ where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
 \item $\paren{\checksynthkwd}$
 
 This asks the synthesis solver to find a solution for the synthesis conjecture
-corresponding to the current set of functions-to-synthesize,
+corresponding to the current list of functions-to-synthesize,
 universal variables and constraints.
 The expected output from the synthesis solver is covered in Section~\ref{sec:output}.
 \end{itemize}
@@ -877,6 +877,8 @@ are the functions-to-synthesize in the current state,
 $X_{1}, \ldots, X_{n}$ are sorted variable lists,
 $\sigma_{1}, \ldots, \sigma_{n}$ are types,
 and $t_{1}, \ldots, t_{n}$ are terms.
+Notice that we require that $f_1, \ldots, f_n$ be
+provided in the order in which they were declared.
 To be a well-formed output, 
 for each $j=1, \ldots, n$, it must be the case that
 $t_{j}$ is a term of $\sigma_{j}$,
