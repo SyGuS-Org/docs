@@ -1033,13 +1033,14 @@ in constraints and grammars.
 %\rem{Standard extension to base logic + extensions?}
 %This section pertains only to 
 
-\subsection{Input/Output Logics}
+\subsection{Input and Output Logics}
 \label{ssec:smt-logic}
 
 %This section covers only base logics defined in the SMT-LIB standard.
 SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
-These logics may be provided either as an input logic or an output logic.
+SyGuS background logics may use any of these logics
+either as an input logic or an output logic.
 
 At a high level, a \emph{logic} includes a set of theories.
 If a logic includes a theory, then its symbols are added
@@ -1189,7 +1190,7 @@ grammars can generate terms that correspond to recursive definitions.
 %arbitrary quantification is allowed in constraints.
 \end{itemize}
 Formal definition of these features are given within the 
-remainder of this section.
+Sections~\ref{ssec:logicr-constraints} and~\ref{ssec:logicr-grammars}.
 Other features and their meanings may be solver specific, 
 which are not covered here.
 
