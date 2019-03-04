@@ -1005,7 +1005,7 @@ denoting equality and if-then-else terms for all sorts in the signature.
 %that is, no restrictions are placed on the set of terms that may 
 %appear, nor are any symbols predefined.
 The logics mentioned in this section supplement the signature of the
-core theory with sorts and symbols.
+core theory with additional sorts and symbols.
 
 \paragraph{Arithmetic}
 The theory of integers is enabled 
@@ -1061,7 +1061,8 @@ A full description of this theory is given by the proposal in~\cite{smtlibString
 The theory of arrays is included in logics specifed with ${\tt A}$ as a prefix,
 such as ${\tt ABV}$ or ${\tt ALIA}$.
 The signature of this theory includes a parametric sort ${\tt Array}$
-of arity two.
+of arity two, whose sort parameters
+indicate the index type and the element type of the array.
 It has two function symbols, ${\tt select}$ and ${\tt store}$,
 interpreted as array select and array store.
 
@@ -1069,11 +1070,13 @@ interpreted as array select and array store.
 The theory of datatypes
 is included in logics specified 
 by symbols that include the substring ${\tt DT}$.
-Logics that include datatypes permit
-$\dtsdeclkwd$ commands, whereas all others do not.
+Logics that include datatypes are should that
+$\dtsdeclkwd$ commands are permitted in inputs, 
+whereas all others do not.
 The signature used in inputs where the theory of datatypes is enabled
-is largely determined by the concrete datatypes definitions
-which append datatype sorts, 
+is largely determined by the concrete datatypes definitions provided
+by the user.
+As mentioned, these commands append datatype sorts, 
 constructors and selectors to the current signature.
 The only fixed symbol of the theory of datatypes is the unary
 indexed \emph{discriminator} predicate ${\tt(\_\ is\ C)}$,
