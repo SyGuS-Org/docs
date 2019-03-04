@@ -100,13 +100,19 @@ correlate to the existing SMT-LIB version 2.6 command.
 
 \item 
 The syntax for terms and sorts
-is now the same one from SMT-LIB versions 2.0 and later.
-There are two notable changes
-with respect to the previous format as a result of this change.
+is now coincides with the corresponding syntax for terms and sorts 
+from SMT-LIB versions 2.0 and later.
+There are three notable changes
+with respect to the previous SyGuS format that come as a result of this change.
 First,
+negative integer and real constants must be written with
+unary negation, that is, the integer constant negative one
+must be written ${\tt (-\ 1)}$, whereas previously it could
+also be written ${\tt -1}$.
+Second,
 the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$
 is now written  ${\tt (\_\ BitVec\ n)}$.
-Second,
+Third,
 all let-bindings do \emph{not} annotate the type of the variable being bound.
 Previously, a let-term could be written ${\tt (let\ ((x\ t\ T)) ...)}$
 where ${\tt T}$ indicates the type of ${\tt t}$.
@@ -116,7 +122,7 @@ way ${\tt (let\ ((x\ t)) ...)}$.
 \item
 The signature, syntax, and semantics for the theory of strings 
 is now the one given in an initial proposal to SMT-LIB~\cite{smtlibStrings}.
-This means that certain new symbols are now present in the signature,
+Thus, certain new symbols are now present in the signature,
 and some existing ones have changed names.
 For example,
 the conversion functions between strings and their integer representations
