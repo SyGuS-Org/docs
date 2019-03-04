@@ -86,11 +86,11 @@ to be the starting symbol.
 \item 
 Terms that occur as the right hand side of production rules in
 SyGuS grammars are now required to be binder-free.
-In particular, this means that let-terms in this context are now disallowed.
+In particular, this means that let-terms are now disallowed within grammars.
 Accordingly,
 the keywords $\inputvarkwd$ and $\localvarkwd$,
 which were used to specify input and local variables in grammars
-respectively, have been removed.
+respectively, have been removed since they are both equivalent to $\varkwd$.
 
 \item The datatype keyword $\enumkwd$
 and related syntactic features were removed.
@@ -164,7 +164,7 @@ has been removed.
 %with higher-order quantification
 
 \item
-A formal notion of features has been added to the background logic,
+A formal notion of \emph{features} has been added to the background logic,
 and the commands $\setfeaturekwd$ and $\setfeaturesetkwd$
 have been added to the language,
 which is used for further refining restrictions or extensions
@@ -182,7 +182,7 @@ In Section~\ref{sec:output},
 we document the expected output of synthesis solvers in response to these commands.
 In Section~\ref{sec:sygus-logic},
 we describe formally the notion of a \emph{SyGuS logic} and how it restricts
-the set of commands that are allowable in an input.
+the set of commands that are allowed in an input.
 In Section~\ref{sec:logical-semantics},
 we formalize what consistutes a correct response to a SyGuS input.
 Finally, in Section~\ref{sec:examples},
@@ -206,7 +206,7 @@ A SyGuS input $\sygus$ is thus a sequence of zero or more commands.
 \sygus & ::= & \kstar{\cmd}\\[2ex]
 \end{array}
 \]
-The syntax for commands is given at the end of this section.
+The syntax for commands $\cmd$ is given at the end of this section.
 We first introduce the necessary preliminary definitions.
 
 \subsection{Comments}
@@ -370,7 +370,7 @@ such as parametric datatype constructors, e.g. the nil constructor
 for a parametric list.
 
 Like sorts, the identifiers that comprise terms
-can either be defined by the user or by the theory.
+can either be defined by the user or by background theories.
 Examples of the latter are given in Section~\ref{ssec:smt-logic}.
 \end{comment}
 \begin{alignat*}{1}
@@ -392,7 +392,7 @@ Above,
 we distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax above,
 which do not contain bound (local) variables.
 Like sorts, the identifiers that comprise terms
-can either be defined by the user or by the theory.
+can either be defined by the user or by background theories.
 %Examples of the latter are given in Section~\ref{ssec:smt-logic}.
 
 \subsection{Features}
@@ -559,7 +559,7 @@ if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
 This may affect the set of commands 
 allowed in an input,
 or further refinements to the restrictions placed
-on the set of allowable constraints and grammars.
+on the set of allowed constraints and grammars.
 All features standardized by this document 
 are given in Section~\ref{ssec:feature-sets}.
 
@@ -941,7 +941,7 @@ synthesis conjecture, or if it has determined that a solution does not exist.
 
 In this section,
 we describe how the background logic
-restricts the constraints and grammars that are allowable as inputs.
+restricts the constraints and grammars that are allowed as inputs.
 %As mentioned in Section~\ref{ssec:set-logic},
 %a SyGuS input may be given a background logic
 %specified by a symbol $S$,
@@ -969,7 +969,7 @@ two subsections gives an overview of the kinds of base logics that
 are defined in SMT-LIB and the feature sets
 standardized by this document.
 The next two subsections 
-summarize how these
+then summarize how these
 restrict the set of terms that may appear 
 in constraints and grammars.
 %We give three such examples in Section~\ref{ssec:logicr-grammars}
@@ -1155,7 +1155,7 @@ arbitrary quantification is also not permitted by default.
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
 Assuming our base logic is a standard SMT-LIB background logic,
 a term $t$ is allowed in this context
-generally if it belongs to that logic, as prescribed by the SMT-LIB standard.
+generally if it is allowed by that logic, as prescribed by the SMT-LIB standard.
 Exceptions to this rule are described here.
 
 By convention, as stated in Section~\ref{ssec:set-logic}, 
@@ -1177,7 +1177,7 @@ unless the feature $\fquantifierskwd$ is enabled in the background logic.
 %This section defines restrictions on the terms
 %that may appear in grammars.
 %The base logic affects the kinds of grammars that
-%are allowable in SyGuS inputs.
+%are allowed in SyGuS inputs.
 A grammar $G$ is not allowed by the base logic if
 it generates some term $t$ that does not belong to that logic.
 %For instance, 
@@ -1226,7 +1226,7 @@ it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is
 \label{sec:logical-semantics}
 
 Here we give the formal semantics
-for what constitutes a correct solution for synthesis conjecture.
+for what constitutes a correct solution for a synthesis conjecture.
 
 \subsection{Satisfying Syntactic Specifications}
 \label{ssec:sat-syntactic}
@@ -1281,7 +1281,7 @@ where $y_1$ is the start symbol of $G$.
 
 \item
 No grammar is provided for $f$, and $t$ is a
-term allowable in the background logic.
+term allowed in the background logic.
 \end{enumerate}
 %\rem{More}
 %whose variable lists are $X_1, \ldots, X_n$
