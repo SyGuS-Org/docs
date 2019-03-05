@@ -1817,9 +1817,11 @@ They are not even required to give consistent definitions, for instance:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun-rec inconsistent ((x List)) Int (+ (inconsistent x) 1))
 \end{lstlisting}
-The semantics of recursive functions is described in detail in 
-the SMT-LIB version 2.6 standard~\cite{}.
-
+The semantics of recursive functions is given in 
+the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
+Each recursive function can be seen as a universally quantified constraint
+that asserts that each set of values in the domain of the function
+is equal to its body.
 %An example, which computes the number of nodes in a tree with 
 %an aribtrary number of children, is given below.
 %\begin{lstlisting}[basicstyle={\ttfamily}]
@@ -1828,7 +1830,18 @@ the SMT-LIB version 2.6 standard~\cite{}.
 %  ((nil) (cons (head Tree) (tail List)))
 %))
 %\end{lstlisting}
+
+
+
 \paragraph{Attribute Annotations}
+In SMT-LIB,
+terms $t$ may be annotated with \emph{attributes} $\attribute$.
+This is done using the
+syntax $\paren{!\mbox{ }t\mbox{ }\kstar{\attribute}}$
+where $t$ is a term.
+The term above is semantically equivalent to $t$ itself.
+A number of attributes are standardized by the SMT-LIB standard.
+Others may be user-defined.
 
 \paragraph{Other Logics and Theories}
 Several standard logics and theories are omitted from discussion in this document.
