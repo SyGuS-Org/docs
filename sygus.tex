@@ -560,8 +560,9 @@ If this command is well-formed and $S$ is an SMT-LIB standard logic,
 then this command sets the SyGuS logic to the one whose
 input and output logics are ${\tt QF\_}S$ and whose feature
 set is the default one defined in this document (Section~\ref{ssec:feature-sets}).
-In other words, when this command has $S$ as an argument, this
-indicates that that terms in $S$ are 
+In other words, when this command has $S$ as an argument
+and $S$ is an SMT-LIB standard logic, this
+indicates that that terms in the logic of $S$ are 
 permitted in constraints, grammars and solutions, but they are
 are restricted to be quantifier-free.
 As a consequence, 
@@ -1260,7 +1261,7 @@ according to the definition of that logic in the SMT-LIB standard.
 Let $\slogic$ be a SyGuS logic whose output logic
 is one from the SMT-LIB standard.
 A grammar $G$ is not allowed by $\slogic$ if
-it generates some term $t$ that does not belong to the output logic of $\slogic$.
+it generates some term $t$ that is not allowed by the output logic of $\slogic$.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
