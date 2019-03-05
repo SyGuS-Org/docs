@@ -1786,10 +1786,48 @@ returns negative one if the list $x$ is empty,
 or the first element of $x$ (its head) if it is non-empty.
 
 \paragraph{Recursive Functions}
-The SMT-LIB version 2.6 includes 
-an extension of the $\fundefkwd$ that allows definitions to be recursive.
+The SMT-LIB version 2.6 includes a command $\recfundefkwd$
+for defining symbols that involve recursion.\footnote{
+Recall that recursion is prohibited from definitions in the command
+$\fundefkwd$.
+}
+An example, which computes the length of a (non-parametric) list 
+is given below.
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun-rec len ((x List)) Int 
+   (match x ((nil 0) ((cons h t) (+ 1 (len t))))))
+\end{lstlisting}
+Functions may be defined to be mutually recursive by declaring
+them in a single block using the $\recfunsdefkwd$ command.
+An example, which defines two predicates ${\tt isEven}$ and ${\tt isOdd}$
+for determining whether a positive integer is even and odd respectively,
+is given in the following.
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-funs-rec (
+  (isEven ((x Int)) Bool)
+  (isOdd ((x Int)) Bool)
+)(
+  (ite (= x 0) true (isOdd (- x 1)))
+  (ite (= x 0) false (isEven (- x 1)))
+))
+\end{lstlisting}
+Notice that recursive function definitions are not required to be terminating
+(the above functions do not terminate for negative integers).
+They are not even required to give consistent definitions, for instance:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun-rec inconsistent ((x List)) Int (+ (inconsistent x) 1))
+\end{lstlisting}
+The semantics of recursive functions is described in detail in 
+the SMT-LIB version 2.6 standard~\cite{}.
 
-
+%An example, which computes the number of nodes in a tree with 
+%an aribtrary number of children, is given below.
+%\begin{lstlisting}[basicstyle={\ttfamily}]
+%(declare-datatypes ((Tree 0) (CList 0)) (
+%  ((leaf) (node (children CList)))
+%  ((nil) (cons (head Tree) (tail List)))
+%))
+%\end{lstlisting}
 \paragraph{Attribute Annotations}
 
 \paragraph{Other Logics and Theories}
