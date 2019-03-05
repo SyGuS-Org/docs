@@ -502,17 +502,17 @@ Each of these symbols may have a predefined semantics
 either given by the theory,
 or defined by the user (e.g. symbols that are defined as macros
 fit the latter category).
-\item A \emph{logic} denoting the
+\item A \emph{SyGuS logic} denoting the
 terms and sorts that may appear in constraints and grammars.
 \end{itemize}
-
 In the initial state of a SyGuS input,
-the sets of functions-to-synthesize, 
-universal variables, constraints, and the signature is empty,
-and the logic is unspecified,
-that is, 
-no restrictions are placed on the set of terms that may appear 
-in constraints and grammars.
+the lists of functions-to-synthesize, 
+universal variables, constraints, and the signature are empty,
+and the SyGuS logic is the default one 
+(for details on SyGuS logics, see Section~\ref{sec:sygus-logic}).
+%that is, 
+%no restrictions are placed on the set of terms that may appear 
+%in constraints and grammars.
 
 In the following, we first describe restrictions
 on the order in which commands can be specified in SyGuS inputs.
