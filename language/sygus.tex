@@ -1037,16 +1037,17 @@ This corresponds to a SMT-LIB standard logic or may be solver specific.
 The input logic determines the set of terms that are allowed in 
 constraints.
 
-\item An \emph{output logic}, which can be set via a $\setlogicoutputkwd$ command,
-which like input logics can correspond to an SMT-LIB standard logic or may be solver specific.
+\item An \emph{output logic}, which can be set via a $\setlogicoutputkwd$ command
+which, similar to input logics,
+can correspond to an SMT-LIB standard logic or may be solver specific.
 The output logic determines the set of terms that are allowed in
 grammars and solutions.
 
 \item A \emph{feature set}, 
-which restricts or extends the types of commands that are allowed in a SyGuS input,
-and may further restrict the constraints, grammars and solutions allowed by the logic.
-Generally, features are not expressible in an input or output logic
-and are parametric with respect to them.
+which restricts or extends the set of commands that are allowed in a SyGuS input,
+and may further refine the constraints, grammars and solutions allowed by the logic.
+Generally, feature sets are not expressible in an input or output logic
+and are independent of them.
 \end{enumerate}
 %We give more detail on what consistutes an extended logic in the following.
 
