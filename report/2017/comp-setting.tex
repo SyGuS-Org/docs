@@ -1,0 +1,112 @@
+%\section{Competition Settings}
+%\label{sec:setting}
+
+
+\section{Participating Benchmarks}
+\label{sec:benchs}
+In addition to last year's benchmarks, we received 4 new sets of benchmarks this year, which are shown in Table~\ref{tbl:new-benchmarks}. 
+
+
+\paragraph{Program Repair}
+The 18 program repair benchmarks correspond to the task of generating small expression repairs that are consistent with a given set of input-output examples~\cite{repairbenchmarks}. These benchmarks were extracted from real-world Java bugs by manually analyzing the developer commits that involved changes to fewer than 5 lines of code. The key idea of the program repair approach is to the first localize the fault location in a buggy program and generate the corresponding input-output example behavior for the buggy expression from passing test cases. In the second phase, the task of repairing the buggy expression can be framed as a SyGuS problem, where the goal is to synthesize an expression that comes from a family of expressions defined using a context-free grammar of expressions and that satisfies the input-output example constraints.
+
+\paragraph{Crypto Circuits}
+The Crypto Circuits benchmarks comprise of tasks of synthesizing constant-time circuits that are cryptographically resilient to timing attacks~\cite{EldibWW16}. Consider a circuit $C$ with a set of \emph{private} inputs $I_0$ and a set of \emph{public} inputs $I_1$ such that if an attacker changes the values of
+the public inputs and observes the corresponding output, she is unable to infer the values
+of the private inputs (under standard assumptions about computational resources in cryptography). An attacker can gain information about private inputs by analyzing the time the circuit takes to compute the output values on public inputs, e.g. when a public input bit changes from 1 to 0, a specific output bit is guaranteed to
+change from 1 to 0 independent of whether a particular private input bit is 0 or 1, but 
+may change faster when this private input is 0, thus leaking information.
+The timing attack can be prevented if the circuit satisfies the \emph{constant-time} property:
+A constant-time circuit is the one in which the length of all input-to-output paths  measured in terms of number of gates
+are the same.
+
+The problem of synthesizing a new circuit $C'$ that is functionally equivalent to a given circuit $C$ such that $C'$ is a constant-time circuit can be formalized as a SyGuS problem. A context-free grammar can be used to define the set of all constant-time circuits with all input-to-output path lengths within a given bound, and the functional equivalence constraint can be expressed as a Boolean formula~\cite{EldibWW16}.
+
+\paragraph{Instruction Selection}
+The Instruction Selection benchmarks consist of tasks for synthesizing a ``Bit Test and Reset" instruction from the set of basic bitvector operations, in a way similar to the implementations supported by the x86 processors. These benchmarks comprise of 4 different addressing variants with increasing levels of complexity:
+\begin{itemize}
+	\item btr*: Read from register.
+	\item btr-am-base*: Load from memory address base.
+	\item btr-am-base-index*: Load from memory address base with indexing.
+	\item btr-am-base-index-scale-disp*:  Load from memory address base with index shifted with scale.
+\end{itemize}
+
+\paragraph{Invariant Generation}
+The invariant generation benchmarks comprise of the task of generating a loop invariant (as a conditional linear arithmetic expression) given the pre-condition, post-condition and the transition function corresponding to the loop body. The 7 new benchmarks~\cite{PadhiM17} correspond to loop invariant tasks adapted from several recent invariant inference papers including generating path invariants, abductive inference, and NECLA Static analysis benchmarks.
+
+
+\begin{table}
+	{\small{
+			\begin{center}
+				\scalebox{0.94}{
+				\begin{tabular}{rcl}
+					Benchmark Set &  \# of benchmarks &  Contributors \\ \hline \hline
+					Invariant Generation & 7 & Saswat Padhi (UCLA)  \\
+					Program Repair & 18 & 	Xuan Bach D Le (SMU), David Lo (SMU) and Claire Le Goues (CMU) \\
+					Crypto Circuits & 214 & Chao Wang (USC) \\		
+					Instruction Selection & 28 & Sebastian Buchwald (KIT) and Andreas Fried (KIT) \\
+				\end{tabular}
+			}
+			\end{center}
+			\caption{New Contributed Benchmarks}
+			\label{tbl:new-benchmarks}
+		}}
+	\end{table}
+
+\section{Participating Solvers}
+\label{sec:solvers}
+Six solvers were submitted to this year's competition. \eusolvernew, an improved version of \eusolver;  \cvcnew, an improved version of \cvc; \euphony, a solver built on top of \eusolver; \dryd, a solver specialized for conditional linear integer arithmetic;  \lig, a solver specialized for invariant generation problems; and \ethree, a solver specialized for the bitvector category of the PBE track, built on top of the enumerative solver.
+Table~\ref{tbl:solvers-authors} lists the submitted solvers together with their authors, and Table~\ref{tbl:solvers-in-tracks} summarizes which solver participated in which track.
+
+\begin{table}[b]
+	{\small{
+			\begin{center}
+				\scalebox{0.94}{
+				\begin{tabular}{r||l}
+					Solver &  Authors \\ \hline \hline
+					\eusolvernew  	& Arjun Radhakrishna (Microsoft) and
+					Abhishek Udupa (Microsoft) \\
+					\cvcnew 		& Andrew Reynolds (Univ. Of Iowa),
+					Cesare Tinelli (Univ. of Iowa), and 
+					Clark Barrett (Stanford)  \\
+					\euphony        & Woosuk Lee (Penn), Arjun Radhakrishna (Microsft) and Abhishek Udupa (Microsoft) \\
+					\dryd           & Kangjing Huang (Purdue Univ.), Xiaokang Qiu (Purdue Univ.), and Yanjun Wang (Purdue Univ.)\\
+					\lig            & Saswat Padhi (UCLA) and Todd Millstein (UCLA)\\
+					\ethree         & Ammar Ben Khadra (University of Kaiserslautern)			
+					\\
+				\end{tabular}}
+			\end{center}
+			\caption{Submitted Solvers }
+			\label{tbl:solvers-authors}
+		}}
+\end{table}
+
+
+\begin{table}[t]
+	\begin{center}
+		\begin{tabular}{r||rrrrrr}
+			& \multicolumn{6}{c}{Solvers} \\
+			Tracks & \rot{\eusolvernew} & \rot{\cvcnew} & \rot{\euphony} & \rot{\dryd} & \rot{\lig} & \rot{\ethree} \\ \hline \hline
+			LIA         & 1 & 1 & 1 & 1 & 0 & 0 \\
+			INV         & 1 & 1 & 1 & 1 & 1 & 0\\
+			General     & 1 & 1 & 1 & 0 & 0 & 0\\ 
+			PBE Strings & 1 & 1 & 1 & 0 & 0 & 0\\ 
+			PBE BV      & 1 & 1 & 1 & 0 & 0 & 1
+		\end{tabular}
+	\end{center}
+	\caption{Solvers participating in each track}
+	\label{tbl:solvers-in-tracks}
+\end{table}
+
+
+ The \eusolvernew\ is based on the divide and conquer strategy~\cite{AlurCAV15}. The idea is to find different expressions that work correctly for different subsets of the input space, and unify them into a solution that works well for the entire space of inputs. The sub-expressions are typically found using enumeration techniques  and are then unified into the overall expression using machine learning methods for decision trees~\cite{AlurRU17}.
+
+ The \cvcnew\ solver is based on an approach for program synthesis that is implemented inside an SMT solver~\cite{ReynoldsDKTB15}. This approach extracts solution functions from unsatisfiability proofs of the negated form of synthesis conjectures, and uses  counterexample-guided techniques for quantifier instantiation (CEGQI) that make finding such proofs practically feasible. \cvcnew\ also combines enumerative techniques, and symmetry breaking techniques~\cite{ReynoldsT17}. 
+ 
+ The \euphony\ solver leverages statistical program models to accelerate the \eusolver. The underlying statistical model is called probabilistic higher-order grammar (PHOG), a generalization of probabilistic context-free grammars (PCFGs). The idea is to use existing benchmarks and the synthesized results to learn a weighted grammar, and give priority to candidates which are more likely according to the learned weighted grammar.
+
+ The \dryd\ solver combines enumerative and symbolic techniques. It considers benchmarks in conditional linear integer arithmetic theory (LIA), and can therefore assume all have a solution in some pre-defined decision tree normal form. It then tries to first get the correct height of a normal form decision tree, and then tries to synthesize a solution of that height. It makes use of parallelization, using as many cores as are available, and of optimizations based on solutions of typical LIA SyGuS problems.  
+ 
+ The \lig\ solver~\cite{PadhiM17} for invariant synthesis extends the data-driven approach to inferring sufficient loop invariants from a collection of program states~\cite{PadhiSM16}. Previous approaches to invariant synthesis were restricted to using a fixed set, or a fixed template for features, e.g., ICE-DT~\cite{ICEDT,GNMR16} requires the shape of constraints (such as octagonal) to be fixed apriori. Instead \lig\, starts with no initial features, and automatically grows the feature set as necessary using program synthesis techniques. It reduces the problem of loop invariant inference to a series of precondition inference problems and uses a Counterexample-Guided Inductive Synthesis (CEGIS) loop to revise the current candidate.
+ 
+ The \ethree\ solver for PBE bitvector programs, is built on top of the enumerative solver~\cite{AlurBJMRSSSTU13,UdupaRDMMA13}. It improves on the original \enum\ solver by applying unification techniques~\cite{AlurCAV15} and avoiding calling an SMT solver, since on PBE tracks there are no semantic constraints other than the input-to-output examples which can be checked without invoking an SMT solver.

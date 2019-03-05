@@ -1,0 +1,109 @@
+\documentclass[submission,copyright,creativecommons]{eptcs}
+\providecommand{\event}{SYNT 2017} % Name of the event you are submitting to
+
+\usepackage{underscore}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}    % for side-by-side figures
+\usepackage{subcaption} % for side-by-side figures
+\usepackage{multirow}
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+
+\title{SyGuS-Comp 2017: Results and Analysis}
+\author{
+Rajeev Alur 
+\institute{University of Pennsylvania}
+\and
+Dana Fisman
+\institute{Ben-Gurion University}
+\and
+Rishabh Singh
+\institute{Microsoft Research, Redmond}
+\and
+Armando Solar-Lezama
+\institute{Massachusetts Institute of Technology}
+}
+\def\titlerunning{SyGuS-Comp 2016: Results and Analysis}
+\def\authorrunning{R. Alur, D. Fisman, R. Singh \& A. Solar-Lezama}
+\def\copyrightholders{Alur, Fisman, Singh \& Solar-Lezama}
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%% MACROS %%%%%%%%%%%%%%
+\newcommand{\commentout}[1]{}
+\newcommand{\alc}{\textsc{Alchemist-cs}}
+\newcommand{\alccsdt}{\textsc{Alchemist-csdt}}
+\newcommand{\cvc}{\textsc{CVC4}}
+\newcommand{\cvclast}{\ensuremath{\textsc{CVC4}_{2016}}}
+\newcommand{\enum}{\textsc{Enumerative}}
+\newcommand{\skac}{\textsc{Sketch-ac}}
+\newcommand{\ice}{\textsc{Ice-dt}}
+\newcommand{\toast}{\textsc{SosyToast}}
+\newcommand{\stoch}{\textsc{Stochastic}}
+\newcommand{\cvcnew}{\ensuremath{\textsc{CVC4}_{2017}}}
+\newcommand{\eusolver}{\textsc{EUSolver}}
+\newcommand{\eusolverlast}{\ensuremath{\textsc{EUSolver}_{2016}}}
+\newcommand{\eusolvernew}{\ensuremath{\textsc{EUSolver}_{2017}}}
+\newcommand{\euphony}{\textsc{Euphony}}
+\newcommand{\ethree}{\textsc{e3solver}}
+\newcommand{\dryd}{\textsc{DryadSynth}}
+\newcommand{\lig}{\textsc{LoopInvGen}}
+\newcommand{\sygus}{SyGuS}
+\newcommand{\comp}{SyGuS-Comp}
+
+\newcolumntype{R}[2]{%
+	>{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+	l%
+	<{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{90}{1em}}}% no optional argument here, please!
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+\emph{Syntax-Guided Synthesis (SyGuS)} is
+the computational problem of finding an implementation $f$ that
+meets both a semantic constraint
+given by a logical formula $\varphi$ in a background theory $T$,
+and a syntactic constraint given by a grammar $G$, which specifies the allowed set of
+candidate implementations.
+Such a synthesis problem can be formally defined in SyGuS-IF,
+a language that is built on top of SMT-LIB.
+
+
+The \emph{Syntax-Guided Synthesis Competition (\comp)} is an
+effort to facilitate, bring together and accelerate research and development of efficient
+solvers for SyGuS by providing a platform for evaluating different synthesis
+techniques on a comprehensive set of benchmarks. 
+In this year's competition six new solvers competed on over 1500 benchmarks.
+This paper presents and analyses the results of \comp'17.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+\input{intro}
+
+%\section{Competition Settings}
+%\label{sec:setting}
+\input{comp-setting}
+
+%\section{Competition Results and Analysis}
+\label{sec:results}
+\input{comp-results}
+
+\section{Summary}
+\label{sec:discussion}
+This year's competition consisted of over 1500 benchmarks, 250 of which where contributed this year. Six solvers competed this year, out of which four by developers submitting a tool for SyGuS-Comp for the first time. All tools preformed remarkably, on both existing and new benchmarks. In particular, 65\% of the new benchmarks were solved.
+
+An impressive progress was shown this year in solving the strings benchmarks of the programing by example track. Analyzing the features of benchmarks that are still hard to solve, we see that these include those with either (i) multiple functions to synthesize or (ii) where the specification invokes the functions with different parameters or (iii) those that use the \emph{let} expression for specifying auxiliary variables, or (iv) the grammar is very general consisting of much more operators than needed, or (v) the specification is partial in the sense that the domain of semantic solutions is not a singleton.
+
+
+
+%\nocite{*}
+\bibliographystyle{eptcs}
+\bibliography{bib-wdoi}
+\end{document}
