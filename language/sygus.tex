@@ -209,8 +209,8 @@ that returns the value of $t[\vec{s}]$ for all inputs $\vec{x} = \vec{s}$.
 Given an application of a lambda term to a concrete argument list $\vec{s}$,
 i.e. the term $(\lambda \vec{x}.\, t[\vec{x}])( \vec{s} )$,
 then its \emph{beta-reduction} is the term $t[\vec{s}]$.
-In this document, we consider \emph{simple} lambda terms 
-whose body itself contains no lambda terms.
+%In this document, we consider only \emph{simple} lambda terms 
+%whose body itself contains no lambda terms.
 
 \section{Syntax}
 \label{sec:syntax}
@@ -584,8 +584,8 @@ indicates that that terms in the logic of $S$ are
 permitted in constraints, grammars and solutions, but they are
 are restricted to be quantifier-free.
 As a consequence, 
-the synthesis conjectures allowed by default for logics specified
-by symbols $S$ that correspond to SMT-LIB standard logics
+the synthesis conjectures allowed by default for SMT-LIB standard logics $S$
+%by symbols $S$ that correspond to SMT-LIB standard logics
 have at most two levels of quantifier alternation.
 %For examples of common SMT logics, 
 %see Section~\ref{ssec:smt-logic}.
