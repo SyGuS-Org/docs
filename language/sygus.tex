@@ -1181,6 +1181,9 @@ constructors and selectors to the current signature.
 Constructor symbols are used for constructing
 values (e.g. ${\tt cons}$ constructs a list from an element and another list),
 and selectors access subfields (e.g. ${\tt tail}$ returns its second argument).
+Notice that the value of \emph{wrongly applied} selectors, e.g. ${\tt tail}$ applied
+to the nil list, is underspecified and hence freely interpreted
+in models of this theory.
 The only fixed symbol of the theory of datatypes is the unary
 indexed \emph{discriminator} predicate ${\tt(\_\ is\ C)}$,
 which holds if and only if its argument is an application of constructor $C$.
@@ -1506,12 +1509,12 @@ A single function-to-synthesize $f$ is given that takes a
 32 bit bit-vector as input and returns a 32 bit bit-vector as output.
 Its grammar involves non-terminals whose sorts are bit-vectors of
 bit-width 32 and 16.
-In that grammar, ${\tt concat}$ denotes
-the operator that concatenates its two arguments,
+The semantics of the operators in this example are defined in the SMT-LIB standard.
+In particular,
+the operator ${\tt concat}$ concatenates its two arguments,
 and the indexed operator ${\tt (\_\ extract\ n\ m)}$
-denotes the the operator that returns a bit-vector containing bits $n$ through $m$ of its
+returns a bit-vector containing bits $n$ through $m$ of its
 argument, where $n \geq m$.
-The semantics of both of these operators is defined in the SMT-LIB standard.
 A possible correct solution for $f$ is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x (_ BitVec 32))) (_ BitVec 32) 
@@ -1521,7 +1524,45 @@ In other words, a possible solution for $f$
 returns the concatenation of bits $15$ to $0$ of its argument
 with the the bit-vector $\#x0000$.
 
-\rem{Multiple check-synth}
+\paragraph{Grammars with Defined Symbols}
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic LIA)
+(set-feature :fwd-decls true)
+(set-feature :recursion true)
+(define-fun x_plus_one ((x Int)) Int (+ x 1))
+(synth-fun f ((x Int)) Int
+  ((I Int))
+  ((I Int (0 1 x (x_plus_one I)))))
+(define-fun fx_plus_one ((x Int)) Int (+ (f x) 1))
+(synth-fun g ((x Int)) Int
+  ((I Int))
+  ((I Int (0 1 x (fx_plus_one I)))))
+(synth-fun h ((x Int)) Int
+  ((I Int))
+  ((I Int (0 1 x (h I)))))
+(declare-var y Int)
+(constraint (= (h y) (- (g y) (f y))))
+(check-synth)
+\end{lstlisting}
+This example contains three well-formed $\synthfunkwd$ commands.
+The first one for function $f$ contains an application of a macro ${\tt x\_plus\_one}$,
+which abbreviates adding one to its argument.
+This grammar is allowed in the default SyGuS logic
+and in this example.
+The grammar for $g$ contains an application of a macro ${\tt fx\_plus\_one}$,
+whose exanded form contains a previously declared function-to-synthesize $f$.
+This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this example.
+The grammar for $h$ contains $h$ itself, and thus is allowed since $\frecursionkwd$ is
+enabled in the feature set in this example.
+A possible correct response from the synthesis solver in this example is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x Int)) Int x)
+(define-fun g ((x Int)) Int (fx_plus_one x))
+(define-fun h ((x Int)) Int 1)
+\end{lstlisting}
+Notice the above definitions for $f$, $g$, and $h$ are given 
+in the order in which they were introduced in the input.
 
 \bibliographystyle{plain}
 \bibliography{references}
@@ -1920,7 +1961,7 @@ An example, which computes the length of a (non-parametric) list
 is given below.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun-rec len ((x List)) Int 
-   (match x ((nil 0) ((cons h t) (+ 1 (len t))))))
+  (match x ((nil 0) ((cons h t) (+ 1 (len t))))))
 \end{lstlisting}
 Functions may be defined to be mutually recursive by declaring
 them in a single block using the $\recfunsdefkwd$ command.
@@ -1940,7 +1981,8 @@ Notice that recursive function definitions are not required to be terminating
 (the above functions do not terminate for negative integers).
 They are not even required to correspond to consistent definitions, for instance:
 \begin{lstlisting}[basicstyle={\ttfamily}]
-(define-fun-rec inconsistent ((x List)) Int (+ (inconsistent x) 1))
+(define-fun-rec inconsistent ((x List)) Int 
+  (+ (inconsistent x) 1))
 \end{lstlisting}
 The semantics of recursive functions is given in 
 the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
