@@ -578,8 +578,8 @@ then this command is syntactic sugar for:
 %We give details on the default settings of the logic for SyGuS inputs
 %in Section~\ref{sec:sygus-logic}.
 In other words, the input logic is set to the quantifier-free
-version of the logic $S$, indicating that arbitrary quantified formulas
-cannot appear in constraints;
+version of the logic $S$ indicating that arbitrary quantified formulas
+cannot appear in constraints, and
 the output logic is set to $S$ itself.
 
 \item $\paren{\setlogicinputkwd\mbox{ }S}$
@@ -609,10 +609,10 @@ from the logic to the current signature.
 This enables the feature specified by $F$
 in the feature set component of the SyGuS background logic
 if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
-This may affect the set of commands 
-allowed in an input,
-or further refinements to the restrictions placed
-on the set of allowed constraints and grammars.
+%This may affect the set of commands 
+%allowed in an input,
+%or further refinements to the restrictions placed
+%on the set of allowed constraints and grammars.
 All features standardized by this document 
 are given in Section~\ref{ssec:feature-sets}.
 
@@ -620,7 +620,7 @@ are given in Section~\ref{ssec:feature-sets}.
 
 This sets the feature set component of the SyGuS background logic
 to the one specified by symbol $S$.
-We do not standardize any concrete examples of feature sets
+We do not standardize any examples of feature sets
 in this document.
 We remark that a feature set may correspond to a class of synthesis problems,
 for example, synthesis conjectures having
