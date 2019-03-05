@@ -1035,13 +1035,13 @@ restricts the constraints and grammars that are allowed as inputs.
 %of a SyGuS input.
 A SyGuS background logic consists of three parts:
 \begin{enumerate}
-\item An \emph{input logic}, which can be set via a $\setlogickwd$ command.
+\item An \emph{input logic}, which can be set as part of a $\setlogickwd$ command.
 This corresponds to a SMT-LIB standard logic or may be solver specific.
 The input logic determines the set of terms that are allowed in 
 constraints.
 
-\item An \emph{output logic}, which can be set via a $\setlogickwd$ command
-which, like input logics,
+\item An \emph{output logic}, which can be set as part of a $\setlogickwd$ command.
+Like input logics, this
 can correspond to an SMT-LIB standard logic or may be solver specific.
 The output logic determines the set of terms that are allowed in
 grammars and solutions.
