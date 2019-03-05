@@ -1017,7 +1017,7 @@ grammars and solutions.
 
 \item A \emph{feature set}, 
 which restricts or extends the types of commands that are allowed in a SyGuS input,
-and may further restrict the terms or grammars allowed by the input and output logics.
+and may further restrict the constraints, grammars and solutions allowed by the logic.
 Generally, features are not expressible as an input or output logic
 and are independent of them.
 \end{enumerate}
@@ -1046,8 +1046,8 @@ SMT-LIB provides a catalog of standard logics,
 available at \url{www.smt-lib.org}.
 SyGuS logics may use any of these logics
 either as input logics or as output logics.
-While generally the input and output logic should be the same,
-this no relationship between the two is required.
+Often the input and output logic are the same, although
+no relationship between the two is required.
 
 At a high level, a \emph{logic} includes a set of theories.
 If a logic includes a theory, then its symbols are added
