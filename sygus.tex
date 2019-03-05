@@ -1724,12 +1724,14 @@ Here, we omit discussion of regular expressions and characters.
 String constants may be specified by text delimited by double quotes
 based on the syntax $\stringconst$ described in Section~\ref{ssec:literals}.
 
-Notice that since the logic specified above in ${\tt S}$,
-meaning that certain functions involving the integer sort like
-${\tt str.len}$ are included in its signature.
+Notice that since the logic specified above is ${\tt S}$.
+The signature of this logic includes 
+some functions involving the integer sort like
+${\tt str.len}$.
 However, the above logic does not permit inputs containing
 integer constants or the standard symbols of arithmetic like 
-${\tt +}, {\tt -}$, ${\tt >=}$ and so on.
+${\tt +}, {\tt -}$, ${\tt >=}$ and so on, since the logic ${\tt S}$
+does not include the theory of integer arithmetic.
 Thus in pratice, 
 the string theory is frequently combined with the theory of integers
 in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
