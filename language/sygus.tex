@@ -197,14 +197,20 @@ and solvers responses to them.
 \subsection{Preliminaries}
 In this document, we assume basic standard notions of
 multi-sorted first-order logic.
-\rem{sorts,
-well-sorted terms,
-quantifiers,
-quantifier-free,
-free variables,
-$\lambda$,
-beta-reduction,
-}
+We assume the reader is familiar
+with sorts, well-sorted terms, (quantified) formulas
+and free variables.
+If $e$ is a term or formula,
+then we write $e[x]$ to denote that $x$ occurs free in $e$,
+and $e[t]$ to denote the result of replacing all occurrences of $x$ by $t$.
+We write $\lambda \vec{x}.\, t[\vec{x}]$ to denote a \emph{lambda term},
+that is, an anonymous function whose argument list is $\vec{x}$
+that returns the value of $t[\vec{s}]$ for all inputs $\vec{x} = \vec{s}$.
+In this document, we consider \emph{simple} lambda terms 
+whose body itself contains no lambda terms.
+Given an application of a lambda term to a concrete argument list $\vec{s}$,
+i.e. the term $(\lambda \vec{x}.\, t[\vec{x}])( \vec{s} )$,
+then its \emph{beta-reduction} is the term $t[\vec{s}]$.
 
 \section{Syntax}
 \label{sec:syntax}
