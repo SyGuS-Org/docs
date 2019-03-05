@@ -10,6 +10,7 @@
 \usepackage{amssymb}
 \usepackage{stmaryrd}
 \usepackage{xargs}[2008/03/08]
+\usepackage{xspace}
 \usepackage[unicode=true,pdfusetitle,
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
  breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false]
@@ -58,6 +59,7 @@
 
 \section{Introduction}
 \label{sec:Introduction}
+\input{introduction}
 
 \ajr{Intro to sygus and example}
 
@@ -518,7 +520,6 @@ We then describe how each command $\cmd$ updates
 the state of the sets above and the current signature.
 
 \subsection{Command Ordering}
-
 A SyGuS input is not well-formed
 if it specifies a list of commands that do not meet
 the restrictions given in this section regarding their order.
