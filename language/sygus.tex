@@ -206,11 +206,11 @@ and $e[t]$ to denote the result of replacing all occurrences of $x$ by $t$.
 We write $\lambda \vec{x}.\, t[\vec{x}]$ to denote a \emph{lambda term},
 that is, an anonymous function whose argument list is $\vec{x}$
 that returns the value of $t[\vec{s}]$ for all inputs $\vec{x} = \vec{s}$.
-In this document, we consider \emph{simple} lambda terms 
-whose body itself contains no lambda terms.
 Given an application of a lambda term to a concrete argument list $\vec{s}$,
 i.e. the term $(\lambda \vec{x}.\, t[\vec{x}])( \vec{s} )$,
 then its \emph{beta-reduction} is the term $t[\vec{s}]$.
+In this document, we consider \emph{simple} lambda terms 
+whose body itself contains no lambda terms.
 
 \section{Syntax}
 \label{sec:syntax}
@@ -1439,6 +1439,46 @@ for details see Section 5 of~\cite{BarFT-RR-17}.
 \rem{extract/concat: multiple types}
 
 \rem{Datatypes}
+\subsection{Datatypes with Linear Arithmetic}
+
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic DTLIA)
+(declare-datatypes ((List 0)) ((nil) (cons (head Int) (tail (List Int)))))
+(synth-fun f ((x List)) Int
+   ((I Int) (L List) (B Bool))
+   ((I Int (0 1 
+            (head L) 
+            (+ I I)
+            (ite B I I)))
+    (L List (nil (cons I L) (tail L)))
+    (B Bool (((_ is nil) y_list) 
+             ((_ is cons) L)
+             (= I I)
+             (>= I I)))))
+(constraint (= (f (cons 4 nil)) 5))
+(constraint (= (f (cons 0 nil)) 1))
+(constraint (= (f nil) 0))
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set to the
+logic of datatypes with linear integer arithmetic ${\tt DTLIA}$.
+A datatype ${\tt List}$ is then declared,
+which encodes lists of integers with two constructors ${\tt nil}$ and ${\tt cons}$.
+The input contains a single-function to synthesize $f$
+that takes as input a list and returns an integer.
+Its grammar contains non-terminal symbols for integers, lists and Booleans,
+and includes applications of constructors (${\tt nil}$ and ${\tt cons}$) 
+selectors (${\tt head}$ and ${\tt tail}$), and
+%discriminators (${\tt (_\ is\ nil)}$ and ${\tt (_\ is\ cons)}$).
+A possible correct solution to this synthesis conjecture is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
+\end{lstlisting}
+In other words, the solution for $f$ returns zero whenever its
+argument is the empty list ${\tt nil}$, 
+and returns one plus the head of its argument otherwise.
+
 
 \rem{Multiple check-synth}
 
@@ -1798,7 +1838,7 @@ An example of a datatype definition for a parametric list is given below.
 \end{lstlisting}
 Above, the datatype ${\tt List}$ 
 is given in the predeclaration with the numeral ${\tt 1}$, indicating
-its arity.
+its arity is one.
 The datatype definition that follows includes quantification on a type
 parameter ${\tt T}$, where this quantification is specified using the 
 ${\tt par}$ keyword. Within the body of this quantification,
@@ -1832,7 +1872,7 @@ or the first element of $x$ (its head) if it is non-empty.
 \paragraph{Recursive Functions}
 The SMT-LIB version 2.6 includes a command $\recfundefkwd$
 for defining symbols that involve recursion.\footnote{
-Recall that recursion is prohibited from macro definitions in the command
+Recall that recursive definitions are prohibited from macro definitions in the command
 $\fundefkwd$.
 }
 An example, which computes the length of a (non-parametric) list 
@@ -1857,7 +1897,7 @@ is given in the following.
 \end{lstlisting}
 Notice that recursive function definitions are not required to be terminating
 (the above functions do not terminate for negative integers).
-They are not even required to give consistent definitions, for instance:
+They are not even required to correspond to consistent definitions, for instance:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun-rec inconsistent ((x List)) Int (+ (inconsistent x) 1))
 \end{lstlisting}
@@ -1875,19 +1915,22 @@ is equal to its body.
 %))
 %\end{lstlisting}
 
-
+%The semantics of recursive functions in SyGuS inputs
+%is planned to be incorporated in later revisions of this document.
 
 \paragraph{Attribute Annotations}
 In SMT-LIB,
-terms $t$ may be annotated with \emph{attributes} $\attribute$.
+terms $t$ may be annotated with \emph{attributes}.
 The purpose of an attribute is to mark a term with a set of special properties, 
 which may influence the expected result of later commands.
 Attributes are specified using the
-syntax $\paren{!\mbox{ }t\mbox{ }\kstar{\attribute}}$
-where $t$ is a term.
+syntax $\paren{!\mbox{ }t\mbox{ }\kstar{(A)}}$
+where $t$ is a term and $A$ is an attribute.
+The syntax for attributes (not given here) is similar to the one
+for specifying options and features in this document.
 The term above is semantically equivalent to $t$ itself.
-Several attributes are standardized by the SMT-LIB standard.
-Others may be user-defined.
+Several attributes are standardized by the SMT-LIB standard, while
+others may be user-defined.
 
 \paragraph{Additional Logics and Theories}
 Several standard logics and theories are omitted from discussion in this document.
