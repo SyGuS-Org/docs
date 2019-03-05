@@ -1739,19 +1739,67 @@ However, other less essential ones are omitted.
 %We do not explicitly forbid the language features of SMT-LIB .
 We briefly mention other language features not mentioned in
 this document.
-\rem{Recommended that if using these, then they are used in this way}
+We do not require solvers to support these features.
+However, we recommend that if solvers support any of the features below,
+they use SMT-LIB compliant syntax, as described briefly below.
+%\rem{Recommended that if using these, then they are used in this way}
 
-\subsection{Parametric Datatype Definitions}
+\paragraph{Parametric Datatype Definitions}
+We do not cover the concrete syntax or semantics of parametric datatypes (that
+is, datatypes whose arity is non-zero) in this document.
+An example of a datatype definition for a parametric list is given below.
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(declare-datatypes ((List 1)) (
+  (par (T) ((nil) (cons (head T) (tail (List T)))))))
+\end{lstlisting}
+Above, the datatype ${\tt List}$ 
+is given in the predeclaration with the numeral ${\tt 1}$, indicating
+its arity.
+The datatype definition that follows includes quantification on a type
+parameter ${\tt T}$, where this quantification is specified using the 
+${\tt par}$ keyword. Within the body of this quantification,
+a usual constructor listing is given, where the type parameter ${\tt T}$
+may occur free. The constructors of this datatype are ${\tt nil}$
+and ${\tt cons}$.
 
-\subsection{Match Terms}
+\paragraph{Qualified Identifiers}
+In SMT-LIB version 2.6,
+identifiers that comprise terms
+may be \emph{qualified} with a type-cast, using the keyword $\askwd$.
+Type casts are required for symbols whose type is ambiguous,
+such as parametric datatype constructors, e.g. the nil constructor
+for a parametric list
+For the parametric datatype above, 
+${\tt (as\ nil\ (List\ Int))}$ and ${\tt (as\ nil\ (List\ Real))}$ 
+denote the type constructors
+for the empty list of integers and reals respectively.
 
-\subsection{Qualified Identifiers}
+\paragraph{Match Terms}
+The SMT-LIB version 2.6 includes a ${\tt match}$ term
+that case splits on the constructors of datatype terms.
+For example,
+the match term:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(match x ((nil (- 1)) ((cons h t) h)))
+\end{lstlisting}
+returns negative one if the list $x$ is empty,
+or the first element of $x$ (its head) if it is non-empty.
 
-\subsection{Recursive Functions}
+\paragraph{Recursive Functions}
+The SMT-LIB version 2.6 includes 
+an extension of the $\fundefkwd$ that allows definitions to be recursive.
 
-\subsection{Attribute Annotations}
 
-\subsection{The Theory of Mixed Integers and Reals}
+\paragraph{Attribute Annotations}
+
+\paragraph{Other Logics and Theories}
+Several standard logics and theories are omitted from discussion in this document.
+This includes the (mixed) theory of integers and reals,
+the theory of floating points,
+the integer and real difference logic,
+and their combinations.
+More details on the catalog of logics and theories in the SMT-LIB standard
+is available at \url{www.smt-lib.org}.
 
 \end{appendix}
 
