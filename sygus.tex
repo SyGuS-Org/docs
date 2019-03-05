@@ -551,7 +551,11 @@ or may be solver-specific.
 If $S$ is an SMT-LIB standard logic,
 then the logic must 
 contain quantifiers or this command is not well-formed,
-that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.
+that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.\footnote{
+The convention to always included quantifiers in the logic
+is due to the fact that the overall synthesis conjecture
+involves universal quantification.
+}
 If this command is well-formed and $S$ is an SMT-LIB standard logic,
 then this command is syntactic sugar for:
 \[
@@ -574,7 +578,7 @@ then this command is syntactic sugar for:
 %We give details on the default settings of the logic for SyGuS inputs
 %in Section~\ref{sec:sygus-logic}.
 In other words, the input logic is set to the quantifier-free
-version of the logic $S$, indicating that quantified formulas
+version of the logic $S$, indicating that arbitrary quantified formulas
 cannot appear in constraints;
 the output logic is set to $S$ itself.
 
