@@ -570,8 +570,8 @@ If $S$ is an SMT-LIB standard logic,
 then the logic must 
 contain quantifiers or this command is not well-formed,
 that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.\footnote{
-By convention quantifiers are always included in the logic
-since the overall synthesis conjecture specified by the
+By convention quantifiers are always included in the logic. This is because
+the overall synthesis conjecture specified by the
 state may involve universal quantification.
 }
 If this command is well-formed and $S$ is an SMT-LIB standard logic,
@@ -584,7 +584,7 @@ indicates that that terms in the logic of $S$ are
 permitted in constraints, grammars and solutions, but they are
 are restricted to be quantifier-free.
 As a consequence, 
-the synthesis conjectures allowed by default for SMT-LIB standard logics $S$
+the synthesis conjectures allowed by default when $S$ is a standard SMT-LIB logic
 %by symbols $S$ that correspond to SMT-LIB standard logics
 have at most two levels of quantifier alternation.
 %For examples of common SMT logics, 
