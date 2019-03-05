@@ -557,13 +557,17 @@ is due to the fact that the overall synthesis conjecture specified by the
 state may involve universal quantification.
 }
 If this command is well-formed and $S$ is an SMT-LIB standard logic,
-then this command is syntactic sugar for:
-\[
-\begin{array}{l}
-\paren{\setlogicinputkwd\ {\tt QF\_}S} \\
-\paren{\setlogicoutputkwd\ S}
-\end{array}
-\]
+then this command sets the SyGuS logic to the one whose
+input and output logics are ${\tt QF\_}S$ and whose feature
+set is the default one defined in this document (Section~\ref{ssec:feature-sets}).
+In other words, when this command has $S$ as an argument, this
+indicates that that terms in $S$ are 
+permitted in constraints, grammars and solutions, but they are
+are restricted to be quantifier-free.
+As a consequence, 
+the synthesis conjectures allowed by default for logics specified
+by symbols $S$ that correspond to SMT-LIB standard logics
+have at most two levels of quantifier alternation.
 %For examples of common SMT logics, 
 %see Section~\ref{ssec:smt-logic}.
 %If $S$ is a standard SMT-LIB logic,
@@ -577,10 +581,10 @@ then this command is syntactic sugar for:
 %may appear in constraints, and may appear in grammars.
 %We give details on the default settings of the logic for SyGuS inputs
 %in Section~\ref{sec:sygus-logic}.
-In other words, the input logic is set to the quantifier-free
-version of the logic $S$ indicating that arbitrary quantified formulas
-cannot appear in constraints, and
-the output logic is set to $S$ itself.
+%In other words, the input logic is set to the quantifier-free
+%version of the logic $S$ indicating that arbitrary quantified formulas
+%cannot appear in constraints, and
+%the output logic is set to $S$ itself.
 
 \item $\paren{\setlogicinputkwd\mbox{ }S}$
 
@@ -1861,7 +1865,7 @@ The term above is semantically equivalent to $t$ itself.
 Several attributes are standardized by the SMT-LIB standard.
 Others may be user-defined.
 
-\paragraph{Other Logics and Theories}
+\paragraph{Additional Logics and Theories}
 Several standard logics and theories are omitted from discussion in this document.
 This includes the (mixed) theory of integers and reals,
 the theory of floating points,
