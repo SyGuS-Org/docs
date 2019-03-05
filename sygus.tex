@@ -707,14 +707,14 @@ $G$ generates a term $t$ from $y_i$
 that does not have type $\tau_i$ for some $i$.
 
 If provided, the grammar $G$ must also be one that is allowed
-by the output logic component of the current SyGuS background logic.
+by the output logic of the current SyGuS logic.
 For more details on the restrictions imposed on grammars by the logic,
 see Section~\ref{sec:sygus-logic}.
 If $G$ does not meet the restrictions
 of the background logic, it should be rejected.
 
 If no grammar is provided,
-then any term in the background logic may be given in the body of a solution for $S$.
+then any term in the output logic may be given in the body of a solution for $S$.
 
 More details on grammars and the terms
 they generate, as well as what denotes a term that meets the syntactic
@@ -851,7 +851,7 @@ a symbol in the current signature.
 
 This adds $t$ to the set of constraints.
 This command is well formed if $t$ is a well-sorted formula,
-that is, a term of sort $\sbool$.
+that is, a well-sorted term of sort $\sbool$.
 % constraint
 %We further require that $t$ is in the logic of
 Furthermore,
@@ -1023,8 +1023,8 @@ grammars and solutions.
 \item A \emph{feature set}, 
 which restricts or extends the types of commands that are allowed in a SyGuS input,
 and may further restrict the constraints, grammars and solutions allowed by the logic.
-Generally, features are not expressible as an input or output logic
-and are independent of them.
+Generally, features are not expressible in an input or output logic
+and are parametric with respect to them.
 \end{enumerate}
 %We give more detail on what consistutes an extended logic in the following.
 
@@ -1214,8 +1214,7 @@ which are not covered here.
 
 The feature set component of the default SyGuS logic is the set $\{ \fgrammarskwd \}$.
 In other words, grammars may be provided, but those involving
-forward declarations and recursion are not permitted by default;
-arbitrary quantification is also not permitted by default.
+forward declarations and recursion are not permitted by default.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
