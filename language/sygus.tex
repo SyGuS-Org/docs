@@ -241,9 +241,9 @@ After encountering a semicolon, the rest of the line is ignored.
 \label{ssec:literals}
 
 A \emph{literal} $\literal$ is a special sequence of characters,
-typically used to denote constant values.
+typically used to denote values or constant terms.
 The SyGuS format includes syntax for several kinds of literals, listed below.
-This treatment of these literals coincides with
+This treatment of most of these literals coincides with
 those in the SMT-LIB version 2.6 format.
 For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
 
@@ -527,7 +527,7 @@ In the initial state of a SyGuS input,
 the lists of functions-to-synthesize, 
 universal variables, constraints, and the signature are empty,
 and the SyGuS logic is the default one 
-(for details on SyGuS logics, see Section~\ref{sec:sygus-logic}).
+(for details on the default SyGuS logic, see Section~\ref{sec:sygus-logic}).
 %that is, 
 %no restrictions are placed on the set of terms that may appear 
 %in constraints and grammars.
@@ -570,8 +570,8 @@ If $S$ is an SMT-LIB standard logic,
 then the logic must 
 contain quantifiers or this command is not well-formed,
 that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.\footnote{
-The convention to always included quantifiers in the logic
-is due to the fact that the overall synthesis conjecture specified by the
+By convention quantifiers are always included in the logic
+since the overall synthesis conjecture specified by the
 state may involve universal quantification.
 }
 If this command is well-formed and $S$ is an SMT-LIB standard logic,
@@ -714,8 +714,10 @@ and $\paren{\varkwd\mbox{ }\sigma_v}$ denoting respectively
 the set of constants whose sort is $\sigma_c$,
 and the set of all variables from $x_1, \ldots, x_n$ whose sort is $\sigma_v$.
 If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldots, y_n$,
-as well as $S$ itself,
-although the latter is disallowed in the default logic (see Section~\ref{sec:sygus-logic}).
+as well as $S$ itself.
+If the grammar contains $S$ itself, then it is possible that the definition
+given for $S$ in a solution is recursive, however,
+this feature is disallowed in the default logic (see Section~\ref{sec:sygus-logic}).
 
 This command is not well-formed if
 $\tau_1$ (the type of the start symbol) is not $\sigma$.
@@ -732,7 +734,8 @@ If $G$ does not meet the restrictions
 of the background logic, it should be rejected.
 
 If no grammar is provided,
-then any term in the output logic may be given in the body of a solution for $S$.
+then any term of the appropriate sort
+in the output logic may be given in the body of a solution for $S$.
 
 More details on grammars and the terms
 they generate, as well as what denotes a term that meets the syntactic
@@ -1382,8 +1385,9 @@ and $G$ generates $t$ starting from $y_1$,
 where $y_1$ is the start symbol of $G$.
 
 \item
-No grammar is provided for $f$, and $t$ is a
-term allowed in the output logic.
+No grammar is provided for $f$, and $t$ is any
+term allowed in the output logic those sort
+is the return sort of $f$.
 \end{enumerate}
 %\rem{More}
 %whose variable lists are $X_1, \ldots, X_n$
