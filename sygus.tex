@@ -1049,7 +1049,9 @@ either as input logics or as output logics.
 Often the input and output logic are the same, although
 no relationship between the two is required.
 
-At a high level, a \emph{logic} includes a set of theories.
+At a high level, a \emph{logic} includes a set of theories
+and defines a subset of terms constructible in the signature of those theories
+that belong to it.
 If a logic includes a theory, then its symbols are added
 to the current signature when a $\setlogickwd$ command is issued.
 Further details on the formal definition of 
@@ -1099,7 +1101,8 @@ The signature of the theory of reals additionally includes
 real division ${\tt /}$.
 Positive reals and zero in this theory can either be specified as
 decimals using the syntax $\realconst$
-or as rational terms of the form ${\tt (/\ m\ n)}$.
+or as rationals of the form ${\tt (/\ m\ n)}$,
+where ${\tt m}$ and ${\tt n}$ are numerals.
 Negative reals are specified as the unary negation of a positive real.
 
 \paragraph{Bit-Vectors}
@@ -1120,8 +1123,10 @@ with linear integer arithmetic).
 The string of this theory includes the string sort ${\tt String}$,
 interpreted as the set of all unicode strings.
 Functions in this signature include string concatenation ${\tt str.++}$,
-length ${\tt str.len}$ as well as many extended functions
-such as ${\tt str.contains}$, ${\tt str.indexof}$, and so on.
+string length ${\tt str.len}$ as well as many extended functions
+such as string containment ${\tt str.contains}$,
+string index-of ${\tt str.indexof}$ which returns the index of
+a string in another, and so on.
 A full description of this theory is given by the proposal in~\cite{smtlibStrings}.
 
 \paragraph{Arrays}
@@ -1137,13 +1142,13 @@ interpreted as array select and array store.
 The theory of datatypes
 is included in logics specified 
 by symbols that include the substring ${\tt DT}$.
-Logics that include datatypes are should that
+Logics that include datatypes are such that
 $\dtsdeclkwd$ commands are permitted in inputs, 
 whereas all others do not.
-The signature used in inputs where the theory of datatypes is enabled
+The signature of the theory of datatypes
 is largely determined by the concrete datatypes definitions provided
 by the user.
-As mentioned, these commands append datatype sorts, 
+As mentioned in Section~\ref{ssec:declaring-sorts}, these commands append datatype sorts, 
 constructors and selectors to the current signature.
 Constructor symbols are used for constructing
 values (e.g. ${\tt cons}$ constructs a list from an element and another list),
@@ -1157,7 +1162,7 @@ we have that ${\tt ((\_\ is\ nil)\ x)}$ holds if and only if
 $x$ is the nil list.
 
 \paragraph{Uninterpreted Functions}
-In SMT-LIB, \emph{uninterpreted} functions and sorts may be declared in
+In SMT-LIB, uninterpreted functions and sorts may be declared in
 logics that include the substring ${\tt UF}$,
 whose interpretations are not fixed.
 Declarations for functions and sorts are made via SMT-LIB commands 
@@ -1169,12 +1174,13 @@ Thus, the only effect that specifying ${\tt UF}$ in the logic string has is
 that user-defined sorts may be declared via $\sortdeclkwd$, where
 variables and functions-to-synthesize may involve these sorts in the usual way.
 We remark here that
-synthesis conjectures that involve (existentially quantified)
+encoding synthesis problems 
+that involve (existentially quantified)
 uninterpreted functions
-can equivalently be represented by declaring those functions
-using $\synthfunkwd$ commands where no grammar is provided;
-conjectures that involve universally quantified variables of function sort
-are planned to be incorporated in a future revision of this document
+can be represented by declaring those functions
+using $\synthfunkwd$ commands where no grammar is provided.
+Synthesis problems that involve universally quantified variables of function sort
+are planned to be addressed in a future revision of this document
 that includes concrete syntax for function sorts.
 
 \subsection{Features and Feature Sets}
@@ -1186,12 +1192,13 @@ Their syntax is given in Section~\ref{ssec:syntax-features}.
 The meaning of all features standardized by this document are listed below.
 \begin{itemize}
 \item $\fgrammarskwd$: if enabled, 
-then grammars may be provided for functions-to-synthesize.
+then grammars may be provided for functions-to-synthesize 
+in $\synthfunkwd$ commands.
 \item $\ffwddeclskwd$: if enabled,
 grammars of $\synthfunkwd$ may refer to previously declared synthesis functions,
 called \emph{forward declarations}.
 \item $\frecursionkwd$: if enabled,
-grammars can generate terms that correspond to recursive definitions.
+grammars of $\synthfunkwd$ can generate terms that correspond to recursive definitions.
 %\item $\fquantifierskwd$: if enabled,
 %arbitrary quantification is allowed in constraints.
 \end{itemize}
