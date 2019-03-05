@@ -169,11 +169,11 @@ has been removed.
 
 \item
 A formal notion of input logics, output logics, and 
-\emph{features} has been added to the background logic,
-and the commands $\setfeaturekwd$ and $\setfeaturesetkwd$
-have been added to the language,
+\emph{features} have been defined as part of the background logic,
+and the command $\setfeaturekwd$ %and $\setfeaturesetkwd$
+has been added to the language,
 which is used for further refining restrictions or extensions
-regarding the kinds of constraints and grammars that may appear in an input.
+regarding the constraints, grammars and commands that may appear in an input.
 
 \end{enumerate}
 
@@ -444,9 +444,9 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
  & | & \paren{\setfeaturekwd\mbox{ }:\feature\mbox{ }\boolconst} \\
- & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
- & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
- & | & \paren{\setlogicoutputkwd\mbox{ }\symbol} \\
+% & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
+% & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
+% & | & \paren{\setlogicoutputkwd\mbox{ }\symbol} \\
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
  & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \smtcmd \\[2ex]
@@ -581,10 +581,11 @@ set is the default one defined in this document (Section~\ref{ssec:feature-sets}
 In other words, when this command has $S$ as an argument
 and $S$ is an SMT-LIB standard logic, this
 indicates that that terms in the logic of $S$ are 
-permitted in constraints, grammars and solutions, but they are
+allowed in constraints, grammars and solutions, but they are
 are restricted to be quantifier-free.
 As a consequence, 
-the synthesis conjectures allowed by default when $S$ is a standard SMT-LIB logic
+the overall synthesis conjectures 
+allowed by default when $S$ is a standard SMT-LIB logic
 %by symbols $S$ that correspond to SMT-LIB standard logics
 have at most two levels of quantifier alternation.
 %For examples of common SMT logics, 
@@ -605,6 +606,7 @@ have at most two levels of quantifier alternation.
 %cannot appear in constraints, and
 %the output logic is set to $S$ itself.
 
+\begin{comment}
 \item $\paren{\setlogicinputkwd\mbox{ }S}$
 
 This sets the input logic component of the SyGuS background logic
@@ -627,18 +629,6 @@ This command imposes the same restrictions on logics
 as the previous command, and adds the set of sort and function symbols
 from the logic to the current signature.
 
-\item $\paren{\setfeaturekwd\mbox{ }:F\mbox{ }b}$
-
-This enables the feature specified by $F$
-in the feature set component of the SyGuS background logic
-if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
-%This may affect the set of commands 
-%allowed in an input,
-%or further refinements to the restrictions placed
-%on the set of allowed constraints and grammars.
-All features standardized by this document 
-are given in Section~\ref{ssec:feature-sets}.
-
 \item $\paren{\setfeaturesetkwd\mbox{ }S}$
 
 This sets the feature set component of the SyGuS background logic
@@ -650,6 +640,19 @@ for example, synthesis conjectures having
 a single non-recursive function-to-synthesize.
 %Setting a feature set is syntactic sugar
 %for the appropriate sequence of $\setfeaturekwd$ commands.
+\end{comment}
+
+\item $\paren{\setfeaturekwd\mbox{ }:F\mbox{ }b}$
+
+This enables the feature specified by $F$
+in the feature set component of the SyGuS background logic
+if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
+%This may affect the set of commands 
+%allowed in an input,
+%or further refinements to the restrictions placed
+%on the set of allowed constraints and grammars.
+All features standardized by this document 
+are given in Section~\ref{ssec:feature-sets}.
 
 \end{itemize}
 
@@ -1032,13 +1035,13 @@ restricts the constraints and grammars that are allowed as inputs.
 %of a SyGuS input.
 A SyGuS background logic consists of three parts:
 \begin{enumerate}
-\item An \emph{input logic}, which can be set via a $\setlogicinputkwd$ command.
+\item An \emph{input logic}, which can be set via a $\setlogickwd$ command.
 This corresponds to a SMT-LIB standard logic or may be solver specific.
 The input logic determines the set of terms that are allowed in 
 constraints.
 
-\item An \emph{output logic}, which can be set via a $\setlogicoutputkwd$ command
-which, similar to input logics,
+\item An \emph{output logic}, which can be set via a $\setlogickwd$ command
+which, like input logics,
 can correspond to an SMT-LIB standard logic or may be solver specific.
 The output logic determines the set of terms that are allowed in
 grammars and solutions.
@@ -1416,7 +1419,7 @@ we formalize the notion of satisfying the \emph{semantic specification}
 of the synthesis conjecture
 for background theories from the SMT-LIB standard.
 The notion of satisfying semantic restrictions for background theories
-that not specified in the SMT-LIB standard are not covered by this document.
+that are not standardized in the SMT-LIB standard are not covered by this document.
 
 %\begin{def}
 A tuple of functions 
@@ -1525,7 +1528,7 @@ In other words, a possible solution for $f$
 returns the concatenation of bits $15$ to $0$ of its argument
 with the the bit-vector $\#x0000$.
 
-\paragraph{Grammars with Defined Symbols}
+\paragraph{Grammars with Defined Symbols and Forward Declarations}
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LIA)
@@ -1533,15 +1536,15 @@ Consider the following example:
 (set-feature :recursion true)
 (define-fun x_plus_one ((x Int)) Int (+ x 1))
 (synth-fun f ((x Int)) Int
-  ((I Int))
-  ((I Int (0 1 x (x_plus_one I)))))
+   ((I Int))
+   ((I Int (0 1 x (x_plus_one I)))))
 (define-fun fx_plus_one ((x Int)) Int (+ (f x) 1))
 (synth-fun g ((x Int)) Int
-  ((I Int))
-  ((I Int (0 1 x (fx_plus_one I)))))
+   ((I Int))
+   ((I Int (0 1 x (fx_plus_one I)))))
 (synth-fun h ((x Int)) Int
-  ((I Int))
-  ((I Int (0 1 x (h I)))))
+   ((I Int))
+   ((I Int (0 1 x (h I)))))
 (declare-var y Int)
 (constraint (= (h y) (- (g y) (f y))))
 (check-synth)
@@ -1555,7 +1558,7 @@ The grammar for $g$ contains an application of a macro ${\tt fx\_plus\_one}$,
 whose exanded form contains a previously declared function-to-synthesize $f$.
 This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this example.
 The grammar for $h$ contains $h$ itself, and thus is allowed since $\frecursionkwd$ is
-enabled in the feature set in this example.
+enabled in this example.
 A possible correct response from the synthesis solver in this example is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x Int)) Int x)
@@ -1563,7 +1566,8 @@ A possible correct response from the synthesis solver in this example is:
 (define-fun h ((x Int)) Int 1)
 \end{lstlisting}
 Notice the above definitions for $f$, $g$, and $h$ are given 
-in the order in which they were introduced in the input.
+in the order in which they were introduced via $\synthfunkwd$ commands
+in the input.
 
 \bibliographystyle{plain}
 \bibliography{references}
@@ -1590,10 +1594,10 @@ $\forallkwd$,
 $\constraintinvkwd$,
 $\letkwd$,
 $\setfeaturekwd$,
-$\setfeaturesetkwd$,
+%$\setfeaturesetkwd$,
 $\setlogickwd$,
-$\setlogicinputkwd$,
-$\setlogicoutputkwd$,
+%$\setlogicinputkwd$,
+%$\setlogicoutputkwd$,
 $\setoptkwd$,
 $\synthfunkwd$,
 $\synthinvkwd$, and
