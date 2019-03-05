@@ -1212,9 +1212,10 @@ arbitrary quantification is also not permitted by default.
 
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
-If our input logic is a standard SMT-LIB background logic,
-a term $t$ is allowed to be a subterm within a $\constraintkwd$ command
-if it is allowed by that logic, as prescribed by the SMT-LIB standard.
+A term $t$ is not allowed by SyGuS background logic $\slogic$ 
+to be an argument to a $\constraintkwd$ command 
+if it is not allowed by the input logic of $\slogic$, 
+according to the definition of that logic in the SMT-LIB standard.
 %Exceptions to this rule are described here.
 
 %By convention, as stated in Section~\ref{ssec:set-logic}, 
@@ -1237,14 +1238,14 @@ if it is allowed by that logic, as prescribed by the SMT-LIB standard.
 %that may appear in grammars.
 %The base logic affects the kinds of grammars that
 %are allowed in SyGuS inputs.
-A grammar $G$ is not allowed by the base logic if
-it generates some term $t$ that does not belong to the output logic.
+A grammar $G$ is not allowed by a SyGuS background logic $\slogic$ if
+it generates some term $t$ that does not belong to the output logic of $\slogic$.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
 %for which it is possible to generate a term involving
 %the multiplication of two non-constant integer terms.
-It may be the case that a grammar $G$
+Notice that it may be the case that a grammar $G$
 contains a rule whose conclusion does not itself meet the restrictions 
 of the output logic.
 For example, consider the logic of \emph{linear} integer arithmetic
@@ -1271,13 +1272,13 @@ is the (unique) term obtained
 by replacing all functions $f$ in $t$ that are defined as macros
 %in the current signature
 with their corresponding definition until a fixed point is reached.
-A grammar for function-to-synthesize $f$ is not allowed
-if it contains a rule whose conclusion is a term $t$
+A grammar $G$ for function-to-synthesize $f$ is not allowed by a SyGuS background logic $\slogic$
+if $G$  contains a rule whose conclusion is a term $t$
 whose expanded form contains applications of functions-to-synthesize
-unless the feature $\ffwddeclskwd$ is enabled;
+unless the feature $\ffwddeclskwd$ is enabled in the feature set of $\slogic$;
 it is not allowed if $t$ 
-contains $f$ itself unless the feature $\frecursionkwd$ is enabled;
-it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is enabled.
+contains $f$ itself unless the feature $\frecursionkwd$ is enabled in the feature set of $\slogic$;
+it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is enabled in the feature set of $\slogic$.
 
 \rem{Special logics: single invariant synthesis?}
 
