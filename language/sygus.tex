@@ -1436,10 +1436,7 @@ for details see Section 5 of~\cite{BarFT-RR-17}.
 
 \rem{Simple LIA example}
 
-\rem{extract/concat: multiple types}
-
-\rem{Datatypes}
-\subsection{Datatypes with Linear Arithmetic}
+\paragraph{Datatypes with Linear Arithmetic}
 
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
@@ -1452,7 +1449,7 @@ Consider the following example:
             (+ I I)
             (ite B I I)))
     (L List (nil (cons I L) (tail L)))
-    (B Bool (((_ is nil) y_list) 
+    (B Bool (((_ is nil) L) 
              ((_ is cons) L)
              (= I I)
              (>= I I)))))
@@ -1461,24 +1458,68 @@ Consider the following example:
 (constraint (= (f nil) 0))
 (check-synth)
 \end{lstlisting}
-In this example, the logic is set to the
-logic of datatypes with linear integer arithmetic ${\tt DTLIA}$.
+In this example, the logic is set to 
+datatypes with linear integer arithmetic ${\tt DTLIA}$.
 A datatype ${\tt List}$ is then declared,
 which encodes lists of integers with two constructors ${\tt nil}$ and ${\tt cons}$.
 The input contains a single-function to synthesize $f$
 that takes as input a list and returns an integer.
 Its grammar contains non-terminal symbols for integers, lists and Booleans,
-and includes applications of constructors (${\tt nil}$ and ${\tt cons}$) 
-selectors (${\tt head}$ and ${\tt tail}$), and
-%discriminators (${\tt (_\ is\ nil)}$ and ${\tt (_\ is\ cons)}$).
+and includes applications of constructors ${\tt nil}$ and ${\tt cons}$,
+selectors ${\tt head}$ and ${\tt tail}$, and
+discriminators ${\tt (\_\ is\ nil)}$ and ${\tt (\_\ is\ cons)}$.
 A possible correct solution to this synthesis conjecture is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
 \end{lstlisting}
-In other words, the solution for $f$ returns zero whenever its
+In other words, a possible solution for $f$ returns zero whenever its
 argument is the empty list ${\tt nil}$, 
 and returns one plus the head of its argument otherwise.
 
+\paragraph{Bit-Vectors with Concatenation and Extraction}
+
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic BV)
+(synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
+   ((BV32 (_ BitVec 32)) (BV16 (_ BitVec 16)))
+   ((BV32 (_ BitVec 32) (#x00000000 #x00000001 #xFFFFFFFF
+                         x
+                         (bvand BV32 BV32)
+                         (bvor BV32 BV32)
+                         (bvnot BV32)
+                         (concat BV16 BV16)
+                         ))
+    (BV16 (_ BitVec 16) (#x0000 #x0001 #xFFFF
+                         (bvand BV16 BV16)
+                         (bvor BV16 BV16)
+                         (bvnot BV16)
+                         ((_ extract 31 16) BV32)
+                         ((_ extract 15 0) BV32)))))
+(constraint (= (f #x0782ECAD) #xECAD0000))
+(constraint (= (f #xFFFF008E) #x008E0000))
+(constraint (= (f #x00000000) #x00000000))
+(check-synth)
+\end{lstlisting}
+The this example, the logic is set to bitvectors ${\tt BV}$.
+A single function-to-synthesize $f$ is given that takes a
+32 bit bit-vector as input and returns a 32 bit bit-vector as output.
+Its grammar involves non-terminals whose sorts are bit-vectors of
+bit-width 32 and 16.
+In that grammar, ${\tt concat}$ denotes
+the operator that concatenates its two arguments,
+and the indexed operator ${\tt (\_\ extract\ n\ m)}$
+denotes the the operator that returns a bit-vector containing bits $n$ through $m$ of its
+argument, where $n \geq m$.
+The semantics of both of these operators is defined in the SMT-LIB standard.
+A possible correct solution for $f$ is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x (_ BitVec 32))) (_ BitVec 32) 
+   (concat ((_ extract 15 0) x) #x0000))
+\end{lstlisting}
+In other words, a possible solution for $f$ 
+returns the concatenation of bits $15$ to $0$ of its argument
+with the the bit-vector $\#x0000$.
 
 \rem{Multiple check-synth}
 
