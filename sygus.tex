@@ -1225,7 +1225,9 @@ arbitrary quantification is also not permitted by default.
 
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
-A term $t$ is not allowed by SyGuS logic $\slogic$ 
+Let $\slogic$ be a SyGuS logic whose input logic
+is one from the SMT-LIB standard.
+A term $t$ is not allowed by $\slogic$ 
 to be an argument to a $\constraintkwd$ command 
 if it is not allowed by the input logic of $\slogic$, 
 according to the definition of that logic in the SMT-LIB standard.
@@ -1251,7 +1253,9 @@ according to the definition of that logic in the SMT-LIB standard.
 %that may appear in grammars.
 %The base logic affects the kinds of grammars that
 %are allowed in SyGuS inputs.
-A grammar $G$ is not allowed by a SyGuS logic $\slogic$ if
+Let $\slogic$ be a SyGuS logic whose output logic
+is one from the SMT-LIB standard.
+A grammar $G$ is not allowed by $\slogic$ if
 it generates some term $t$ that does not belong to the output logic of $\slogic$.
 %For instance, 
 %this restriction disallows grammars
