@@ -1843,11 +1843,13 @@ is equal to its body.
 \paragraph{Attribute Annotations}
 In SMT-LIB,
 terms $t$ may be annotated with \emph{attributes} $\attribute$.
-This is done using the
+The purpose of an attribute is to mark a term with 
+special properties, which impact the expected result of later commands.
+Attributes are specified using the
 syntax $\paren{!\mbox{ }t\mbox{ }\kstar{\attribute}}$
 where $t$ is a term.
 The term above is semantically equivalent to $t$ itself.
-A number of attributes are standardized by the SMT-LIB standard.
+Several attributes are standardized by the SMT-LIB standard.
 Others may be user-defined.
 
 \paragraph{Other Logics and Theories}
