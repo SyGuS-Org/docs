@@ -442,7 +442,7 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
  & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
  & | & \paren{\setlogicoutputkwd\mbox{ }\symbol} \\
- & | & \paren{\setoptkwd\mbox{ }\option} \\[2ex]
+ & | & \paren{\setoptkwd\mbox{ }:\symbol\mbox{ }\literal} \\[2ex]
  \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
  %\sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\  %ajr: used above
  %\fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
@@ -460,8 +460,6 @@ we distinguish between two kinds of commands above.
 The commands listed under $\cmd$ are specific to the SyGuS version 2.0 standard.
 The remaining commands listed under $\smtcmd$
 are borrowed from the SMT-LIB version 2.6 standard.
-We do not provide concrete syntax for options $\option$ in this document,
-which are solver specific.
 Details on the semantics of these commands are given in Section~\ref{sec:semantics}.
 
 %\paragraph{Reserved Words}
@@ -927,9 +925,10 @@ The expected output from the synthesis solver is covered in Section~\ref{sec:out
 \subsection{Setting Solver Options}
 
 \begin{itemize}
-\item $\paren{\setoptkwd\mbox{ }O}$
+\item $\paren{\setoptkwd\mbox{ }:S\mbox{ }L}$
 
-This enables the solver-specific options specified by $O$.
+This sets the solver-specific option specified by the symbol $S$ 
+to the (literal) value $L$, whose syntax is given in Section~\ref{ssec:literals}.
 We do not give concrete examples of such options in this document. %\rem{Any needed?}
 It is recommended that synthesis solvers
 ignore unrecognized options, 
@@ -1303,7 +1302,7 @@ it is not allowed if $t$
 contains $f$ itself unless the feature $\frecursionkwd$ is enabled in the feature set of $\slogic$;
 it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is enabled in the feature set of $\slogic$.
 
-\rem{Special logics: single invariant synthesis?}
+\rem{Special logics: PBE, single invariant synthesis?}
 
 \section{Formal Semantics}
 \label{sec:logical-semantics}
