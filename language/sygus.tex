@@ -92,12 +92,14 @@ In particular, this means that let-terms are now disallowed within grammars.
 Accordingly,
 the keywords $\inputvarkwd$ and $\localvarkwd$,
 which were used to specify input and local variables in grammars
-respectively, have been removed since they are both equivalent to $\varkwd$.
+respectively, have been removed since the former is equivalent to $\varkwd$
+and the latter has no affect on the grammar.
 
 \item The datatype keyword $\enumkwd$
 and related syntactic features have been removed.
 The standard SMT-LIB version 2.6 commands
-for declaring datatypes are now adopted.
+for declaring datatypes are now adopted,
+see Section~\ref{ssec:declaring-sorts} for details.
 
 \item The $\setoptskwd$ has been renamed $\setoptkwd$ to 
 correlate to the existing SMT-LIB version 2.6 command.
@@ -112,13 +114,13 @@ First,
 negative integer and real constants must be written with
 unary negation, that is, the integer constant negative one
 must be written ${\tt (-\ 1)}$, whereas previously it could
-also be written ${\tt -1}$.
+be written ${\tt -1}$.
 Second,
 the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$
 is now written  ${\tt (\_\ BitVec\ n)}$.
 Third,
 all let-bindings do \emph{not} annotate the type of the variable being bound.
-Previously, a let-term could be written ${\tt (let\ ((x\ t\ T)) ...)}$
+Previously, a let-term was written ${\tt (let\ ((x\ t\ T)) ...)}$
 where ${\tt T}$ indicates the type of ${\tt t}$.
 Now, it must be written in the SMT-LIB compliant
 way ${\tt (let\ ((x\ t)) ...)}$.
@@ -166,7 +168,8 @@ has been removed.
 %with higher-order quantification
 
 \item
-A formal notion of \emph{features} has been added to the background logic,
+A formal notion of input logics, output logics, and 
+\emph{features} has been added to the background logic,
 and the commands $\setfeaturekwd$ and $\setfeaturesetkwd$
 have been added to the language,
 which is used for further refining restrictions or extensions
@@ -190,6 +193,18 @@ we formalize what consistutes a correct response to a SyGuS input.
 Finally, in Section~\ref{sec:examples},
 we provide examples of possible inputs in the SyGuS language
 and solvers responses to them.
+
+\subsection{Preliminaries}
+In this document, we assume basic standard notions of
+multi-sorted first-order logic.
+\rem{sorts,
+well-sorted terms,
+quantifiers,
+quantifier-free,
+free variables,
+$\lambda$,
+beta-reduction,
+}
 
 \section{Syntax}
 \label{sec:syntax}
@@ -265,13 +280,12 @@ are interpreted as denoting characters of the string in a one-to-one corresponde
 with one exception:
 two consecutive double quotes within a string
 denote a single double quotes character.
-In other words, $\texttt{"}$ ${\tt a}$ $\texttt{"}$ $\texttt{"}$ ${\tt b}$ $\texttt{"}$ denotes the string
-whose characters are ${\tt a}$, $\texttt{"}$ and ${\tt b}$.
-Notice that 
-sequences such as ${\tt \backslash n}$ that are commonly
+In other words, $\texttt{"}{\tt a}\texttt{"}\texttt{"}{\tt b}\texttt{"}$ denotes the string
+whose characters in order are ${\tt a}$, $\texttt{"}$ and ${\tt b}$.
+Strings such as $\texttt{"}{\tt \backslash n}\texttt{"}$ whose characters are commonly
 interpreted as escape sequences are not handled specially,
-meaning the above sequence should be interpreted 
-as a sequence of two characters ${\tt \backslash}$ and ${\tt n}$.
+meaning this string is interpreted 
+as the one consisting of two characters, ${\tt \backslash}$ followed by ${\tt n}$.
 %\rem{TODO: double quotes within strings escape, no other escape}
 
 \ 
