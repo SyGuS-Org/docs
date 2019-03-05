@@ -1446,6 +1446,8 @@ $\varkwd$.
 In this section, for convenience, we provide the concrete syntax for
 grammars that generate exactly the set of terms 
 that belong to SMT-LIB logics of interest for a fixed set of free variables.
+In particular, this means that each of the following $\synthfun$
+commands are equivalent to those in which no grammar is provided.
 Note this is not intended to be a complete list of logics.
 In particular, we focus on logics that include a single background theory
 whose sorts are not parametric.
@@ -1499,7 +1501,8 @@ for numerals $\intconst$. Negative integer constants
 are written as the unary negation of a positive integer constant.
 
 The following grammar for $g$ generates exactly the integer-typed terms in the logic of
-non-linear integer arithmetic (NIA).
+non-linear integer arithmetic (NIA)
+with one free integer variable ${\tt x}$.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic NIA)
 (synth-fun g ((x Int)) Int
@@ -1525,7 +1528,8 @@ non-linear integer arithmetic (NIA).
 
 The following grammar for $f$
 generates exactly the real-typed terms in the logic of
-linear real arithmetic (LRA).
+linear real arithmetic (LRA)
+with one free real variable ${\tt x}$.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LRA)
 (synth-fun f ((x Real)) Real
@@ -1553,7 +1557,8 @@ Negative reals are written as the unary negation of a positive real constant.
 
 The grammar for $g$
 generates exactly the real-typed terms in the logic of
-non-linear real arithmetic (NRA).
+non-linear real arithmetic (NRA)
+with one free real variable ${\tt x}$.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic NRA)
 (synth-fun g ((x Real)) Real
@@ -1788,7 +1793,7 @@ or the first element of $x$ (its head) if it is non-empty.
 \paragraph{Recursive Functions}
 The SMT-LIB version 2.6 includes a command $\recfundefkwd$
 for defining symbols that involve recursion.\footnote{
-Recall that recursion is prohibited from definitions in the command
+Recall that recursion is prohibited from macro definitions in the command
 $\fundefkwd$.
 }
 An example, which computes the length of a (non-parametric) list 
