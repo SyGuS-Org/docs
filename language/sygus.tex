@@ -1307,7 +1307,8 @@ according to the definition of that logic in the SMT-LIB standard.
 Let $\slogic$ be a SyGuS logic whose output logic
 is one from the SMT-LIB standard.
 A grammar $G$ is not allowed by $\slogic$ if
-it generates some term $t$ that is not allowed by the output logic of $\slogic$.
+it generates some term $t$ that has no free occurrences of non-terminal
+symbols from $G$ and is not allowed by the output logic of $\slogic$.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
@@ -1391,8 +1392,7 @@ Otherwise, if $g_{ik}$ is an ordinary term,
 then $G$ contains the rule $y_i \mapsto g_{ik}$.
 
 We say that $G$ \emph{generates} term $r$ from $s$
-if $r$ contains no free occurrences of non-terminal symbols and
-it is possible to construct a sequence of terms
+if it is possible to construct a sequence of terms
 $s_1, \ldots, s_n$
 with $s_1 = s$ and $s_n = r$
 where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
@@ -1406,6 +1406,7 @@ if one of the following hold:
 \begin{enumerate}
 \item 
 A grammar $G$ is provided for $f$,
+$t$ contains no free occurrences of non-terminal symbols,
 and $G$ generates $t$ starting from $y_1$,
 where $y_1$ is the start symbol of $G$.
 
