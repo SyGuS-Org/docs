@@ -63,6 +63,34 @@
 
 %\ajr{Intro to sygus and example}
 
+\paragraph{Overview of This Document}
+
+This document defines the SyGuS input language version 2.0,
+which is intended to be used as the standard input and output languages
+for SyGuS solvers and users of them.
+The language borrows many concepts and language constructs
+from the standard format for Satisfiability Modulo Theories (SMT)
+solvers, the SMT-LIB language (version 2.6)~\cite{BarFT-RR-17}.
+
+In the remainder of this section, we cover differences of
+the language described in this document with previous revisions of the
+SyGuS input language~\cite{sygusFormat} and cover the necessary preliminaries.
+Then,
+Section~\ref{sec:syntax}
+gives the concrete syntax for commands in the SyGuS input language.
+Section~\ref{sec:semantics}
+documents the well-formedness and the semantics of input commands.
+Section~\ref{sec:output}
+documents the expected output of synthesis solvers in response to these commands.
+Section~\ref{sec:sygus-logic}
+describes formally the notion of a \emph{SyGuS logic} and how it restricts
+the set of commands that are allowed in an input.
+Section~\ref{sec:logical-semantics}
+formalizes what consistutes a correct response to a SyGuS input.
+Finally, Section~\ref{sec:examples}
+provides examples of possible inputs in the SyGuS language
+and solvers responses to them.
+
 \subsection{Differences from Previous Versions}
 
 In this section, we cover the differences
@@ -177,29 +205,6 @@ regarding the constraints, grammars and commands that may appear in an input.
 
 \end{enumerate}
 
-\subsection{Overview of This Document}
-
-This document defines the syntax-guided synthesis (SyGuS) input language version 2.0,
-which is intended to be used as the standard input and output languages
-for SyGuS solvers and users of them.
-The language borrows many concepts and language constructs
-from the standard format for Satisfiability Modulo Theories (SMT)
-solvers, the SMT-LIB language (version 2.6)~\cite{BarFT-RR-17}.
-
-In Section~\ref{sec:syntax},
-we give the concrete syntax for commands in the SyGuS input language.
-In Section~\ref{sec:semantics},
-we document the well-formedness and the semantics of input commands.
-In Section~\ref{sec:output},
-we document the expected output of synthesis solvers in response to these commands.
-In Section~\ref{sec:sygus-logic},
-we describe formally the notion of a \emph{SyGuS logic} and how it restricts
-the set of commands that are allowed in an input.
-In Section~\ref{sec:logical-semantics},
-we formalize what consistutes a correct response to a SyGuS input.
-Finally, in Section~\ref{sec:examples},
-we provide examples of possible inputs in the SyGuS language
-and solvers responses to them.
 
 \subsection{Preliminaries}
 In this document, we assume basic standard notions of
@@ -480,7 +485,7 @@ A command $\cmd$ is given by the following syntax.
  \dtdec & ::= & \paren{\kplus{\dtconsdec}} \\
  \dtconsdec & ::= & \paren{\symbol\mbox{ }\kstar{\sortedvar}} \\
  \grammardef & ::= & \paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}} \\
- \ntdef & ::= & \paren{\symbol\mbox{ }\paren{ \kplus{\gterm} } } \\[2ex]
+ \ntdef & ::= & \paren{\symbol\mbox{ }\sortexpr\mbox{ }\paren{ \kplus{\gterm} } } \\[2ex]
  \gterm 
  & ::= &  \paren{\constantkwd\mbox{ }\sortexpr}\mbox{ }|\mbox{ }\paren{\varkwd\mbox{ }\sortexpr}\mbox{ }|\mbox{ }\bfterm\\
 \end{array}
@@ -623,7 +628,7 @@ This sets the input logic component of the SyGuS background logic
 to the one $S$ refers to,
 which can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
 or may be solver-specific.
-%The logic must contain quantifiers or this command is not well-formed,
+%The logic must contain quantifiers or this command is not well-formed,\mbox{ }\tau_n
 %that is, logics from the SMT-LIB standard 
 %with the prefix ``${\tt QF\_}$'' are not allowed.
 This command adds the set of sort and function symbols
@@ -715,10 +720,11 @@ consists of two parts:
 a \emph{predeclaration}
 $\paren{\paren{y_1\mbox{ }\tau_1} \ldots \paren{y_n\mbox{ }\tau_n}}$,
 followed by a \emph{grouped rule listing}
-$\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}$
+$\paren{\paren{y_1\mbox{ }\tau_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots \paren{y_n\mbox{ }\tau_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}$
 where $y_1, \ldots, y_n$ are the \emph{non-terminal} symbols of the grammar.
 Note that the same variable symbols
-$y_1, \ldots, y_n$ appear both in the predeclaration and as heads
+$y_1, \ldots, y_n$ and their sorts 
+$\tau_1, \ldots, \tau_n$ appear both in the predeclaration and as heads
 of each of the rules.
 If this is not the case, then this command is not well-formed.
 For all $i,j$, recall that grammar term $g_{ij}$ is either a term, or a class of terms
