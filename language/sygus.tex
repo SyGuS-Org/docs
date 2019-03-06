@@ -1007,12 +1007,12 @@ A well-formed response to $\checksynthkwd$ is one of the following:
 
 \begin{enumerate}
 \item
-A list of $\fundefkwd$ commands of the form:
+A list of commands of the form:
 \[
 \begin{array}{l}
-\paren{\fundefkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
+\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
 \ldots\\
-\paren{\fundefkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}
+\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}
 \end{array}
 \]
 where functions $f_{1}, \ldots, f_{n}$
@@ -1022,6 +1022,9 @@ are the functions-to-synthesize in the current state,
 $X_{1}, \ldots, X_{n}$ are sorted variable lists,
 $\sigma_{1}, \ldots, \sigma_{n}$ are types,
 and $t_{1}, \ldots, t_{n}$ are terms.
+The syntax $\fundefcmdkwd$ can be either $\fundefkwd$ or $\recfundefkwd$.
+The latter must be used for $f_i$ if it occurs free in $t_i$,
+that is, when the definition of $f_i$ is recursive.
 It is required that $f_1, \ldots, f_n$ be
 provided in the order in which they were declared.\footnote{
 This is to ensure that the definition of $f_i$, which may depend on a definition

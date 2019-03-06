@@ -19,19 +19,26 @@ We present a language to specify instances of the syntax-guided synthesis
 \item
   The semantic constraints that describe the behavior of the functions to
   the synthesized. This is described as a quantifier-free formula $\varphi$
-  in the input logic, and may refer to universally quantified variables
+  in the input logic, and may refer to the functions-to-synthesize as well as 
+  universally quantified variables
   $v_1, v_2, \ldots, v_m$.
 \end{enumerate}
 
 The objective then is to find interpretations $e_i$ (in the form of
 expression bodies) for each function $f_i$ such that (a) the expression
 body belongs to the grammar $G_i$ that is used to syntactically constrain
-solutions for $f_i$, and (b) The constraint $\forall v_1, v_2, \ldots,
-v_m\ \varphi(f_1, f_2, \ldots, f_n, v_1, v_2, \ldots, v_m)[f_i \mathtt{:=}
-  e_i, \ldots, f_n \mathtt{:=} e_n] $ is satisfied. Note that each $e_i$ is
-an expression over the arguments to the function $f_i$. [Do we want to be
-  more precise here and talk about synthesizing lambdas and talk about beta
-  reduction]?
-
-[TODO: Introduce an example from the old document here? Or do we wait until
-  the Examples section later to talk about examples]
+solutions for $f_i$, and (b) The constraint 
+$\forall v_1, v_2, \ldots,
+v_m.\ \varphi$ is valid in the background theory
+under the assumption that functions $f_1, \ldots, f_n$
+are interpreted as functions returning $e_1, \ldots, e_n$.
+%\varphi(f_1, f_2, \ldots, f_n, v_1, v_2, \ldots, v_m)[f_i \mathtt{:=}
+%  e_i, \ldots, f_n \mathtt{:=} e_n] $ 
+Note that each $e_i$ is
+an expression where the arguments to the function $f_i$ may occur free.
+%[Do we want to be
+%  more precise here and talk about synthesizing lambdas and talk about beta
+%  reduction]?
+% ajr: its a bit tricky since we allow recursion, best to keep it imprecise for now.
+%[TODO: Introduce an example from the old document here? Or do we wait until
+%  the Examples section later to talk about examples]
