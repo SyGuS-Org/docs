@@ -562,20 +562,20 @@ order is specified by the following regular pattern:
 \vspace*{2mm}
 \noindent
 \begin{equation*}
-\mathit{\{setter\ commands\}^* \big(\{other\ commands\}^* \{check\ synth\ command\}?\big)^*}
+(\mathit{\{ set\ logic\ command \}})?\mbox{ }\mathit{(\{setter\ commands\})^*\mbox{ }(\{other\ commands\})^*}
 \end{equation*}
-where the set $\mathit{\{setter\ commands\}}$ includes
-the \texttt{set-logic}, \texttt{set-feature} and \texttt{set-option}
-commands, the set  $\mathit{\{other\ commands\}}$ include all the SyGuS
-commands except the \texttt{check-synth} command and the commands in the
-set $\mathit{\{setter\ commands\}}$ and the singleton set $\mathit{\{check\
-synth\ command\}}$ consists of the \texttt{check-synth} command.
+where the set $\mathit{\{check\ logic\ command\}}$ consists
+of the set of all $\setlogickwd$ commands,
+set $\mathit{\{setter\ commands\}}$ includes
+the \texttt{set-feature} and \texttt{set-option}
+commands, the set $\mathit{\{other\ commands\}}$ include all the SyGuS
+commands except the commands in the aforementioned two sets.
 
-In other words, a SyGuS input is well formed if it begins with a block of
-zero or more \texttt{set-logic}, \texttt{set-feature}
-and \texttt{set-option} commands, followed by zero or more instances of a
-block of commands, where each block consists of commands terminated by an
-optional \texttt{check-synth} command.
+In other words, a SyGuS input is well formed if it begins with 
+at most one \texttt{set-logic} command, followed by 
+a block of zero or more \texttt{set-feature}
+and \texttt{set-option} commands in any order, 
+followed by zero or more instances of the other SyGuS commands.
 
 \subsection{Setting the Logic}
 \label{ssec:set-logic}
