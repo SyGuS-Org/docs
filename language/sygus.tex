@@ -1307,8 +1307,9 @@ according to the definition of that logic in the SMT-LIB standard.
 Let $\slogic$ be a SyGuS logic whose output logic
 is one from the SMT-LIB standard.
 A grammar $G$ is not allowed by $\slogic$ if
-it generates some term $t$ that has no free occurrences of non-terminal
-symbols from $G$ and is not allowed by the output logic of $\slogic$.
+it generates some term $t$ that 
+has no free occurrences of non-terminal
+symbols and is not allowed by the output logic of $\slogic$.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
