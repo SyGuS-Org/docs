@@ -1309,7 +1309,7 @@ is one from the SMT-LIB standard.
 A grammar $G$ is not allowed by $\slogic$ if
 it generates some term $t$ that 
 has no free occurrences of non-terminal
-symbols and is not allowed by the output logic of $\slogic$.
+symbols, and is not allowed by the output logic of $\slogic$.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
@@ -1326,6 +1326,7 @@ Grammar $G$ may be allowed in the logic of linear integer arithmetic
 even if it has a rule whose conclusion is $y_c * t$, 
 noting that no non-linear terms can be generated from this rule,
 provided that no non-linear terms can be generated from $t$.
+An example of this form is given in Section~\ref{sec:examples}.
 %then the term $y_c * y$ may be the conclusion
 %grammar terms $g_{ij}$ may involve
 %the multiplication of two non-constant integer terms $t_1$ and $t_2$
@@ -1495,7 +1496,7 @@ in a constraint,
 then it would not be allowed since it is the
 multiplication of two non-constant terms and thus is not allowed by the input logic ${\tt LIA}$.
 However, 
-by the definition of our restrictions on grammars in Section~\ref{ssec:logicr-grammrs},
+by the definition of our restrictions on grammars in Section~\ref{ssec:logicr-grammars},
 this grammar \emph{is allowed},
 since all closed terms that the grammar generates (those that do not have
 non-terminal symbols as free variables) are allowed by linear arithmetic.
