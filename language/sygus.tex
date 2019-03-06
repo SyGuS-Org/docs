@@ -1481,7 +1481,7 @@ Consider the following example:
     (Ic Int (0 1 2 (- 1) (- 2)))))
 (declare-var x Int)
 (declare-var y Int)
-(constraint (= (f x y) (* 2 (- x y))))
+(constraint (= (f x y) (* 2 (+ x y))))
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set 
@@ -1605,8 +1605,9 @@ Consider the following example:
    ((I Int))
    ((I Int (0 1 x (fx_plus_one I)))))
 (synth-fun h ((x Int)) Int
-   ((I Int))
-   ((I Int (0 1 x (h I)))))
+   ((I Int) (B Bool))
+   ((I Int (0 1 x (- I 1) (+ I I) (h I) (ite B I I)))
+    (B Bool ((= I I) (> I I))))
 (declare-var y Int)
 (constraint (= (h y) (- (g y) (f y))))
 (check-synth)
@@ -1619,8 +1620,8 @@ and in this example.
 The grammar for $g$ contains an application of a macro ${\tt fx\_plus\_one}$,
 whose exanded form contains a previously declared function-to-synthesize $f$.
 This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this example.
-The grammar for $h$ contains $h$ itself, and thus is allowed since $\frecursionkwd$ is
-enabled in this example.
+The grammar for $h$ contains a rule that contains an application of $h$ itself.
+This grammar is allowed since $\frecursionkwd$ is enabled in this example.
 A possible correct response from the synthesis solver in this example is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x Int)) Int x)
