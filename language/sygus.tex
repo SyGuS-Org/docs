@@ -1427,7 +1427,8 @@ satisfies the semantic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
 in conjecture $\exists f_1, \ldots, f_n.\,  \varphi$ in background theory $T$
 if $\varphi$ is $T$-valid formula
-when $f_1, \ldots, f_n$ are defined to be 
+when $f_1, \ldots, f_n$ are defined to be terms
+whose semantics are given by the functions
 $\lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n$.
 %where $\psi$ is the formula
 %$\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t_n \}$
@@ -1436,6 +1437,12 @@ The formal definition for $T$-valid here
 corresponds to the definition given by SMT-LIB,
 for details see Section 5 of~\cite{BarFT-RR-17}.
 
+The definition above covers cases where $f_1, \ldots, f_n$
+may have recursive definitions or references to forward declarations.
+A formal description of $T$-valid formulas that contain these kinds of
+functions assumes the semantics for
+(defined) macros and recursive functions in SMT-LIB,
+and is not elaborated on here.
 
 \section{Examples}
 \label{sec:examples}
