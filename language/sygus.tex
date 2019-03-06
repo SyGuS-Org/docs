@@ -1391,7 +1391,8 @@ Otherwise, if $g_{ik}$ is an ordinary term,
 then $G$ contains the rule $y_i \mapsto g_{ik}$.
 
 We say that $G$ \emph{generates} term $r$ from $s$
-if it is possible to construct a sequence of terms
+if $r$ contains no free occurrences of non-terminal symbols and
+it is possible to construct a sequence of terms
 $s_1, \ldots, s_n$
 with $s_1 = s$ and $s_n = r$
 where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
@@ -1465,6 +1466,42 @@ functions assumes the semantics for SMT-LIB input formulas that involve
 
 \rem{Simple LIA example}
 
+\paragraph{Linear Arithmetic with Constant Coefficients}
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic LIA)
+(synth-fun f ((x Int) (y Int)) Int
+   ((I Int) (Ic List))
+   ((I Int (0 1 x y
+            (+ I I)
+            (* Ic I)))
+    (Ic Int (0 1 2 (- 1) (- 2)))))
+(declare-var x Int)
+(declare-var y Int)
+(constraint (= (f x y) (* 2 (- x y))))
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set 
+to linear integer arithmetic.
+The grammar of the function-to-synthesize $f$
+has two non-terminals, ${\tt I}$ and ${\tt Ic}$.
+What is notable in this example is that
+the grammar for $f$ includes a rule for ${\tt I}$ whose right hand side 
+is the term ${\tt(*\ Ic\ I)}$. 
+If a term of this form were to appear
+in a constraint, 
+then it would not be allowed since it is the
+multiplication of two non-constant terms and thus is not allowed by the input logic ${\tt LIA}$.
+However, 
+by the definition of our restrictions on grammars in Section~\ref{ssec:logicr-grammrs},
+this grammar \emph{is allowed},
+since all closed terms that the grammar generates (those that do not have
+non-terminal symbols as free variables) are allowed by linear arithmetic.
+A possible correct solution to this synthesis conjecture is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
+\end{lstlisting}
+
 \paragraph{Datatypes with Linear Arithmetic}
 
 Consider the following example:
@@ -1477,7 +1514,7 @@ Consider the following example:
             (head L) 
             (+ I I)
             (ite B I I)))
-    (L List (nil (cons I L) (tail L)))
+    (L List (nil x (cons I L) (tail L)))
     (B Bool (((_ is nil) L) 
              ((_ is cons) L)
              (= I I)
