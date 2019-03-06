@@ -61,7 +61,7 @@
 \label{sec:Introduction}
 \input{introduction}
 
-\ajr{Intro to sygus and example}
+%\ajr{Intro to sygus and example}
 
 \subsection{Differences from Previous Versions}
 
@@ -1421,18 +1421,17 @@ for background theories from the SMT-LIB standard.
 The notion of satisfying semantic restrictions for background theories
 that are not standardized in the SMT-LIB standard are not covered by this document.
 
-%\begin{def}
 A tuple of functions 
 $( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n)$
 satisfies the semantic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
 in conjecture $\exists f_1, \ldots, f_n.\,  \varphi$ in background theory $T$
-if $\psi$ is $T$-valid formula,
-where $\psi$ is the formula
-$\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t_n \}$
-after beta-reduction.
-%which notice contains no 
-%\end{def}
+if $\varphi$ is $T$-valid formula
+when $f_1, \ldots, f_n$ are defined to be 
+$\lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n$.
+%where $\psi$ is the formula
+%$\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t_n \}$
+%after beta-reduction.
 The formal definition for $T$-valid here
 corresponds to the definition given by SMT-LIB,
 for details see Section 5 of~\cite{BarFT-RR-17}.
