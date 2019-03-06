@@ -1135,7 +1135,8 @@ Positive reals and zero in this theory can either be specified as
 decimals using the syntax $\realconst$
 or as rationals of the form ${\tt (/\ m\ n)}$,
 where ${\tt m}$ and ${\tt n}$ are numerals.
-Negative reals are specified as the unary negation of a positive real.
+Negative reals are specified as the unary negation of a decimal
+or as a negative rational ${\tt (/\ (-\ m)\ n)}$.
 
 \paragraph{Bit-Vectors}
 The theory of fixed-width bit-vectors
@@ -1417,7 +1418,7 @@ for each $i=1,\ldots,n$.
 In this section,
 we formalize the notion of satisfying the \emph{semantic specification}
 of the synthesis conjecture
-for background theories from the SMT-LIB standard.
+for background theories $T$ from the SMT-LIB standard.
 The notion of satisfying semantic restrictions for background theories
 that are not standardized in the SMT-LIB standard are not covered by this document.
 
@@ -1437,11 +1438,11 @@ The formal definition for $T$-valid here
 corresponds to the definition given by SMT-LIB,
 for details see Section 5 of~\cite{BarFT-RR-17}.
 
-The definition above covers cases where $f_1, \ldots, f_n$
-may have recursive definitions or references to forward declarations.
+The above definition covers cases where $f_1, \ldots, f_n$
+have recursive definitions or references to forward declarations.
 A formal description of $T$-valid formulas that contain these kinds of
-functions assumes the semantics for
-(defined) macros and recursive functions in SMT-LIB.
+functions assumes the semantics for SMT-LIB input formulas that involve
+(defined) macros and recursive functions.
 
 \section{Examples}
 \label{sec:examples}
@@ -1720,9 +1721,11 @@ with one free real variable ${\tt x}$.
 \end{lstlisting}
 Notice that positive real constants and zero can either be written 
 as decimal values using the syntax $\realconst$
-or as rationals, e.g. the division of two integer constants
-${\tt (/\ m\ n)}$ where $n$ is non-zero.
-Negative reals are written as the unary negation of a positive real constant.
+or as rationals, e.g. the division of two numerals
+${\tt (/\ m\ n)}$ where $n$ is not zero.
+Negative reals are written either as the unary negation of decimal value 
+or a rational of the form ${\tt (/\ (-\ m)\ n)}$ for numerals $m$ and $n$
+where $n$ is not zero.
 
 The grammar for $g$
 generates exactly the real-typed terms in the logic of
