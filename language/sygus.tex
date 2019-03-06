@@ -556,14 +556,29 @@ the state of the sets above and the current signature.
 \subsection{Command Ordering}
 A SyGuS input is not well-formed
 if it specifies a list of commands that do not meet
-the restrictions given in this section regarding their order.
+the restrictions given in this section regarding their order. The
+order is specified by the following regular pattern:
 
-\rem{(Set logic | set extension | set option )* ( everything else )* ( check-synth )? }
-%\rem{Order of commands}
+\vspace*{2mm}
+\noindent
+\begin{equation*}
+\mathit{\{setter\ commands\}^* \big(\{other\ commands\}^* \{check\ synth\ command\}?\big)^*}
+\end{equation*}
+where the set $\mathit{\{setter\ commands\}}$ includes
+the \texttt{set-logic}, \texttt{set-feature} and \texttt{set-option}
+commands, the set  $\mathit{\{other\ commands\}}$ include all the SyGuS
+commands except the \texttt{check-synth} command and the commands in the
+set $\mathit{\{setter\ commands\}}$ and the singleton set $\mathit{\{check\
+synth\ command\}}$ consists of the \texttt{check-synth} command.
+
+In other words, a SyGuS input is well formed if it begins with a block of
+zero or more \texttt{set-logic}, \texttt{set-feature}
+and \texttt{set-option} commands, followed by zero or more instances of a
+block of commands, where each block consists of commands terminated by an
+optional \texttt{check-synth} command.
 
 \subsection{Setting the Logic}
 \label{ssec:set-logic}
-
 The logic of SyGuS consists of three parts,
 an \emph{input logic}, an \emph{output logic} and a \emph{feature set}.
 Roughly, 
