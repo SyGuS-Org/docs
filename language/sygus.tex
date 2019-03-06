@@ -34,6 +34,7 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{comment}
+\usepackage{amsthm}
 
 \usetikzlibrary{automata}
 \usetikzlibrary{backgrounds}
@@ -1469,7 +1470,7 @@ functions assumes the semantics for SMT-LIB input formulas that involve
 
 \rem{Simple LIA example}
 
-\paragraph{Linear Arithmetic with Constant Coefficients}
+\begin{example}[Linear Arithmetic with Constant Coefficients]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LIA)
@@ -1504,9 +1505,9 @@ A possible correct solution to this synthesis conjecture is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
 \end{lstlisting}
+\end{example}
 
-\paragraph{Datatypes with Linear Arithmetic}
-
+\begin{example}[Datatypes with Linear Arithmetic]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic DTLIA)
@@ -1544,9 +1545,9 @@ A possible correct solution to this synthesis conjecture is:
 In other words, a possible solution for $f$ returns zero whenever its
 argument is the empty list ${\tt nil}$, 
 and returns one plus the head of its argument otherwise.
+\end{example}
 
-\paragraph{Bit-Vectors with Concatenation and Extraction}
-
+\begin{example}[Bit-Vectors with Concatenation and Extraction]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic BV)
@@ -1589,8 +1590,9 @@ A possible correct solution for $f$ is:
 In other words, a possible solution for $f$ 
 returns the concatenation of bits $15$ to $0$ of its argument
 with the the bit-vector $\#x0000$.
+\end{example}
 
-\paragraph{Grammars with Defined Symbols and Forward Declarations}
+\begin{example}[Grammars with Defined Symbols, Forward Declarations and Recursion]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LIA)
@@ -1631,6 +1633,7 @@ A possible correct response from the synthesis solver in this example is:
 Notice the above definitions for $f$, $g$, and $h$ are given 
 in the order in which they were introduced via $\synthfunkwd$ commands
 in the input.
+\end{example}
 
 \bibliographystyle{plain}
 \bibliography{references}
