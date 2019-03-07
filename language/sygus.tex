@@ -34,6 +34,7 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{comment}
+\usepackage{amsthm}
 
 \usetikzlibrary{automata}
 \usetikzlibrary{backgrounds}
@@ -64,14 +65,14 @@
 %\ajr{Intro to sygus and example}
 
 \paragraph{Overview of This Document}
-
 This document defines the SyGuS input language version 2.0,
-which is intended to be used as the standard input and output languages
-for SyGuS solvers and users of them.
+which is intended to be used as the standard input and output language
+for solvers targeting the syntax-guided synthesis problem and users of these solvers.
 The language borrows many concepts and language constructs
 from the standard format for Satisfiability Modulo Theories (SMT)
 solvers, the SMT-LIB language (version 2.6)~\cite{BarFT-RR-17}.
 
+\paragraph{Outline}
 In the remainder of this section, we cover differences of
 the language described in this document with previous revisions of the
 SyGuS input language~\cite{sygusFormat} and cover the necessary preliminaries.
@@ -196,12 +197,12 @@ has been removed.
 %with higher-order quantification
 
 \item
-A formal notion of input logics, output logics, and 
-\emph{features} have been defined as part of the background logic,
+A formal notion of \emph{input logics}, \emph{output logics}, and 
+\emph{features} have been defined as part of the SyGuS background logic,
 and the command $\setfeaturekwd$ %and $\setfeaturesetkwd$
 has been added to the language,
-which is used for further refining restrictions or extensions
-regarding the constraints, grammars and commands that may appear in an input.
+which is used for further refining
+the constraints, grammars and commands that may appear in an input.
 
 \end{enumerate}
 
@@ -232,8 +233,8 @@ then its \emph{beta-reduction} is the term $t[\vec{s}]$.
 
 In this section, we describe the concrete syntax
 of SyGuS version 2.0 inputs.
-This syntax borrows many definitions
-from the SMT-LIB version 2.6 format~\cite{BarFT-RR-17}.
+Many constructs in this syntax coincide
+with those in the SMT-LIB version 2.6 format~\cite{BarFT-RR-17}.
 In the following description,
 italic text within angle-brackets represents EBNF non-terminals,
 and text in typewriter font represents terminal symbols.
@@ -445,7 +446,7 @@ It is an enumeration in the following syntax.
  %|\mbox{ }\fquantifierskwd
 \end{array}
 \end{alignat*}
-More details on features are given in Section~\ref{sec:sygus-logic}.
+More details on features are given in Section~\ref{ssec:feature-sets}.
 
 \subsection{Commands}
 
@@ -555,14 +556,29 @@ the state of the sets above and the current signature.
 \subsection{Command Ordering}
 A SyGuS input is not well-formed
 if it specifies a list of commands that do not meet
-the restrictions given in this section regarding their order.
+the restrictions given in this section regarding their order. The
+order is specified by the following regular pattern:
 
-\rem{(Set logic | set extension | set option )* ( everything else )* ( check-synth )? }
-%\rem{Order of commands}
+\vspace*{2mm}
+\noindent
+\begin{equation*}
+(\mathit{\{ set\ logic\ command \}})?\mbox{ }\mathit{(\{setter\ commands\})^*\mbox{ }(\{other\ commands\})^*}
+\end{equation*}
+where the set $\mathit{\{check\ logic\ command\}}$ consists
+of the set of all $\setlogickwd$ commands,
+set $\mathit{\{setter\ commands\}}$ includes
+the \texttt{set-feature} and \texttt{set-option}
+commands, the set $\mathit{\{other\ commands\}}$ include all the SyGuS
+commands except the commands in the aforementioned two sets.
+
+In other words, a SyGuS input is well formed if it begins with 
+at most one \texttt{set-logic} command, followed by 
+a block of zero or more \texttt{set-feature}
+and \texttt{set-option} commands in any order, 
+followed by zero or more instances of the other SyGuS commands.
 
 \subsection{Setting the Logic}
 \label{ssec:set-logic}
-
 The logic of SyGuS consists of three parts,
 an \emph{input logic}, an \emph{output logic} and a \emph{feature set}.
 Roughly, 
@@ -571,7 +587,7 @@ can appear in constraints and
 the output logic determines
 what terms can appear in grammars and solutions.
 The feature set places additional restrictions or extensions 
-on the terms, grammars and commands that are allowed in an input.
+on the constraints, grammars as well as the commands that are allowed in an input.
 These are described in detail in Section~\ref{sec:sygus-logic}.
 
 \begin{itemize}
@@ -579,10 +595,10 @@ These are described in detail in Section~\ref{sec:sygus-logic}.
 
 This sets the SyGuS background logic
 to the one that $S$ refers to.
-The logic $S$ can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
+The logic string $S$ can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
 or may be solver-specific.
 If $S$ is an SMT-LIB standard logic,
-then the logic must 
+then it must 
 contain quantifiers or this command is not well-formed,
 that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.\footnote{
 By convention quantifiers are always included in the logic. This is because
@@ -991,12 +1007,12 @@ A well-formed response to $\checksynthkwd$ is one of the following:
 
 \begin{enumerate}
 \item
-A list of $\fundefkwd$ commands of the form:
+A list of commands of the form:
 \[
 \begin{array}{l}
-\paren{\fundefkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
+\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
 \ldots\\
-\paren{\fundefkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}
+\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}
 \end{array}
 \]
 where functions $f_{1}, \ldots, f_{n}$
@@ -1006,6 +1022,9 @@ are the functions-to-synthesize in the current state,
 $X_{1}, \ldots, X_{n}$ are sorted variable lists,
 $\sigma_{1}, \ldots, \sigma_{n}$ are types,
 and $t_{1}, \ldots, t_{n}$ are terms.
+The syntax $\fundefcmdkwd$ can be either $\fundefkwd$ or $\recfundefkwd$.
+The latter must be used for $f_i$ if it occurs free in $t_i$,
+that is, when the definition of $f_i$ is recursive.
 It is required that $f_1, \ldots, f_n$ be
 provided in the order in which they were declared.\footnote{
 This is to ensure that the definition of $f_i$, which may depend on a definition
@@ -1235,6 +1254,9 @@ Synthesis problems that involve universally quantified variables of function sor
 are planned to be addressed in a future revision of this document
 that includes concrete syntax for function sorts.
 
+\subsubsection{Additional Logics Defined by the SyGuS Standard}
+\rem{Special logics: PBE, single invariant synthesis?}
+
 \subsection{Features and Feature Sets}
 \label{ssec:feature-sets}
 
@@ -1307,7 +1329,10 @@ according to the definition of that logic in the SMT-LIB standard.
 Let $\slogic$ be a SyGuS logic whose output logic
 is one from the SMT-LIB standard.
 A grammar $G$ is not allowed by $\slogic$ if
-it generates some term $t$ that is not allowed by the output logic of $\slogic$.
+it generates some term $t$ with 
+no free occurrences of non-terminal
+symbols that is not allowed by the output logic of $\slogic$,
+according to the definition of that logic in the SMT-LIB standard.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
@@ -1315,7 +1340,8 @@ it generates some term $t$ that is not allowed by the output logic of $\slogic$.
 %the multiplication of two non-constant integer terms.
 
 Notice that it may be the case that a grammar $G$
-contains a rule whose conclusion does not itself meet the restrictions 
+contains a rule whose conclusion is a term 
+that does not itself meet the restrictions 
 of the output logic.
 For example, consider the logic of \emph{linear} integer arithmetic
 and a grammar $G$ containing a non-terminal symbol $y_c$ of integer type
@@ -1324,6 +1350,7 @@ Grammar $G$ may be allowed in the logic of linear integer arithmetic
 even if it has a rule whose conclusion is $y_c * t$, 
 noting that no non-linear terms can be generated from this rule,
 provided that no non-linear terms can be generated from $t$.
+An example demonstrating this case is given in Section~\ref{sec:examples}.
 %then the term $y_c * y$ may be the conclusion
 %grammar terms $g_{ij}$ may involve
 %the multiplication of two non-constant integer terms $t_1$ and $t_2$
@@ -1333,7 +1360,7 @@ provided that no non-linear terms can be generated from $t$.
 %The default logic assumed by the SyGuS standard assumes
 %additional restrictions on the terms that are generated by grammars.
 The feature set component of the SyGuS logic 
-may impose additional restrictions
+imposes additional restrictions
 on the terms that are generated by grammars.
 Note the following definition.
 The \emph{expanded form} of a term $t$
@@ -1349,7 +1376,6 @@ it is not allowed if $t$
 contains $f$ itself unless the feature $\frecursionkwd$ is enabled in the feature set of $\slogic$;
 it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is enabled in the feature set of $\slogic$.
 
-\rem{Special logics: PBE, single invariant synthesis?}
 
 \section{Formal Semantics}
 \label{sec:logical-semantics}
@@ -1405,6 +1431,7 @@ if one of the following hold:
 \begin{enumerate}
 \item 
 A grammar $G$ is provided for $f$,
+$t$ contains no free occurrences of non-terminal symbols,
 and $G$ generates $t$ starting from $y_1$,
 where $y_1$ is the start symbol of $G$.
 
@@ -1456,17 +1483,52 @@ for details see Section 5 of~\cite{BarFT-RR-17}.
 
 The above definition covers cases where $f_1, \ldots, f_n$
 have recursive definitions or references to forward declarations.
-A formal description of $T$-valid formulas that contain these kinds of
-functions assumes the semantics for SMT-LIB input formulas that involve
-(defined) macros and recursive functions.
+The formal definition of $T$-valid formulas that contain these kinds of
+function definitions assumes the semantics for SMT-LIB input formulas that 
+involve (defined) macros and recursive functions.
 
 \section{Examples}
 \label{sec:examples}
 
-\rem{Simple LIA example}
+%\rem{Simple LIA example}
 
-\paragraph{Datatypes with Linear Arithmetic}
+\begin{example}[Linear Arithmetic with Constant Coefficients]
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic LIA)
+(synth-fun f ((x Int) (y Int)) Int
+   ((I Int) (Ic List))
+   ((I Int (0 1 x y
+            (+ I I)
+            (* Ic I)))
+    (Ic Int (0 1 2 (- 1) (- 2)))))
+(declare-var x Int)
+(declare-var y Int)
+(constraint (= (f x y) (* 2 (+ x y))))
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set 
+to linear integer arithmetic.
+The grammar of the function-to-synthesize $f$
+has two non-terminals, ${\tt I}$ and ${\tt Ic}$.
+What is notable in this example is that
+the grammar for $f$ includes a rule for ${\tt I}$ whose right hand side 
+is the term ${\tt(*\ Ic\ I)}$. 
+If a term of this form were to appear
+in a constraint, 
+then it would not be allowed since it is the
+multiplication of two non-constant terms and thus is not allowed by the input logic ${\tt LIA}$.
+However, 
+by the definition of our restrictions on grammars in Section~\ref{ssec:logicr-grammars},
+this grammar \emph{is allowed},
+since all closed terms that the grammar generates are allowed by linear arithmetic.
+A possible correct solution to this synthesis conjecture is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
+\end{lstlisting}
+\end{example}
 
+\begin{example}[Datatypes with Linear Arithmetic]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic DTLIA)
@@ -1477,7 +1539,7 @@ Consider the following example:
             (head L) 
             (+ I I)
             (ite B I I)))
-    (L List (nil (cons I L) (tail L)))
+    (L List (nil x (cons I L) (tail L)))
     (B Bool (((_ is nil) L) 
              ((_ is cons) L)
              (= I I)
@@ -1504,9 +1566,9 @@ A possible correct solution to this synthesis conjecture is:
 In other words, a possible solution for $f$ returns zero whenever its
 argument is the empty list ${\tt nil}$, 
 and returns one plus the head of its argument otherwise.
+\end{example}
 
-\paragraph{Bit-Vectors with Concatenation and Extraction}
-
+\begin{example}[Bit-Vectors with Concatenation and Extraction]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic BV)
@@ -1532,7 +1594,7 @@ Consider the following example:
 \end{lstlisting}
 The this example, the logic is set to bitvectors ${\tt BV}$.
 A single function-to-synthesize $f$ is given that takes a
-32 bit bit-vector as input and returns a 32 bit bit-vector as output.
+bit-vector of bit-width 32 as input and returns a bit-vector of the same width as output.
 Its grammar involves non-terminals whose sorts are bit-vectors of
 bit-width 32 and 16.
 The semantics of the operators in this example are defined in the SMT-LIB standard.
@@ -1549,8 +1611,44 @@ A possible correct solution for $f$ is:
 In other words, a possible solution for $f$ 
 returns the concatenation of bits $15$ to $0$ of its argument
 with the the bit-vector $\#x0000$.
+\end{example}
 
-\paragraph{Grammars with Defined Symbols and Forward Declarations}
+\begin{example}[Strings]
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic SLIA)
+(synth-fun f ((x String)) String
+   ((S String) (I Int))
+   ((S Int ("" x 
+            (str.++ S S)
+            (str.substr S I I)))
+    (I Int (0 1 (str.len S) (- I I) (+ I I)))))
+(constraint (= (f "AB") "A"))
+(constraint (= (f "") ""))
+(constraint (= (f "AAAA") "AAA"))
+(check-synth)
+\end{lstlisting}
+This example sets the logic to strings with linear arithmetic (${\tt SLIA}$).
+A possible correct response from the synthesis solver in this example is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x String)) String (str.substr x 0 (- (str.len x) 1)))
+\end{lstlisting}
+In other words, the above definition returns 
+the substr (via the substring operator ${\tt str.substr}$ starting
+at position $0$ and containing (at most) ${\tt (-\ (str.len\ x)\ 1)}$ characters.
+Thus, when the argument of $f$ is non-empty, it returns
+the result of dropping its last character.
+%This is equivalent to dropping the last character from the argument for all inputs.
+Moreover, notice this definition for $f$ satisfies the constraint 
+${\tt (=\ (f\ }\texttt{""}{\tt)\ \texttt{""})}$ since
+substring is interpreted as the empty string when its third argument
+is negative.
+The semantics for string operators, which includes corner cases
+like the one mentioned above,
+is given in~\cite{smtlibStrings} and is the semantics assumed by this document.
+\end{example}
+
+\begin{example}[Grammars with Defined Symbols, Forward Declarations and Recursion]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic LIA)
@@ -1565,8 +1663,9 @@ Consider the following example:
    ((I Int))
    ((I Int (0 1 x (fx_plus_one I)))))
 (synth-fun h ((x Int)) Int
-   ((I Int))
-   ((I Int (0 1 x (h I)))))
+   ((I Int) (B Bool))
+   ((I Int (0 1 x (- I 1) (+ I I) (h I) (ite B I I)))
+    (B Bool ((= I I) (> I I))))
 (declare-var y Int)
 (constraint (= (h y) (- (g y) (f y))))
 (check-synth)
@@ -1579,8 +1678,8 @@ and in this example.
 The grammar for $g$ contains an application of a macro ${\tt fx\_plus\_one}$,
 whose exanded form contains a previously declared function-to-synthesize $f$.
 This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this example.
-The grammar for $h$ contains $h$ itself, and thus is allowed since $\frecursionkwd$ is
-enabled in this example.
+The grammar for $h$ contains a rule that contains an application of $h$ itself.
+This grammar is allowed since $\frecursionkwd$ is enabled in this example.
 A possible correct response from the synthesis solver in this example is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x Int)) Int x)
@@ -1590,6 +1689,7 @@ A possible correct response from the synthesis solver in this example is:
 Notice the above definitions for $f$, $g$, and $h$ are given 
 in the order in which they were introduced via $\synthfunkwd$ commands
 in the input.
+\end{example}
 
 \bibliographystyle{plain}
 \bibliography{references}
