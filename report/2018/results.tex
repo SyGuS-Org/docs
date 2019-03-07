@@ -1,0 +1,107 @@
+\section{Results Overview}
+\label{sec:comp-results}
+
+The combined results for all tracks are given in Figure~\ref{fig:combinedresults}. The figure shows the sum of benchmarks solved by the solvers for each track. We can observe that the $\eusolvernew$ solved the highest number of benchmarks in the combined tracks, and   the \euphony\ solver and the $\cvcnew$ solver  solved almost as many.
+
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\textwidth]{figures/TotalSolved.png}
+	\caption{The overall combined results for each solver on benchmarks from all five tracks.}
+	\label{fig:combinedresults}
+\end{figure}
+
+
+
+The primary criterion for winning a track was the number of benchmarks solved, but we also analyzed the time to solve and the the size of the generated expressions. Both where classified using a pseudo-logarithmic scale as follows.
+For time to solve the scale is [0,1), [1,3), [3,10), [10,30),[30, 100), [100,300), [300, 1000), [1000,3600), $>$3600. That is the first ``bucket'' refers to termination in less than one second, the second to termination in one to three second and so on. We say that a solver solved a certain benchmark \emph{among the fastest} if the time it took to solve that benchmark was on the same bucket as that of the solver who solved that benchmark the fastest. 
+For the expression sizes the pseudo-logarithmic scale we use is [1,10), [10,30), [30,100), [100,300), [300,1000), $>$1000 where expression size is the number of nodes in the SyGuS parse-tree.
+In some tracks there was a tie or almost a tie in terms of the number of solved benchmarks, but the differences in the time to solve where significant.
+We also report on the number of benchmarks \emph{solved uniquely} by a solver (meaning the number of benchmark that solver was the single solver that managed to solve them).
+
+
+
+Figure~\ref{fig:resultsPerTrack} shows the percentage of benchmarks solved by each of the solvers in each of the tracks (in the upper part) and the number of benchmarks solved among the fastest by each of the solvers in each of the tracks (in the lower part) and the number of benchmarks solved among the fastest. 
+
+\begin{figure}
+	\begin{center}
+		\begin{minipage}{\textwidth}
+			\centering
+			\includegraphics[width=0.95\textwidth]{figures/Solved.png}
+		\end{minipage}
+		\\[1cm]
+		\begin{minipage}{\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{figures/Fastest.png}
+		\end{minipage}
+		\\[1cm]
+		\begin{minipage}{\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{figures/Smallest.png}
+		\end{minipage}
+	\end{center}
+	\caption{Percentage of benchmarks solved by the different solvers across all tracks, and the percentage of benchmarks a solver solved among the fastest for that benchmarks (according to the logarithmic scale)}\label{fig:resultsPerTrack}	
+\end{figure}
+
+
+\paragraph{General Track}
+In the general track the \eusolvernew\ solved more benchmarks than all others (407), the \cvcnew\ came second, solving 378 benchmarks, and \euphony\ came third, solving 362 benchmarks. The same order appears in the number of benchmarks solved among the fastest: \eusolvernew\ with 276, \cvcnew\ with 236, and \euphony\ with 135. In terms of benchmarks solved uniquely by a solver, we have that \eusolvernew\ solved 34 uniquely, \cvcnew\ solved 9 uniquely, and \euphony\ solved 2 uniquely. 
+
+
+
+\begin{table}[t]
+	\begin{center}
+		\scalebox{0.9}{
+		\begin{tabular}{lr||rrrrrrrrrrrr|r}
+			 &	& \rot{Compiler Optimizations and Bit Vectors}	& \rot{Let and Motion Planning} &	\rot{Invariant Generation with Bounded Ints} &	\rot{Invariant Generation with Unbounded Ints} &	\rot{Multiple Functions}	& \rot{Arrays} &	\rot{Hackers Delight} &	\rot{Integers} &	\rot{Program Repair} &	\rot{ICFP} &	\rot{Cryptographic Circuits} &	\rot{Instruction Selection} & {Total}\\\hline \hline
+\multicolumn{2}{l||}{Number of benchmarks}  & 32 & 30 & 28 & 28 & 32 & 31 & 44 & 34 & 18 & 50 & 214 & 28 & 569 \\ \hline			 
+\multirow{3}{*}{Solved} & \eusolvernew\ &	16	& 10	& 24	&24 &	18	& 31	& 35 &	33 &	14 &	50& 	152& 	0 & 407 \\
+& \cvcnew\ &	15	& 15	& 24	& 24	& 12	& 31 &	44& 	34&	14&	48&	117&	0 & 378 \\
+& \euphony\	& 19	&10 &	24 &	24 &	18	& 31	& 44	& 33	& 14	& 50	& 95 &	0 & 362 \\ \hline
+\multirow{3}{*}{Fastest} & \eusolvernew\ &	7	&2 	& 12	& 14	& 6	& 5	& 20	& 14 &	13 &	40	& 143 &	0 & 276\\
+ & \cvcnew &	11 &	15 &	18	& 19	& 9	& 31 &	44	& 33	& 7& 	19	& 30	& 0 & 236 \\
+& \euphony	& 16 &	2	& 8	& 13 &	13 &	4	& 27 &	14 &	9	& 29	& 0& 	0 & 135 \\ \hline
+\multirow{3}{*}{Uniquely} & \eusolvernew\ &	0	& 0& 	0	& 0& 	0	& 0& 	0	& 0 &	0	& 0	& 34 &	0 & 34 \\
+& \cvcnew &	1	& 5&	0&	0&	1&	0	&0&	1&	1&	0	&0&	0 & 9\\
+& \euphony	& 2	& 0	& 0& 	0	& 0& 	0	& 0& 	0	& 0& 	0 &	0	& 0 & 2\\ \hline			
+		\end{tabular}}
+	\end{center}
+	\caption{Solvers performance across all categories of the general track}
+	\label{tbl:general-categories}
+\end{table}
+
+We partition the benchmarks of the general track according to categories where different categories consists of related benchmarks. The results per category are given in the Table~\ref{tbl:general-categories}. We can see that \eusolvernew\ preformed better than others in the categories of program repair, icfp and cryptographic circuits. The \cvcnew\ solver preformed better than others in the categories of let and motion planning, invariant generation with bounded and unbounded integers, arrays, integers and hacker's delight. The \euphony\ solver preformed better than others in the categories of  multiple functions, compiler optimizations and bitvectors. We can also observe that none of the solvers could solve any of the instruction selection benchmarks. 
+
+
+
+
+% \begin{figure}
+% 	\begin{center}
+% 		\begin{minipage}{1\textwidth}
+% 			\centering
+% 			\includegraphics[scale=0.9,width=1\textwidth]{Figures/GeneralSolved.png}
+% 		\end{minipage}
+% 		\\
+% 		\vspace{2mm}
+% 		\begin{minipage}{1\textwidth}
+% 			\centering
+% 			\includegraphics[scale=0.9,width=1\textwidth]{Figures/GeneralWon.png}
+% 		\end{minipage}
+% 	\end{center}
+% 	\caption{Percentage of benchmarks solved by the different solvers across all categories of the general track, and the percentage of benchmarks a solver solved among the fastest for that benchmark (according to the logarithmic scale).  }	
+% \end{figure}	
+
+
+\paragraph{Conditional Linear Arithmetic Track}
+In the CLIA track the \cvcnew\ solved all 73 benchmarks, \euphony\ and \eusolvernew\ solved 71 benchmarks, and \dryd\ solved 32 benchmarks. The \cvcnew\ solver solved 72 benchmarks among the fastest, followed by \eusolvernew\ which solved 29 among the fastest, \euphony\ which solved 11 among the fastetst, and \dryd\ which solved 3 among the fastest. None of the benchmarks where solved uniquely.
+
+\paragraph{Invariant Generation Track}
+In the invariant generation  track, both the \lig\ solver and the \cvcnew\ solver solved 65 out of 74 benchmarks, the \dryd\ solver solved 64 benchmarks, the Euphony solver solved 48 benchmarks and EUSolver solved 40 benchmarks. In terms of the time to solve the differences where more significant. The \lig\ solver solved 54 benchmarks among the fastest, followed by \cvcnew\ which solved 38 among the fastest, and \dryd\
+which solved 36 among the fastest. There was one benchmark that only one solver solved, this is the \texttt{hola07.sl} benchmark, and the solver is \lig. 
+
+
+\paragraph{Programming By Example BV Track}
+In the PBE track using BV theory, the \ethree\ solver solved all 750 benchmarks, \euphony\ solved 747 benchmarks, \eusolvernew\ solved 242, benchmarks, and \cvcnew\ solved 687 benchmarks. The \ethree\ solver solved 692 among the fastest, \eusolvernew\ solved 211 among the fastest, \cvcnew\ solved 169 among the fastest, and \euphony\ solved 117 among the fastest. Three benchmarks where solved uniquely by \ethree, these are: \texttt{13_1000.sl}, \texttt{40_1000.sl} and \texttt{89_1000.sl}.
+
+\paragraph{Programming By Example Strings Track}
+In the PBE track using SLIA theory, the \cvcnew\ solved 89 out of 108 benchmarks, \euphony\ solved 78, and \eusolvernew\ solved 69. The \euphony\ solver solved 66 benchmarks among the fastest, \cvcnew\ solved 49 among the fastest and \eusolvernew\ solved 23 among the fastest. Nine benchmarks where solved by only one solver, which is \cvcnew.

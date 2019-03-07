@@ -43,17 +43,17 @@
 \maketitle
 
 %%%%%%%%%%%%%%% MACROS %%%%%%%%%%%%%%
-\newcommand{\commentout}[1]{}
+
 \newcommand{\alc}{\textsc{Alchemist-cs}}
 \newcommand{\alccsdt}{\textsc{Alchemist-csdt}}
 \newcommand{\cvc}{\textsc{CVC4}}
-\newcommand{\cvclast}{\ensuremath{\textsc{CVC4}_{2016}}}
+\newcommand{\cvclast}{\ensuremath{\textsc{CVC4}_{2017}}}
 \newcommand{\enum}{\textsc{Enumerative}}
 \newcommand{\skac}{\textsc{Sketch-ac}}
 \newcommand{\ice}{\textsc{Ice-dt}}
 \newcommand{\toast}{\textsc{SosyToast}}
 \newcommand{\stoch}{\textsc{Stochastic}}
-\newcommand{\cvcnew}{\ensuremath{\textsc{CVC4}_{2017}}}
+\newcommand{\cvcnew}{\ensuremath{\textsc{CVC4}_{2018}}}
 \newcommand{\eusolver}{\textsc{EUSolver}}
 \newcommand{\eusolverlast}{\ensuremath{\textsc{EUSolver}_{2016}}}
 \newcommand{\eusolvernew}{\ensuremath{\textsc{EUSolver}_{2017}}}
@@ -72,6 +72,7 @@
 \newcommand*\rot{\multicolumn{1}{R{90}{1em}}}% no optional argument here, please!
 
 \newcommand{\verify}[1]{\textcolor{red}{#1}}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{abstract}
@@ -79,7 +80,10 @@
 \input{intro}
 \input{benchmarks}
 \input{solvers}
-\input{comp-results}
+\input{setup}
+\input{results}
+\input{details}
+
 
 \section{Summary}
 \label{sec:discussion}
@@ -95,8 +99,7 @@ we see that these include those with either \verify{<features> ...}
 %(i) multiple functions to synthesize or (ii) where the specification invokes the functions with different parameters or (iii) those that use the \emph{let} expression for specifying auxiliary variables, or (iv) the grammar is very general consisting of much more operators than needed, or (v) the specification is partial in the sense that the domain of semantic solutions is not a singleton.
 
 
-
-%\nocite{*}
 \bibliographystyle{eptcs}
-\bibliography{bib-wdoi}
+\bibliography{paper}
+
 \end{document}

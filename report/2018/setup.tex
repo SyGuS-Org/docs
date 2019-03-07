@@ -1,0 +1,11 @@
+\section{Experimental Setup} 
+\label{sec:exp-set}
+
+The solvers are run on the StarExec platform~\cite{starexec} with a dedicated cluster of 12 nodes,
+where each node consisted of two 4-core 2.4\,GHz Intel processors with 256\,GB RAM and a 1\,TB hard drive.
+The memory usage limit of each solver run is set to 128\,GB.
+The wall-clock time limit is set to 3600 seconds (thus, a solver that used all 4 cores could consume at most 14400 seconds cpu time).
+The solutions that the solvers produce are checked for both syntactic and semantic correctness.
+That is, a first post-processor checks that the produced expression adheres to the grammar specified in the given benchmark,
+and if this check passes, a second post-processor checks that the solution adheres to semantic constraints
+given in the benchmark (by invoking an SMT solver).
