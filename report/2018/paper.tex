@@ -1,0 +1,102 @@
+\documentclass[submission,copyright,creativecommons]{eptcs}
+\providecommand{\event}{SYNT 2018} % Name of the event you are submitting to
+
+\usepackage{bookmark}
+\usepackage{underscore}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{caption}    % for side-by-side figures
+\usepackage{subcaption} % for side-by-side figures
+\usepackage{multirow}
+
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+
+\usepackage[inline]{enumitem}
+\newcommand{\inliststyle}[1]{\textbf{\smaller#1}}
+\newlist{inlist}{enumerate*}{1}
+\setlist[inlist]{label={\inliststyle{(\arabic*)}}}
+
+\title{SyGuS-Comp 2018: Results and Analysis}
+\author{
+	Rajeev Alur 
+	\institute{University of Pennsylvania}
+  \and
+	Dana Fisman
+	\institute{Ben-Gurion University}
+  \and
+	Saswat Padhi
+	\institute{University of California, Los Angeles}
+  \and
+	Rishabh Singh
+	\institute{Google Brain}
+  \and
+	Abhishek Udupa
+	\institute{Microsoft, Redmond}
+}
+\def\titlerunning{SyGuS-Comp 2018: Results and Analysis}
+\def\authorrunning{R. Alur, D. Fisman, S. Padhi, R. Singh \& A. Udupa}
+\def\copyrightholders{Alur, Fisman, Padhi, Singh \& Udupa}
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%% MACROS %%%%%%%%%%%%%%
+\newcommand{\commentout}[1]{}
+\newcommand{\alc}{\textsc{Alchemist-cs}}
+\newcommand{\alccsdt}{\textsc{Alchemist-csdt}}
+\newcommand{\cvc}{\textsc{CVC4}}
+\newcommand{\cvclast}{\ensuremath{\textsc{CVC4}_{2016}}}
+\newcommand{\enum}{\textsc{Enumerative}}
+\newcommand{\skac}{\textsc{Sketch-ac}}
+\newcommand{\ice}{\textsc{Ice-dt}}
+\newcommand{\toast}{\textsc{SosyToast}}
+\newcommand{\stoch}{\textsc{Stochastic}}
+\newcommand{\cvcnew}{\ensuremath{\textsc{CVC4}_{2017}}}
+\newcommand{\eusolver}{\textsc{EUSolver}}
+\newcommand{\eusolverlast}{\ensuremath{\textsc{EUSolver}_{2016}}}
+\newcommand{\eusolvernew}{\ensuremath{\textsc{EUSolver}_{2017}}}
+\newcommand{\euphony}{\textsc{Euphony}}
+\newcommand{\ethree}{\textsc{e3solver}}
+\newcommand{\dryd}{\textsc{DryadSynth}}
+\newcommand{\lig}{\textsc{LoopInvGen}}
+\newcommand{\sygus}{SyGuS}
+\newcommand{\comp}{SyGuS-Comp}
+
+\newcolumntype{R}[2]{%
+	>{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+	l%
+	<{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{90}{1em}}}% no optional argument here, please!
+
+\newcommand{\verify}[1]{\textcolor{red}{#1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{abstract}
+
+\input{intro}
+\input{benchmarks}
+\input{solvers}
+\input{comp-results}
+
+\section{Summary}
+\label{sec:discussion}
+This year's competition consisted of over 1600 benchmarks,
+107 of which where contributed this year.
+Five solvers competed this year, one of which was submitted by developers creating a tool for SyGuS-Comp for the first time.
+All tools preformed remarkably, on both existing and new benchmarks.
+In particular, \verify{65\%} of the new benchmarks were solved.
+
+An impressive progress was shown this year in solving the strings benchmarks of the programing by example track.
+Analyzing the features of benchmarks that are still hard to solve,
+we see that these include those with either \verify{<features> ...}
+%(i) multiple functions to synthesize or (ii) where the specification invokes the functions with different parameters or (iii) those that use the \emph{let} expression for specifying auxiliary variables, or (iv) the grammar is very general consisting of much more operators than needed, or (v) the specification is partial in the sense that the domain of semantic solutions is not a singleton.
+
+
+
+%\nocite{*}
+\bibliographystyle{eptcs}
+\bibliography{bib-wdoi}
+\end{document}
