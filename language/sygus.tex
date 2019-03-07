@@ -587,7 +587,7 @@ can appear in constraints and
 the output logic determines
 what terms can appear in grammars and solutions.
 The feature set places additional restrictions or extensions 
-on the terms, grammars and commands that are allowed in an input.
+on the constraints, grammars as well as the commands that are allowed in an input.
 These are described in detail in Section~\ref{sec:sygus-logic}.
 
 \begin{itemize}
@@ -595,10 +595,10 @@ These are described in detail in Section~\ref{sec:sygus-logic}.
 
 This sets the SyGuS background logic
 to the one that $S$ refers to.
-The logic $S$ can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
+The logic string $S$ can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
 or may be solver-specific.
 If $S$ is an SMT-LIB standard logic,
-then the logic must 
+then it must 
 contain quantifiers or this command is not well-formed,
 that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.\footnote{
 By convention quantifiers are always included in the logic. This is because
@@ -1490,7 +1490,7 @@ involve (defined) macros and recursive functions.
 \section{Examples}
 \label{sec:examples}
 
-\rem{Simple LIA example}
+%\rem{Simple LIA example}
 
 \begin{example}[Linear Arithmetic with Constant Coefficients]
 Consider the following example:
@@ -1521,8 +1521,7 @@ multiplication of two non-constant terms and thus is not allowed by the input lo
 However, 
 by the definition of our restrictions on grammars in Section~\ref{ssec:logicr-grammars},
 this grammar \emph{is allowed},
-since all closed terms that the grammar generates (those that do not have
-non-terminal symbols as free variables) are allowed by linear arithmetic.
+since all closed terms that the grammar generates are allowed by linear arithmetic.
 A possible correct solution to this synthesis conjecture is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
@@ -1612,6 +1611,41 @@ A possible correct solution for $f$ is:
 In other words, a possible solution for $f$ 
 returns the concatenation of bits $15$ to $0$ of its argument
 with the the bit-vector $\#x0000$.
+\end{example}
+
+\begin{example}[Strings]
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic SLIA)
+(synth-fun f ((x String)) String
+   ((S String) (I Int))
+   ((S Int ("" x 
+            (str.++ S S)
+            (str.substr S I I)))
+    (I Int (0 1 (str.len S) (- I I) (+ I I)))))
+(constraint (= (f "AB") "A"))
+(constraint (= (f "") ""))
+(constraint (= (f "AAAA") "AAA"))
+(check-synth)
+\end{lstlisting}
+This example sets the logic to strings with linear arithmetic (${\tt SLIA}$).
+A possible correct response from the synthesis solver in this example is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((x String)) String (str.substr x 0 (- (str.len x) 1)))
+\end{lstlisting}
+In other words, the above definition returns 
+the substr (via the substring operator ${\tt str.substr}$ starting
+at position $0$ and containing (at most) ${\tt (-\ (str.len\ x)\ 1)}$ characters.
+Thus, when the argument of $f$ is non-empty, it returns
+the result of dropping its last character.
+%This is equivalent to dropping the last character from the argument for all inputs.
+Moreover, notice this definition for $f$ satisfies the constraint 
+${\tt (=\ (f\ }\texttt{""}{\tt)\ \texttt{""})}$ since
+substring is interpreted as the empty string when its third argument
+is negative.
+The semantics for string operators, which includes corner cases
+like the one mentioned above,
+is given in~\cite{smtlibStrings} and is the semantics assumed by this document.
 \end{example}
 
 \begin{example}[Grammars with Defined Symbols, Forward Declarations and Recursion]
