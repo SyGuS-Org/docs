@@ -1101,7 +1101,7 @@ We refer to input and output logics as \emph{base} logics.
 Base logics have the same scope as SMT-LIB logics, in that their purpose is to
 define a set of terms and formulas.
 Further extensions and restrictions of the SyGuS language are recommended
-to be expressed in terms of new base logics whenever it is possible to do so.
+to be expressed as new base logics whenever it is possible to do so.
 On the other hand,
 the feature set is allowed to restrict or extend the
 \emph{commands} that are allowed in the input
@@ -1398,26 +1398,51 @@ it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is
 \subsection{Additional SyGuS Logics}
 %\rem{Special logics: PBE, single invariant synthesis?}
 Here, we cover additional SyGuS logics that are standardized
-by this document that are \emph{not} covered by the SMT-LIB standard.
+by this document that are \emph{not} defined by the SMT-LIB standard.
 
 \paragraph{Programming-by-examples (PBE)}
-Given an SMT-LIB standard logic $X$,
+Given an SMT-LIB standard logic $X$ 
+that does not contain the prefix ${\tt QF\_}$,
 the base logic ${\tt PBE\_}X$ denotes the SyGuS logic
 where the formulas in the \emph{input logic} are limited to conjunctions
 of equalities between pairs of terms $f( \vec c )$ and $d$,
 where $f$ is a function-to-synthesize,
 and $\vec c$, $d$ are constants.
+Notice that this logic is a subset of ${\tt QF\_}X$.
+
+The same logic string is used for referring to a SyGuS logic.
+The SyGuS logic ${\tt PBE\_}X$ is the one
+whose input logic is ${\tt PBE\_}X$,
+whose output logic ${\tt QF\_}X$,
+and whose feature set is the default one.
+In other words, the constraints of this logic
+are limited to be in PBE form, 
+but gives no special restrictions
+on the solutions or grammars that can be provided.
 
 \paragraph{Single Invariant-to-Synthesize (INV)}
 Given an SMT-LIB standard logic $X$,
-the logic ${\tt INV\_}X$ denotes the SyGuS logic
+the base logic ${\tt INV\_}X$ denotes the SyGuS logic
 where the constraints in the \emph{input logic} are limited to an
 invariant synthesis problem for a single invariant-to-synthesize.
+Concretely,
+this means that formulas in this logic are limited to those that 
+are (syntactically) a conjunction of three implications, 
+for a single invariant to synthesize $I$:
+\begin{enumerate}
+\item The first is an implication whose antecedant is an arbitrary formula
+in the logic (the pre-condition) and
+and whose conclusion is
+an application $I( \vec x )$ where $\vec x$ are variables,
+\item The second 
 
-
-Note that all well-formed inputs that are limited to
-a single $\synthinvkwd$ command, followed by a single $\constraintinvkwd$
-command meet the requirements of the input logic ${\tt INV\_}X$.
+\item The third is an implication whose antecedant is 
+an application $I( \vec x )$ where $\vec x$ are variables,
+and whose conclusion is an arbitrary formula in the logic (the post-condition).
+\end{enumerate}
+Note that all well-formed inputs that are limited to a sequence
+of two commands, a $\synthinvkwd$ command followed by a $\constraintinvkwd$ command,
+meet the requirements of the input logic ${\tt INV\_}X$.
 
 \section{Formal Semantics}
 \label{sec:logical-semantics}
