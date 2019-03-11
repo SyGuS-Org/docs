@@ -1101,7 +1101,7 @@ We refer to input and output logics as \emph{base} logics.
 Base logics have the same scope as SMT-LIB logics, in that their purpose is to
 define a set of terms and formulas.
 Further extensions and restrictions of the SyGuS language are recommended
-to be expressed in terms of new base logics whenever it is possible to do so.
+to be expressed as new base logics whenever it is possible to do so.
 On the other hand,
 the feature set is allowed to restrict or extend the
 \emph{commands} that are allowed in the input
@@ -1398,26 +1398,75 @@ it is not allowed regardless of the terms it generates unless $\fgrammarskwd$ is
 \subsection{Additional SyGuS Logics}
 %\rem{Special logics: PBE, single invariant synthesis?}
 Here, we cover additional SyGuS logics that are standardized
-by this document that are \emph{not} covered by the SMT-LIB standard.
+by this document that are \emph{not} defined by the SMT-LIB standard.
 
 \paragraph{Programming-by-examples (PBE)}
-Given an SMT-LIB standard logic $X$,
-the base logic ${\tt PBE\_}X$ denotes the SyGuS logic
-where the formulas in the \emph{input logic} are limited to conjunctions
-of equalities between pairs of terms $f( \vec c )$ and $d$,
-where $f$ is a function-to-synthesize,
+Given an SMT-LIB standard logic $X$ 
+that does not contain the prefix ${\tt QF\_}$,
+the base logic ${\tt PBE\_}X$ denotes the logic
+where constraints are limited to (conjunctions of)
+equalities between pairs of terms $f( \vec c )$ and $d$,
+where $f$ is a function
 and $\vec c$, $d$ are constants.
+We refer to an equality of the aforementioned form as a \emph{PBE equality},
+which denotes a relationship between the inputs and output of 
+function $f$ for a single point.
+Notice that this logic is a subset of ${\tt QF\_}X$.
+
+We overload this logic string and use it for referring to a SyGuS logic as well.
+The SyGuS logic ${\tt PBE\_}X$ is the one
+whose input logic is ${\tt PBE\_}X$,
+whose output logic ${\tt QF\_}X$,
+and whose feature set is the default one.
+In other words, the constraints allowed by this logic
+are limited to conjunctions of PBE equalities,
+but gives no special restrictions
+on the solutions or grammars that can be provided.
+
+By construction of the overall synthesis conjecture, SyGus command sequences 
+that meet the requirements of the input logic ${\tt PBE\_}X$
+require that each ${\tt constraint}$ command takes as argument a PBE equality.
 
 \paragraph{Single Invariant-to-Synthesize (INV)}
 Given an SMT-LIB standard logic $X$,
-the logic ${\tt INV\_}X$ denotes the SyGuS logic
-where the constraints in the \emph{input logic} are limited to an
-invariant synthesis problem for a single invariant-to-synthesize.
+the base logic ${\tt INV\_}X$ denotes the logic
+where formulas are limited to the invariant synthesis
+problem for a single invariant-to-synthesize.
+Concretely,
+this means that formulas are limited to those that 
+are (syntactically) a conjunction of three implications, 
+for a single predicate $I$:
+\begin{enumerate}
+\item The first is an implication whose antecedant is an arbitrary formula
+in the logic (the pre-condition) and
+and whose conclusion is
+an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
 
+\item The second is an implication whose antecedant is
+$I( \vec x ) \wedge \varphi$
+where $\vec x$ is a tuple of unique variables and $\varphi$ is an arbitrary formula
+in the logic (the transition relation),
+and whose conclusion is $I( \vec y )$
+where $\vec y$ is a tuple of unique variables disjoint from $\vec x$,
 
-Note that all well-formed inputs that are limited to
-a single $\synthinvkwd$ command, followed by a single $\constraintinvkwd$
-command meet the requirements of the input logic ${\tt INV\_}X$.
+\item The third is an implication whose antecedant is 
+an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
+and whose conclusion is an arbitrary formula in the logic (the post-condition).
+\end{enumerate}
+The variables $\vec x$ in each of these three formulas are not required to be the same.
+
+Like the previous section, 
+we overload this logic string and use it for referring to SyGuS logics as well.
+Logic ${\tt INV\_}X$ denotes the SyGuS logic
+whose input logic is ${\tt INV\_}X$,
+whose output logic is ${\tt QF\_}X$,
+and whose feature set is the default one.
+
+Note that if a SyGuS command sequence is such that
+(1) it contains one $\synthinvkwd$ command,
+(2) it contains one $\constraintinvkwd$ command whose arguments are predicates whose definitions belong to logic $X$,
+and (3) it contains no other commands that introduce constraints,
+then its constraints are guaranteed to meet the requirements of the input logic ${\tt INV\_}X$.
 
 \section{Formal Semantics}
 \label{sec:logical-semantics}
