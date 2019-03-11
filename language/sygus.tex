@@ -1430,29 +1430,30 @@ require that each ${\tt constraint}$ command takes as argument a PBE equality.
 \paragraph{Single Invariant-to-Synthesize (INV)}
 Given an SMT-LIB standard logic $X$,
 the base logic ${\tt INV\_}X$ denotes the logic
-where constraints are limited to the invariant synthesis
+where formulas are limited to the invariant synthesis
 problem for a single invariant-to-synthesize.
 Concretely,
-this means that constraints allowed in its input logic are limited to those that 
+this means that formulas are limited to those that 
 are (syntactically) a conjunction of three implications, 
-for a single invariant to synthesize $I$:
+for a single predicate $I$:
 \begin{enumerate}
 \item The first is an implication whose antecedant is an arbitrary formula
 in the logic (the pre-condition) and
 and whose conclusion is
-an application $I( \vec x )$ where $\vec x$ are variables,
+an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
 
 \item The second is an implication whose antecedant is
 $I( \vec x ) \wedge \varphi$
-where $\vec x$ are variables and $\varphi$ is an arbitrary formula
+where $\vec x$ is a tuple of unique variables and $\varphi$ is an arbitrary formula
 in the logic (the transition relation),
 and whose conclusion is $I( \vec y )$
-where $\vec y$ are variables disjoint from $\vec x$,
+where $\vec y$ is a tuple of unique variables disjoint from $\vec x$,
 
 \item The third is an implication whose antecedant is 
-an application $I( \vec x )$ where $\vec x$ are variables,
+an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
 and whose conclusion is an arbitrary formula in the logic (the post-condition).
 \end{enumerate}
+The variables $\vec x$ in each of these three formulas are not required to be the same.
 
 Like the previous section, 
 we overload this logic string and use it for referring to SyGuS logics as well.
@@ -1463,7 +1464,7 @@ and whose feature set is the default one.
 
 Note that if a SyGuS command sequence is such that
 (1) it contains one $\synthinvkwd$ command,
-(2) it contains one $\constraintinvkwd$ command whose arguments are predicates whose definitions belong to logic $X$
+(2) it contains one $\constraintinvkwd$ command whose arguments are predicates whose definitions belong to logic $X$,
 and (3) it contains no other commands that introduce constraints,
 then its constraints are guaranteed to meet the requirements of the input logic ${\tt INV\_}X$.
 
