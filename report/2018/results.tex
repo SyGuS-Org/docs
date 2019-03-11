@@ -1,8 +1,10 @@
 \section{Results Overview}
 \label{sec:comp-results}
 
-The combined results for all tracks are given in Figure~\ref{fig:combinedresults}. The figure shows the sum of benchmarks solved by the solvers for each track. We can observe that the $\eusolvernew$ solved the highest number of benchmarks in the combined tracks, and   the \euphony\ solver and the $\cvcnew$ solver  solved almost as many.
-
+The combined results for all tracks are summarized in \Cref{fig:combinedresults},
+which shows the total number of benchmarks solved by each solver in various track.
+We observe that \cvcnew\ solved the highest combined number of benchmarks,
+and \eusolvernew\ solved almost as many.
 
 \begin{figure}
 	\centering
@@ -11,17 +13,28 @@ The combined results for all tracks are given in Figure~\ref{fig:combinedresults
 	\label{fig:combinedresults}
 \end{figure}
 
+The primary criterion for winning a track was the number of benchmarks solved,
+but we also analyzed the time to solve and the the size of the generated expressions.
+Both were classified using a pseudo-logarithmic scale as follows.
+For time to solve, the scale is: $[0,1)$, $[1,3)$, $[3,10)$, $[10,30)$, $[30, 100)$,
+$[100,300)$, $[300, 1000)$, $[1000,3600)$, $\geqslant 3600$.
+That is, the first ``bucket'' refers to termination in less than one second,
+the second to termination in one to three seconds and so on.
+We say that a solver solved a certain benchmark \emph{among the fastest}
+if the time it took to solve that benchmark is in the same bucket
+as that of the solver which solved that benchmark in minimum time.
+Similarly, for expression sizes, the pseudo-logarithmic scale we use is:
+$[1,10)$, $[10,30)$, $[30,100)$, $[100,300)$, $[300,1000)$, $\geqslant 1000$,
+where expression size is the number of nodes in the SyGuS parse-tree.
+In some tracks there was a tie or almost a tie in terms of the number of solved benchmarks,
+but the differences in the time to solve where significant.
+We also report on the number of benchmarks \emph{solved uniquely} by a solver,
+\emph{i.e.} the number of benchmarks which no other solver but this particular solver could solve.
 
-
-The primary criterion for winning a track was the number of benchmarks solved, but we also analyzed the time to solve and the the size of the generated expressions. Both where classified using a pseudo-logarithmic scale as follows.
-For time to solve the scale is [0,1), [1,3), [3,10), [10,30),[30, 100), [100,300), [300, 1000), [1000,3600), $>$3600. That is the first ``bucket'' refers to termination in less than one second, the second to termination in one to three second and so on. We say that a solver solved a certain benchmark \emph{among the fastest} if the time it took to solve that benchmark was on the same bucket as that of the solver who solved that benchmark the fastest. 
-For the expression sizes the pseudo-logarithmic scale we use is [1,10), [10,30), [30,100), [100,300), [300,1000), $>$1000 where expression size is the number of nodes in the SyGuS parse-tree.
-In some tracks there was a tie or almost a tie in terms of the number of solved benchmarks, but the differences in the time to solve where significant.
-We also report on the number of benchmarks \emph{solved uniquely} by a solver (meaning the number of benchmark that solver was the single solver that managed to solve them).
-
-
-
-Figure~\ref{fig:resultsPerTrack} shows the percentage of benchmarks solved by each of the solvers in each of the tracks (in the upper part) and the number of benchmarks solved among the fastest by each of the solvers in each of the tracks (in the lower part) and the number of benchmarks solved among the fastest. 
+\Cref{fig:resultsPerTrack} shows the percentage of benchmarks solved,
+the percentage of those among the fastest,
+and the percentage of synthesized expressions among the smallest size
+for each solver in each track.
 
 \begin{figure}
 	\begin{center}
@@ -40,14 +53,21 @@ Figure~\ref{fig:resultsPerTrack} shows the percentage of benchmarks solved by ea
 			\includegraphics[width=\textwidth]{figures/Smallest.png}
 		\end{minipage}
 	\end{center}
-	\caption{Percentage of benchmarks solved by the different solvers across all tracks, and the percentage of benchmarks a solver solved among the fastest for that benchmarks (according to the logarithmic scale)}\label{fig:resultsPerTrack}	
+	\caption{Percentage of benchmarks solved by different solvers across all tracks,
+			 the percentage of benchmarks a solver solved among the fastest,
+			 and the percentage of benchmarks for which the solver generated an expression among the smallest size.}
+	\label{fig:resultsPerTrack}	
 \end{figure}
 
-
 \paragraph{General Track}
-In the general track the \eusolvernew\ solved more benchmarks than all others (407), the \cvcnew\ came second, solving 378 benchmarks, and \euphony\ came third, solving 362 benchmarks. The same order appears in the number of benchmarks solved among the fastest: \eusolvernew\ with 276, \cvcnew\ with 236, and \euphony\ with 135. In terms of benchmarks solved uniquely by a solver, we have that \eusolvernew\ solved 34 uniquely, \cvcnew\ solved 9 uniquely, and \euphony\ solved 2 uniquely. 
-
-
+In the general track, \cvcnew\ solved more benchmarks than all others ($447$),
+and \eusolvernew\ came second, solving $420$ benchmarks.
+We note that the new version \cvcnew\ of \cvc, is significantly better than the previous version \cvclast,
+which could only solve $395$ benchmarks.
+The same order appears in the number of benchmarks solved among the fastest:
+\cvcnew\ with 366, \eusolvernew\ with 266, and \cvclast\ with 231.
+\verify{In terms of benchmarks solved uniquely by these solvers,
+we have that \cvcnew\ solved ??? uniquely and \eusolvernew\ solved ??? uniquely.}
 
 \begin{table}[t]
 	\begin{center}
@@ -66,14 +86,17 @@ In the general track the \eusolvernew\ solved more benchmarks than all others (4
 & \euphony	& 2	& 0	& 0& 	0	& 0& 	0	& 0& 	0	& 0& 	0 &	0	& 0 & 2\\ \hline			
 		\end{tabular}}
 	\end{center}
-	\caption{Solvers performance across all categories of the general track}
+	\caption{\verify{Solvers performance across all categories of the general track}}
 	\label{tbl:general-categories}
 \end{table}
 
-We partition the benchmarks of the general track according to categories where different categories consists of related benchmarks. The results per category are given in the Table~\ref{tbl:general-categories}. We can see that \eusolvernew\ preformed better than others in the categories of program repair, icfp and cryptographic circuits. The \cvcnew\ solver preformed better than others in the categories of let and motion planning, invariant generation with bounded and unbounded integers, arrays, integers and hacker's delight. The \euphony\ solver preformed better than others in the categories of  multiple functions, compiler optimizations and bitvectors. We can also observe that none of the solvers could solve any of the instruction selection benchmarks. 
-
-
-
+\verify{We partition the benchmarks of the general track according to categories where different categories consists of related benchmarks.
+The results per category are given in the Table~\ref{tbl:general-categories}.
+We can see that \eusolvernew\ preformed better than others in the categories of program repair, icfp and cryptographic circuits.
+The \cvcnew\ solver preformed better than others in the categories of let and motion planning, invariant generation with bounded and unbounded integers,
+arrays, integers and hacker's delight. The \euphony\ solver preformed better than others in the categories of
+multiple functions, compiler optimizations and bitvectors.
+We can also observe that none of the solvers could solve any of the instruction selection benchmarks.}
 
 % \begin{figure}
 % 	\begin{center}
@@ -93,15 +116,22 @@ We partition the benchmarks of the general track according to categories where d
 
 
 \paragraph{Conditional Linear Arithmetic Track}
-In the CLIA track the \cvcnew\ solved all 73 benchmarks, \euphony\ and \eusolvernew\ solved 71 benchmarks, and \dryd\ solved 32 benchmarks. The \cvcnew\ solver solved 72 benchmarks among the fastest, followed by \eusolvernew\ which solved 29 among the fastest, \euphony\ which solved 11 among the fastetst, and \dryd\ which solved 3 among the fastest. None of the benchmarks where solved uniquely.
+In the CLIA track, \cvcnew\ and \dryd\ had a close competition.
+\cvcnew\ solved $85$ out of $88$ benchmarks, \dryd\ solved $84$ benchmarks, and \eusolvernew\ solved $81$ benchmarks.
+In terms of the time to solve, \dryd\ solved $79$ benchmarks among the fastest, \cvcnew\ solved $74$,
+followed by \eusolvernew\ which solved $29$ among the fastest.
+There were $2$ benchmarks that were solved uniquely by \dryd\ and $1$ that was solved uniquely by \cvcnew.
 
 \paragraph{Invariant Generation Track}
-In the invariant generation  track, both the \lig\ solver and the \cvcnew\ solver solved 65 out of 74 benchmarks, the \dryd\ solver solved 64 benchmarks, the Euphony solver solved 48 benchmarks and EUSolver solved 40 benchmarks. In terms of the time to solve the differences where more significant. The \lig\ solver solved 54 benchmarks among the fastest, followed by \cvcnew\ which solved 38 among the fastest, and \dryd\
-which solved 36 among the fastest. There was one benchmark that only one solver solved, this is the \texttt{hola07.sl} benchmark, and the solver is \lig. 
+In the invariant generation track, the \lig\ solver solved $115$ out of $127$ benchmarks, \cvcnew\ solved $109$, \dryd\ solved $103$,
+\horndini\ solved $68$ and \eusolvernew\ solved $61$ benchmarks.
+In terms of the time to solve, \lig\ solved $102$ benchmarks among the fastest, followed by \cvcnew\ which solved $82$,
+\dryd\ which solved $81$, \horndini\ which solved $21$, and \eusolvernew\ which solved $15$.
+There was one benchmark that was solved by a unique solver -- the \texttt{fib_17n.sl} benchmark solved by \lig. 
 
+\paragraph{Programming By Example (Bit Vectors) Track}
+In the PBE on bit vectors track, the \ethree\ solver solved all 750 benchmarks,
+\euphony\ solved 747 benchmarks, \eusolvernew\ solved 242, benchmarks, and \cvcnew\ solved 687 benchmarks. The \ethree\ solver solved 692 among the fastest, \eusolvernew\ solved 211 among the fastest, \cvcnew\ solved 169 among the fastest, and \euphony\ solved 117 among the fastest. Three benchmarks where solved uniquely by \ethree, these are: \texttt{13_1000.sl}, \texttt{40_1000.sl} and \texttt{89_1000.sl}.
 
-\paragraph{Programming By Example BV Track}
-In the PBE track using BV theory, the \ethree\ solver solved all 750 benchmarks, \euphony\ solved 747 benchmarks, \eusolvernew\ solved 242, benchmarks, and \cvcnew\ solved 687 benchmarks. The \ethree\ solver solved 692 among the fastest, \eusolvernew\ solved 211 among the fastest, \cvcnew\ solved 169 among the fastest, and \euphony\ solved 117 among the fastest. Three benchmarks where solved uniquely by \ethree, these are: \texttt{13_1000.sl}, \texttt{40_1000.sl} and \texttt{89_1000.sl}.
-
-\paragraph{Programming By Example Strings Track}
+\paragraph{Programming By Example (Strings) Track}
 In the PBE track using SLIA theory, the \cvcnew\ solved 89 out of 108 benchmarks, \euphony\ solved 78, and \eusolvernew\ solved 69. The \euphony\ solver solved 66 benchmarks among the fastest, \cvcnew\ solved 49 among the fastest and \eusolvernew\ solved 23 among the fastest. Nine benchmarks where solved by only one solver, which is \cvcnew.

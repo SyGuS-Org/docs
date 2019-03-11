@@ -1,6 +1,8 @@
 \documentclass[submission,copyright,creativecommons]{eptcs}
 \providecommand{\event}{SYNT 2018} % Name of the event you are submitting to
 
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{bookmark}
 \usepackage{underscore}
 \usepackage{graphicx}
@@ -11,6 +13,10 @@
 \usepackage{subcaption} % for side-by-side figures
 \usepackage{multirow}
 \usepackage{xcolor}
+\usepackage{relsize}
+
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
 
 \usepackage[inline]{enumitem}
 \newcommand{\inliststyle}[1]{\textbf{\smaller#1}}
@@ -44,19 +50,21 @@
 
 \newcommand{\alc}{\textsc{Alchemist-cs}}
 \newcommand{\alccsdt}{\textsc{Alchemist-csdt}}
-\newcommand{\cvc}{\textsc{CVC4}}
 \newcommand{\cvclast}{\ensuremath{\textsc{CVC4}_{2017}}}
 \newcommand{\enum}{\textsc{Enumerative}}
 \newcommand{\skac}{\textsc{Sketch-ac}}
 \newcommand{\ice}{\textsc{Ice-dt}}
 \newcommand{\toast}{\textsc{SosyToast}}
 \newcommand{\stoch}{\textsc{Stochastic}}
-\newcommand{\cvcnew}{\ensuremath{\textsc{CVC4}_{2018}}}
-\newcommand{\eusolver}{\textsc{EUSolver}}
 \newcommand{\eusolverlast}{\ensuremath{\textsc{EUSolver}_{2016}}}
-\newcommand{\eusolvernew}{\ensuremath{\textsc{EUSolver}_{2017}}}
 \newcommand{\euphony}{\textsc{Euphony}}
 \newcommand{\ethree}{\textsc{e3solver}}
+
+\newcommand{\cvc}{\textsc{CVC4}}
+\newcommand{\horndini}{\textsc{Horndini}}
+\newcommand{\cvcnew}{\ensuremath{\textsc{CVC4}_{2018}}}
+\newcommand{\eusolvernew}{\ensuremath{\textsc{EUSolver}_{2017}}}
+\newcommand{\eusolver}{\textsc{EUSolver}}
 \newcommand{\dryd}{\textsc{DryadSynth}}
 \newcommand{\lig}{\textsc{LoopInvGen}}
 \newcommand{\sygus}{SyGuS}

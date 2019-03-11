@@ -1,59 +1,70 @@
-\section{Participating Benchmarks and Solvers}
+\section{Submitted Benchmarks and Solvers}
 \label{sec:participation}
 
-Six solvers were submitted to this year's competition. \eusolvernew, an improved version of \eusolver;  \cvcnew, an improved version of \cvc; \euphony, a solver built on top of \eusolver; \dryd, a solver specialized for conditional linear integer arithmetic;  \lig, a solver specialized for invariant generation problems; and \ethree, a solver specialized for the bitvector category of the PBE track, built on top of the enumerative solver.
-Table~\ref{tbl:solvers-authors} lists the submitted solvers together with their authors, and Table~\ref{tbl:solvers-in-tracks} summarizes which solver participated in which track.
+In addition to last year's benchmarks, we received over $100$ new benchmarks this year,
+which are summarized in \Cref{tbl:new-benchmarks}.
+\verify{I can add the sources for Inv benchmarks, but do we know the sources for others?}
 
 \begin{table}[!h]
+	\def\arraystretch{1.1}
 	\small
 	\begin{center}
 		\begin{tabular}{r||c|l}
 			Track 	  	  & Benchmarks & Contributors \\
 			\hline \hline
 			CLIA 		  & 15 		   & Kangjing Huang (Purdue University) \\
-			General 	  & 29 		   & Qinheping Hu, Loris D' Antoni (University of Wisconsin-Madison) \\
+			General 	  & 29 		   & Qinheping Hu and Loris D' Antoni (University of Wisconsin-Madison) \\
 			Invariants 	  & 21 + 32    & Saswat Padhi (UCLA) $\enskip$+$\enskip$ Kangjing Huang (Purdue University) \\
-			PBE (Strings) & 10 		   & Woosul Lee (University of Pennsylvania) \\
+			PBE (Strings) & 10 		   & Woosuk Lee (University of Pennsylvania) \\
 		\end{tabular}
 	\end{center}
 	\caption{New benchmarks contributed to various tracks}
 	\label{tbl:new-benchmarks}
 \end{table}
 
+Five solvers were submitted to this year's competition:
+\begin{inlist}
+	\item \cvcnew, an improved version of \cvc,
+	\item \dryd, a solver specialized for conditional linear integer arithmetic,
+	\item \eusolvernew, an improved version of \eusolver,
+	\item \horndini, a solver specialized for constrained horn clauses (CHCs) and
+	\item \lig, a solver specialized for invariant generation problems.
+\end{inlist}
+\Cref{tbl:solvers-authors} lists the submitted solvers along with their authors,
+and \Cref{tbl:solvers-in-tracks} shows the tracks in which each solver participated.
+
 \begin{table}[b]
-	{\small{
-			\begin{center}
-				\scalebox{0.94}{
-				\begin{tabular}{r||l}
-					Solver &  Authors \\ \hline \hline
-					\eusolvernew  	& Arjun Radhakrishna (Microsoft) and
-					Abhishek Udupa (Microsoft) \\
-					\cvcnew 		& Andrew Reynolds (Univ. Of Iowa),
-					Cesare Tinelli (Univ. of Iowa), and 
-					Clark Barrett (Stanford)  \\
-					\euphony        & Woosuk Lee (Penn), Arjun Radhakrishna (Microsft) and Abhishek Udupa (Microsoft) \\
-					\dryd           & Kangjing Huang (Purdue Univ.), Xiaokang Qiu (Purdue Univ.), and Yanjun Wang (Purdue Univ.)\\
-					\lig            & Saswat Padhi (UCLA) and Todd Millstein (UCLA)\\
-					\ethree         & Ammar Ben Khadra (University of Kaiserslautern)			
-					\\
-				\end{tabular}}
-			\end{center}
-			\caption{Submitted Solvers }
-			\label{tbl:solvers-authors}
-		}}
+	\small
+	\begin{center}
+		\scalebox{0.975}{
+		\begin{tabular}{r||l}
+			Solver 			& Authors \\ \hline \hline
+			\cvcnew 		& Andrew Reynolds (Univ. of Iowa), Haniel Barbosa (Univ. of Iowa), Andrez Notzli (Stanford), \\
+							& Cesare Tinelli (Univ. of Iowa), and Clark Barrett (Stanford) \\[5pt]
+			\dryd           & KangJing Huang (Purdue Univ.), Xiaokang Qiu (Purdue Univ.), Qi Tan (Nanjing Univ.), and \\
+							& Yanjun Wang (Purdue Univ.) \\[5pt]
+			\eusolvernew  	& Arjun Radhakrishna (Microsoft) and Abhishek Udupa (Microsoft) \\[5pt]
+			\horndini  		& Deepak D’Souza (IISc, Bangalore), P. Ezudheen (IISc, Bangalore), P. Madhusudan (UIUC), \\
+							& Pranav Garg (Amazon), Daniel Neider (MPI-SWS), and Shubham Ugare (IIT, Guwahati) \\[5pt]
+			\lig            & Saswat Padhi (UCLA), Rahul Sharma (Microsoft Research), and Todd Millstein (UCLA) \\
+		\end{tabular}}
+	\end{center}
+	\caption{List of registered solvers}
+	\label{tbl:solvers-authors}
 \end{table}
 
 
 \begin{table}[t]
+	\setlength{\tabcolsep}{8pt}
 	\begin{center}
-		\begin{tabular}{r||rrrrrr}
-			& \multicolumn{6}{c}{Solvers} \\
-			Tracks & \rot{\eusolvernew} & \rot{\cvcnew} & \rot{\euphony} & \rot{\dryd} & \rot{\lig} & \rot{\ethree} \\ \hline \hline
-			LIA         & 1 & 1 & 1 & 1 & 0 & 0 \\
-			INV         & 1 & 1 & 1 & 1 & 1 & 0\\
-			General     & 1 & 1 & 1 & 0 & 0 & 0\\ 
-			PBE Strings & 1 & 1 & 1 & 0 & 0 & 0\\ 
-			PBE BV      & 1 & 1 & 1 & 0 & 0 & 1
+		\begin{tabular}{r||rrrrr}
+			& \multicolumn{5}{c}{Solvers} \\[3pt]
+			Tracks & \rot{\cvcnew} & \rot{\dryd} & \rot{\eusolvernew} & \rot{\horndini} & \rot{\lig} \\ \hline \hline
+			CLIA        & 1 & 1 & 1 & 0 & 0 \\
+			INV         & 1 & 1 & 1 & 1 & 1 \\
+			General     & 1 & 0 & 1 & 0 & 0 \\ 
+			PBE Strings & 1 & 0 & 1 & 0 & 0 \\ 
+			PBE BV      & 1 & 0 & 1 & 0 & 0 \\
 		\end{tabular}
 	\end{center}
 	\caption{Solvers participating in each track}
@@ -61,14 +72,31 @@ Table~\ref{tbl:solvers-authors} lists the submitted solvers together with their 
 \end{table}
 
 
- The \eusolvernew\ is based on the divide and conquer strategy~\cite{AlurCAV15}. The idea is to find different expressions that work correctly for different subsets of the input space, and unify them into a solution that works well for the entire space of inputs. The sub-expressions are typically found using enumeration techniques  and are then unified into the overall expression using machine learning methods for decision trees~\cite{AlurRU17}.
+The \cvcnew\ solver is based on an approach for program synthesis that is implemented inside an SMT solver~\cite{ReynoldsDKTB15}.
+This approach extracts solution functions from unsatisfiability proofs of the negated form of synthesis conjectures,
+and uses counterexample-guided techniques for quantifier instantiation (CEGQI) that make finding such proofs practically feasible.
+\cvcnew\ also combines enumerative techniques, and symmetry breaking techniques~\cite{ReynoldsT17}. 
 
- The \cvcnew\ solver is based on an approach for program synthesis that is implemented inside an SMT solver~\cite{ReynoldsDKTB15}. This approach extracts solution functions from unsatisfiability proofs of the negated form of synthesis conjectures, and uses  counterexample-guided techniques for quantifier instantiation (CEGQI) that make finding such proofs practically feasible. \cvcnew\ also combines enumerative techniques, and symmetry breaking techniques~\cite{ReynoldsT17}. 
- 
- The \euphony\ solver leverages statistical program models to accelerate the \eusolver. The underlying statistical model is called probabilistic higher-order grammar (PHOG), a generalization of probabilistic context-free grammars (PCFGs). The idea is to use existing benchmarks and the synthesized results to learn a weighted grammar, and give priority to candidates which are more likely according to the learned weighted grammar.
+The \dryd\ solver combines enumerative and symbolic techniques.
+It considers benchmarks in conditional linear integer arithmetic theory (LIA), and can therefore assume all have a solution in some pre-defined decision tree normal form.
+It then tries to first get the correct height of a normal form decision tree, and then tries to synthesize a solution of that height.
+It makes use of parallelization, using as many cores as are available, and of optimizations based on solutions of typical LIA SyGuS problems.
 
- The \dryd\ solver combines enumerative and symbolic techniques. It considers benchmarks in conditional linear integer arithmetic theory (LIA), and can therefore assume all have a solution in some pre-defined decision tree normal form. It then tries to first get the correct height of a normal form decision tree, and then tries to synthesize a solution of that height. It makes use of parallelization, using as many cores as are available, and of optimizations based on solutions of typical LIA SyGuS problems.  
- 
- The \lig\ solver~\cite{PadhiM17} for invariant synthesis extends the data-driven approach to inferring sufficient loop invariants from a collection of program states~\cite{PadhiSM16}. Previous approaches to invariant synthesis were restricted to using a fixed set, or a fixed template for features, e.g., ICE-DT~\cite{ICEDT,GNMR16} requires the shape of constraints (such as octagonal) to be fixed apriori. Instead \lig\, starts with no initial features, and automatically grows the feature set as necessary using program synthesis techniques. It reduces the problem of loop invariant inference to a series of precondition inference problems and uses a Counterexample-Guided Inductive Synthesis (CEGIS) loop to revise the current candidate.
- 
- The \ethree\ solver for PBE bitvector programs, is built on top of the enumerative solver~\cite{AlurBJMRSSSTU13,UdupaRDMMA13}. It improves on the original \enum\ solver by applying unification techniques~\cite{AlurCAV15} and avoiding calling an SMT solver, since on PBE tracks there are no semantic constraints other than the input-to-output examples which can be checked without invoking an SMT solver.
+The \eusolvernew\ solver uses a divide-and-conquer strategy~\cite{AlurCAV15}.
+The idea is to find different expressions that satisfy different subsets of the input space,
+and unify them into a solution that works well for the entire space of inputs.
+The sub-expressions are typically found using enumeration techniques
+and are then unified into the overall expression using machine learning methods for decision trees~\cite{AlurRU17}.
+
+The \horndini\ solver extends the classical IC3 decision-tree algorithm with
+the Horn implication counterexamples (Horn-ICE) framework~\cite{EzudheenND0M18},
+which extends the ICE-learning model.
+The authors describe a decision-tree learning algorithm that learns from Horn-ICE samples,
+works in polynomial time, and uses statistical heuristics to learn small trees that satisfy the samples.
+
+The \lig\ solver~\cite{PadhiM17} for invariant synthesis extends the data-driven approach to inferring sufficient loop invariants from a collection of program states~\cite{PadhiSM16}.
+Previous approaches to invariant synthesis were restricted to using a fixed set, or a fixed template for features,
+e.g., ICE-DT~\cite{ICEDT,GNMR16} requires the shape of constraints (such as octagonal) to be fixed apriori.
+Instead \lig\ starts with no initial features, and automatically grows the feature set as necessary using program synthesis techniques.
+It reduces the problem of loop invariant inference to a series of precondition inference problems,
+and uses a counterexample-guided inductive synthesis (CEGIS) loop to revise the current candidate.
