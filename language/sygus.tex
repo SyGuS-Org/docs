@@ -1830,7 +1830,7 @@ Consider the following example:
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set to the SyGuS-specific logic
-${\tt PBE\_SLIA}$, indicating strings with linear arithmetic
+${\tt PBE\_SLIA}$, indicating strings with linear integer arithmetic
 where constraints are limited to a conjunction of PBE equalities.
 In this example, four constraints are given, each of which meet the
 restriction of being a PBE equality.
@@ -1841,6 +1841,30 @@ A possible correct response from the synthesis solver in this example is:
 \end{example}
 
 \begin{example}[Invariant Synthesis (INV)]
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic INV_LIA)
+(synth-inv inv-f ((x Int) (y Int)))
+(define-fun pre-f ((x Int) (y Int)) Bool 
+  (and (>= x 5) (<= x 9) (>= y 1) (<= y 3)))
+(define-fun trans-f ((x Int) (y Int) (xp Int) (yp Int)) Bool 
+  (and (= xp (+ x 2)) (= yp (+ y 1))))
+(define-fun post-f ((x Int) (y Int)) Bool (< y x))
+(inv-constraint inv-f pre-f trans-f post-f)
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set to the SyGuS-specific logic
+${\tt INV\_LIA}$, indicating linear integer arithmetic
+where constraints are limited to the invariant synthesis problem for
+a single invariant-to-synthesize.
+Since this example contains only linear arithmetic terms,
+a single function-to-synthesize
+and only introduces constraints via a single $\constraintinvkwd$ command,
+it meets the restrictions of the logic.
+A possible correct response from the synthesis solver in this example is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun inv-f ((x Int) (y Int)) Bool (>= x y))
+\end{lstlisting}
 \end{example}
 
 \bibliographystyle{plain}
