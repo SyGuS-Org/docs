@@ -1727,16 +1727,17 @@ returns the concatenation of bits $15$ to $0$ of its argument
 with the the bit-vector $\#x0000$.
 \end{example}
 
+\begin{comment}
 \begin{example}[Strings]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic SLIA)
 (synth-fun f ((x String)) String
    ((S String) (I Int))
-   ((S Int ("" x 
-            (str.++ S S)
-            (str.substr S I I)))
-    (I Int (0 1 (str.len S) (- I I) (+ I I)))))
+   ((S String ("" x 
+               (str.++ S S)
+               (str.substr S I I)))
+    (I Int    (0 1 (str.len S) (- I I) (+ I I)))))
 (constraint (= (f "AB") "A"))
 (constraint (= (f "") ""))
 (constraint (= (f "AAAA") "AAA"))
@@ -1761,6 +1762,7 @@ The semantics for string operators, which includes corner cases
 like the one mentioned above,
 is given in~\cite{smtlibStrings} and is the semantics assumed by this document.
 \end{example}
+\end{comment}
 
 \begin{example}[Grammars with Defined Symbols, Forward Declarations and Recursion]
 Consider the following example:
@@ -1805,7 +1807,7 @@ in the order in which they were introduced via $\synthfunkwd$ commands
 in the input.
 \end{example}
 
-\begin{example}[Programming by Examples (PBE)]
+\begin{example}[Strings Programming by Examples (PBE)]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic PBE_SLIA)
@@ -1826,7 +1828,7 @@ Consider the following example:
 (constraint (= (f "Nancy" "FreeHafer") "Nancy FreeHafer"))
 (constraint (= (f "Andrew" "Cencici") "Andrew Cencici"))
 (constraint (= (f "Jan" "Kotas") "Jan Kotas"))
-(constraint (= (f "Mariya" "Sergienko") "Maria Sergienko"))
+(constraint (= (f "Mariya" "Sergienko") "Mariya Sergienko"))
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set to the SyGuS-specific logic
