@@ -213,6 +213,13 @@ has been added to the language,
 which is used for further refining
 the constraints, grammars and commands that may appear in an input.
 
+\item The expected output for fail responses from a solver has changed,
+in particular,
+the response ${\tt (fail)}$ from the previous standard
+should now be given as ${\tt fail}$.
+Additionally, a solver may answer ${\tt infeasible}$, indicating
+that it is certain there are no solutions.
+
 \end{enumerate}
 
 
@@ -1046,19 +1053,27 @@ and $X_{j}$ is identical to the sorted variable list
 used when introducing the function-to-synthesize $f_{j}$.
 
 \item
-The output ${\tt (fail)}$.
+The output ${\tt infeasible}$,
+indicating that the conjecture has no solutions.
+
+\item
+The output ${\tt fail}$,
+indicating that the solver failed to solve the conjecture.
 
 \end{enumerate}
 
-A response to $\checksynthkwd$ is a correct solution if
+A response to $\checksynthkwd$ of the first kind is a correct solution if
 it satisfies both the semantic and syntactic restrictions given by
 the current state.
 We describe this in more detail in Section~\ref{sec:logical-semantics}.
 
-We do not define the correctness of a ${\tt fail}$ response 
-in this document. We remark that a fail response may be given
-by a solver either when it is unable to find a solution for the current
-synthesis conjecture, or if it has determined that a solution does not exist.
+We do not define the correctness of a ${\tt infeasible}$ response 
+in this document. 
+We remark that a response of this form should be given
+by a solver only if it is certain that a solution to the current
+conjecture does not exist.
+Otherwise, the response ${\tt fail}$ indicates that the solver
+was unable to find a solution.
 
 \end{itemize}
 
@@ -1405,16 +1420,20 @@ Given an SMT-LIB standard logic $X$
 that does not contain the prefix ${\tt QF\_}$,
 the base logic ${\tt PBE\_}X$ denotes the logic
 where constraints are limited to (conjunctions of)
-equalities between pairs of terms $f( \vec c )$ and $d$,
+equalities whose left hand side is a term $f( \vec c )$ and 
+whose right hand side is $d$,
 where $f$ is a function
 and $\vec c$, $d$ are constants.
-We refer to an equality of the aforementioned form as a \emph{PBE equality},
-which denotes a relationship between the inputs and output of 
+We refer to an equality of this form as a \emph{PBE equality}.
+Such equalities denote a relationship between the inputs and output of 
 function $f$ for a single point.
-Notice that this logic is a subset of ${\tt QF\_}X$.
+Notice that formulas allowed by 
+logic ${\tt PBE\_}X$ are a subset of those allowed by ${\tt QF\_}X$.
 
-We overload this logic string and use it for referring to a SyGuS logic as well.
-The SyGuS logic ${\tt PBE\_}X$ is the one
+We use the logic string ${\tt PBE\_}X$ to refer to a SyGuS logic as well.
+Given an SMT-LIB standard logic $X$
+that does not contain the prefix ${\tt QF\_}$,
+the SyGuS logic ${\tt PBE\_}X$ is the one
 whose input logic is ${\tt PBE\_}X$,
 whose output logic ${\tt QF\_}X$,
 and whose feature set is the default one.
@@ -1423,9 +1442,9 @@ are limited to conjunctions of PBE equalities,
 but gives no special restrictions
 on the solutions or grammars that can be provided.
 
-By construction of the overall synthesis conjecture, SyGus command sequences 
-that meet the requirements of the input logic ${\tt PBE\_}X$
-require that each ${\tt constraint}$ command takes as argument a PBE equality.
+By construction of the overall synthesis conjecture, a SyGuS command sequence
+meets the requirements of the input logic ${\tt PBE\_}X$
+if and only if each ${\tt constraint}$ command takes as argument a PBE equality.
 
 \paragraph{Single Invariant-to-Synthesize (INV)}
 Given an SMT-LIB standard logic $X$,
@@ -1435,30 +1454,34 @@ problem for a single invariant-to-synthesize.
 Concretely,
 this means that formulas are limited to those that 
 are (syntactically) a conjunction of three implications, 
-for a single predicate $I$:
+for a single predicate symbol $I$:
 \begin{enumerate}
-\item The first is an implication whose antecedant is an arbitrary formula
-in the logic (the pre-condition) and
+\item The first is an implication whose antecedant (the pre-condition) 
+is an arbitrary formula
+in the logic $X$ and
 and whose conclusion is
 an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
 
 \item The second is an implication whose antecedant is
 $I( \vec x ) \wedge \varphi$
-where $\vec x$ is a tuple of unique variables and $\varphi$ is an arbitrary formula
-in the logic (the transition relation),
+where $\vec x$ is a tuple of unique variables and $\varphi$ (the transition relation) 
+is an arbitrary formula
+in the logic $X$,
 and whose conclusion is $I( \vec y )$
 where $\vec y$ is a tuple of unique variables disjoint from $\vec x$,
 
 \item The third is an implication whose antecedant is 
 an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
-and whose conclusion is an arbitrary formula in the logic (the post-condition).
+and whose conclusion (the post-condition) is an arbitrary formula in the logic $X$.
 \end{enumerate}
 The variables $\vec x$ in each of these three formulas are not required to be the same.
 
 Like the previous section, 
-we overload this logic string and use it for referring to SyGuS logics as well.
-Logic ${\tt INV\_}X$ denotes the SyGuS logic
-whose input logic is ${\tt INV\_}X$,
+we use the logic string ${\tt INV\_}X$ to refer to SyGuS logics as well.
+Given an SMT-LIB standard logic $X$
+that does not contain the prefix ${\tt QF\_}$,
+logic ${\tt INV\_}X$ denotes the SyGuS logic
+whose input logic is ${\tt INV\_QF\_}X$,
 whose output logic is ${\tt QF\_}X$,
 and whose feature set is the default one.
 
@@ -1780,6 +1803,44 @@ A possible correct response from the synthesis solver in this example is:
 Notice the above definitions for $f$, $g$, and $h$ are given 
 in the order in which they were introduced via $\synthfunkwd$ commands
 in the input.
+\end{example}
+
+\begin{example}[Programming by Examples (PBE)]
+Consider the following example:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(set-logic PBE_SLIA)
+(synth-fun f ((fname String) (lname String)) String
+    ((ntString String) (ntInt Int))
+    ((ntString String (fname lname " "
+                       (str.++ ntString ntString)
+                       (str.replace ntString ntString ntString)
+                       (str.at ntString ntInt)
+                       (int.to.str ntString)
+                       (str.substr ntString ntInt ntInt)))
+     (ntInt Int (0 1 2
+                 (+ ntInt ntInt)
+                 (- ntInt ntInt)
+                 (str.len ntString)
+                 (str.to.int ntString)
+                 (str.indexof ntString ntString ntInt)))))
+(constraint (= (f "Nancy" "FreeHafer") "Nancy FreeHafer"))
+(constraint (= (f "Andrew" "Cencici") "Andrew Cencici"))
+(constraint (= (f "Jan" "Kotas") "Jan Kotas"))
+(constraint (= (f "Mariya" "Sergienko") "Maria Sergienko"))
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set to the SyGuS-specific logic
+${\tt PBE\_SLIA}$, indicating strings with linear arithmetic
+where constraints are limited to a conjunction of PBE equalities.
+In this example, four constraints are given, each of which meet the
+restriction of being a PBE equality.
+A possible correct response from the synthesis solver in this example is:
+\begin{lstlisting}[basicstyle={\ttfamily}]
+(define-fun f ((fname String) (lname String)) String (str.++ fname lname))
+\end{lstlisting}
+\end{example}
+
+\begin{example}[Invariant Synthesis (INV)]
 \end{example}
 
 \bibliographystyle{plain}
