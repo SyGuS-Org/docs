@@ -86,17 +86,19 @@ we have that \cvcnew\ solved ??? uniquely and \eusolvernew\ solved ??? uniquely.
 & \euphony	& 2	& 0	& 0& 	0	& 0& 	0	& 0& 	0	& 0& 	0 &	0	& 0 & 2\\ \hline			
 		\end{tabular}}
 	\end{center}
-	\caption{\verify{Solvers performance across all categories of the general track}}
+	\caption{Solvers performance across all categories of the general track
+	\verify{I don't have the per-category results for the General track ... Should we remove this?}}
 	\label{tbl:general-categories}
 \end{table}
 
-\verify{We partition the benchmarks of the general track according to categories where different categories consists of related benchmarks.
+\verify{I don't have the per-category results for the General track ... Should we remove this?}
+We partition the benchmarks of the general track according to categories where different categories consists of related benchmarks.
 The results per category are given in the Table~\ref{tbl:general-categories}.
 We can see that \eusolvernew\ preformed better than others in the categories of program repair, icfp and cryptographic circuits.
 The \cvcnew\ solver preformed better than others in the categories of let and motion planning, invariant generation with bounded and unbounded integers,
 arrays, integers and hacker's delight. The \euphony\ solver preformed better than others in the categories of
 multiple functions, compiler optimizations and bitvectors.
-We can also observe that none of the solvers could solve any of the instruction selection benchmarks.}
+We can also observe that none of the solvers could solve any of the instruction selection benchmarks.
 
 % \begin{figure}
 % 	\begin{center}
@@ -123,15 +125,22 @@ followed by \eusolvernew\ which solved $29$ among the fastest.
 There were $2$ benchmarks that were solved uniquely by \dryd\ and $1$ that was solved uniquely by \cvcnew.
 
 \paragraph{Invariant Generation Track}
-In the invariant generation track, the \lig\ solver solved $115$ out of $127$ benchmarks, \cvcnew\ solved $109$, \dryd\ solved $103$,
-\horndini\ solved $68$ and \eusolvernew\ solved $61$ benchmarks.
+In the invariant generation track, the \lig\ solver solved $115$ out of $127$ benchmarks, \cvcnew\ solved $109$,
+\dryd\ solved $103$, \horndini\ solved $68$ and \eusolvernew\ solved $61$ benchmarks.
 In terms of the time to solve, \lig\ solved $102$ benchmarks among the fastest, followed by \cvcnew\ which solved $82$,
 \dryd\ which solved $81$, \horndini\ which solved $21$, and \eusolvernew\ which solved $15$.
 There was one benchmark that was solved by a unique solver -- the \texttt{fib_17n.sl} benchmark solved by \lig. 
 
 \paragraph{Programming By Example (Bit Vectors) Track}
-In the PBE on bit vectors track, the \ethree\ solver solved all 750 benchmarks,
-\euphony\ solved 747 benchmarks, \eusolvernew\ solved 242, benchmarks, and \cvcnew\ solved 687 benchmarks. The \ethree\ solver solved 692 among the fastest, \eusolvernew\ solved 211 among the fastest, \cvcnew\ solved 169 among the fastest, and \euphony\ solved 117 among the fastest. Three benchmarks where solved uniquely by \ethree, these are: \texttt{13_1000.sl}, \texttt{40_1000.sl} and \texttt{89_1000.sl}.
+In the PBE on the theory of bit vectors track, the \cvcnew\ solver solved $724$ out of $750$ benchmarks
+and \eusolvernew\ solved $677$ benchmarks.
+In terms of the time to solve, \cvcnew\ solved $508$ benchmarks among the fastest,
+and \eusolvernew\ solved $468$.
+\verify{what about uniquely solved benchmarks?}
 
 \paragraph{Programming By Example (Strings) Track}
-In the PBE track using SLIA theory, the \cvcnew\ solved 89 out of 108 benchmarks, \euphony\ solved 78, and \eusolvernew\ solved 69. The \euphony\ solver solved 66 benchmarks among the fastest, \cvcnew\ solved 49 among the fastest and \eusolvernew\ solved 23 among the fastest. Nine benchmarks where solved by only one solver, which is \cvcnew.
+In the PBE track on the theory of strings track, the \cvcnew\ solver solved $102$ out of $118$ benchmarks,
+and \eusolvernew\ solved $79$ benchmarks.
+In terms of the time to solve, \cvcnew\ solved $98$ benchmarks among the fastest,
+and \eusolvernew\ solved $79$.
+\verify{what about uniquely solved benchmarks?}

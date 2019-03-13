@@ -13,13 +13,12 @@
 \usepackage{subcaption} % for side-by-side figures
 \usepackage{multirow}
 \usepackage{xcolor}
-\usepackage{relsize}
 
 \usepackage{hyperref}
 \usepackage[nameinlink,noabbrev]{cleveref}
 
 \usepackage[inline]{enumitem}
-\newcommand{\inliststyle}[1]{\textbf{\smaller#1}}
+\newcommand{\inliststyle}[1]{\textbf{\small #1}}
 \newlist{inlist}{enumerate*}{1}
 \setlist[inlist]{label={\inliststyle{(\arabic*)}}}
 
