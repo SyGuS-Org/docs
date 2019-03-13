@@ -1512,8 +1512,8 @@ As described in Section~\ref{ssec:dec-synth-fun},
 a grammar $G$ is specified as
 a \emph{grouped rule listing} of the form
 \[
-\paren{\paren{y_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots 
-\paren{y_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}
+\paren{\paren{y_1\mbox{ }\tau_1\mbox{ }\paren{g_{11} \ldots g_{1m_1} } } \ldots 
+\paren{y_n\mbox{ }\tau_n\mbox{ }\paren{g_{n1} \ldots g_{nm_n} } }}
 \]
 where $y_1, \ldots, y_n$ are variables
 and $g_{11} \ldots g_{1m_1}, \ldots, g_{n1} \ldots g_{nm_n}$
@@ -1985,8 +1985,7 @@ with one free integer variable ${\tt x}$.
                   (mod y_term y_term)
                   (abs y_term)
                   (ite y_pred y_term y_term)))
-    (y_pred Bool (...
-                  (> y_term y_term)
+    (y_pred Bool ((> y_term y_term)
                   (>= y_term y_term)
                   (< y_term y_term
                   (<= y_term y_term))))))
@@ -2011,8 +2010,7 @@ with one free real variable ${\tt x}$.
                   (* y_term y_cons)
                   (ite y_pred y_term y_term)))
     (y_cons Real ((Constant Real)))
-    (y_pred Bool (...
-                  (> y_term y_term)
+    (y_pred Bool ((> y_term y_term)
                   (>= y_term y_term)
                   (< y_term y_term
                   (<= y_term y_term))))))
@@ -2041,8 +2039,7 @@ with one free real variable ${\tt x}$.
                   (* y_term y_term)
                   (/ y_term y_term)
                   (ite y_pred y_term y_term)))
-    (y_pred Bool (...
-                  (= y_term y_term)
+    (y_pred Bool ((= y_term y_term)
                   (> y_term y_term)
                   (>= y_term y_term)
                   (< y_term y_term
@@ -2130,8 +2127,7 @@ some of the omitted operators are given in Section~\ref{sec:examples}.
                            (bvshl y_term y_term)
                            (bvlshr y_term y_term)
                            (ite y_pred y_term y_term)))
-    (y_pred Bool (...
-                  (bvult y_pred y_pred))))))
+    (y_pred Bool ((bvult y_pred y_pred))))))
 \end{lstlisting}
 Bit-vector constants may be specified
 using either the hexadecimal format $\hexconst$
@@ -2163,8 +2159,7 @@ Here, we omit discussion of regular expressions and characters.
                         (str.len y_term_str)
                         (str.to-int y_term_str)
                         (ite y_pred y_term_int y_term_int)))
-    (y_pred Bool (...
-                  (str.contains y_term_str y_term_str)
+    (y_pred Bool ((str.contains y_term_str y_term_str)
                   (str.prefixof y_term_str y_term_str)
                   (str.suffixof y_term_str y_term_str)
                   (str.< y_term_str y_term_str)
