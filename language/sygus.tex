@@ -216,9 +216,9 @@ the constraints, grammars and commands that may appear in an input.
 \item The expected output for fail responses from a solver has changed,
 in particular,
 the response ${\tt (fail)}$ from the previous standard
-should now be given as ${\tt fail}$.
+should now be provided as ${\tt fail}$, that is, without parentheses.
 Additionally, a solver may answer ${\tt infeasible}$, indicating
-that it is certain there are no solutions.
+that it has determined there are no solutions to the given conjecture.
 
 \end{enumerate}
 
@@ -1058,7 +1058,7 @@ indicating that the conjecture has no solutions.
 
 \item
 The output ${\tt fail}$,
-indicating that the solver failed to solve the conjecture.
+indicating that the solver failed to find a solution to the conjecture.
 
 \end{enumerate}
 
@@ -1067,13 +1067,17 @@ it satisfies both the semantic and syntactic restrictions given by
 the current state.
 We describe this in more detail in Section~\ref{sec:logical-semantics}.
 
-We do not define the correctness of a ${\tt infeasible}$ response 
+We do not define the correctness of an ${\tt infeasible}$ response 
 in this document. 
 We remark that a response of this form should be given
 by a solver only if it is certain that a solution to the current
 conjecture does not exist.
-Otherwise, the response ${\tt fail}$ indicates that the solver
-was unable to find a solution.
+A conjecture may be infeasible based on the current semantic
+restrictions, or may be infeasible due to a combination
+of semantic restrictions and the syntactic ones imposed on functions-to-synthesize.
+The response ${\tt fail}$ indicates that the solver
+was unable to find a solution, which does not necessarily imply that
+the conjecture is infeasible.
 
 \end{itemize}
 
@@ -1859,8 +1863,8 @@ In this example, the logic is set to the SyGuS-specific logic
 ${\tt INV\_LIA}$, indicating linear integer arithmetic
 where constraints are limited to the invariant synthesis problem for
 a single invariant-to-synthesize.
-Since this example contains only linear arithmetic terms,
-a single function-to-synthesize
+Since this example contains only linear integer arithmetic terms,
+a single predicate-to-synthesize ${\tt inv-f}$,
 and only introduces constraints via a single $\constraintinvkwd$ command,
 it meets the restrictions of the logic.
 A possible correct response from the synthesis solver in this example is:
