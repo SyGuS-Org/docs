@@ -78,6 +78,7 @@ suggestions and feedback regarding this document (listed alphabetically):
 Haniel Barbosa,
 Andres N\"otzli,
 Saswat Padhi,
+Rishabh Singh,
 Cesare Tinelli.
 \end{comment}
 
@@ -144,7 +145,7 @@ correlate to the existing SMT-LIB version 2.6 command.
 
 \item 
 The syntax for terms and sorts
-is now coincides with the corresponding syntax for terms and sorts 
+now coincides with the corresponding syntax for terms and sorts 
 from SMT-LIB versions 2.0 and later.
 There are three notable changes
 with respect to the previous SyGuS format that come as a result of this change.
@@ -580,7 +581,7 @@ order is specified by the following regular pattern:
 \begin{equation*}
 (\mathit{\{ set\ logic\ command \}})?\mbox{ }\mathit{(\{setter\ commands\})^*\mbox{ }(\{other\ commands\})^*}
 \end{equation*}
-where the set $\mathit{\{check\ logic\ command\}}$ consists
+where the set $\mathit{\{set\ logic\ command\}}$ consists
 of the set of all $\setlogickwd$ commands,
 set $\mathit{\{setter\ commands\}}$ includes
 the \texttt{set-feature} and \texttt{set-option}
@@ -1130,7 +1131,7 @@ which is not expressible in a base logic.
 %extensions and restrictions of the SyGuS language when it is possible to do so.
 
 The default SyGuS logic is the one
-whose the input and output logics include only the core theory of Booleans,
+whose input and output logics include only the core theory of Booleans,
 and whose feature set enables grammars and the core commands of the language.
 We describe logics and feature sets
 in more detail in
