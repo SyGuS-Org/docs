@@ -54,24 +54,6 @@ and \Cref{tbl:solvers-in-tracks} shows the tracks in which each solver participa
 \end{table}
 
 
-\begin{table}[t]
-	\setlength{\tabcolsep}{8pt}
-	\begin{center}
-		\begin{tabular}{r||rrrrr}
-			& \multicolumn{5}{c}{Solvers} \\[3pt]
-			Tracks & \rot{\cvcnew} & \rot{\dryd} & \rot{\eusolvernew} & \rot{\horndini} & \rot{\lig} \\ \hline \hline
-			CLIA        & 1 & 1 & 1 & 0 & 0 \\
-			INV         & 1 & 1 & 1 & 1 & 1 \\
-			General     & 1 & 0 & 1 & 0 & 0 \\ 
-			PBE-Strings & 1 & 0 & 1 & 0 & 0 \\ 
-			PBE-BV      & 1 & 0 & 1 & 0 & 0 \\
-		\end{tabular}
-	\end{center}
-	\caption{Solvers participating in each track}
-	\label{tbl:solvers-in-tracks}
-\end{table}
-
-
 The \cvcnew\ solver is based on an approach for program synthesis that is implemented inside an SMT solver~\cite{ReynoldsDKTB15}.
 This approach extracts solution functions from unsatisfiability proofs of the negated form of synthesis conjectures,
 and uses counterexample-guided techniques for quantifier instantiation (CEGQI) that make finding such proofs practically feasible.
@@ -87,6 +69,24 @@ The idea is to find different expressions that satisfy different subsets of the 
 and unify them into a solution that works well for the entire space of inputs.
 The sub-expressions are typically found using enumeration techniques
 and are then unified into the overall expression using machine learning methods for decision trees~\cite{AlurRU17}.
+
+\begin{wraptable}{r}{55mm}
+	\setlength{\tabcolsep}{5pt}
+	\def\arraystretch{1.15}
+	\begin{center}
+		\begin{tabular}{r||rrrrr}
+			& \multicolumn{5}{c}{Solvers} \\[8pt]
+			Tracks & \rot{\cvcnew} & \rot{\dryd} & \rot{\eusolvernew} & \rot{\horndini} & \rot{\lig} \\ \hline \hline
+			CLIA        & 1 & 1 & 1 & 0 & 0 \\
+			INV         & 1 & 1 & 1 & 1 & 1 \\
+			General     & 1 & 0 & 1 & 0 & 0 \\ 
+			PBE-Strings & 1 & 0 & 1 & 0 & 0 \\ 
+			PBE-BV      & 1 & 0 & 1 & 0 & 0 \\
+		\end{tabular}
+	\end{center}
+	\caption{Participating solvers}
+	\label{tbl:solvers-in-tracks}
+\end{wraptable}
 
 The \horndini\ solver extends the classical IC3 decision-tree algorithm with
 the Horn implication counterexamples (Horn-ICE) framework~\cite{EzudheenND0M18},
