@@ -1,11 +1,11 @@
 \pdfoutput=1
 
-%% LyX 2.1.5 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
-\documentclass[english]{article}
+\documentclass[english,a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[latin9]{inputenc}
-\usepackage{babel}
+\usepackage[english]{babel}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{stmaryrd}
@@ -15,8 +15,6 @@
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
  breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false]
  {hyperref}
-
-\makeatletter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
 %% For printing a cirumflex inside a formula
@@ -35,13 +33,12 @@
 \usepackage{pgfplots}
 \usepackage{comment}
 \usepackage{amsthm}
+\usepackage[noabbrev,capitalize,nameinlink]{cleveref}
 
 \usetikzlibrary{automata}
 \usetikzlibrary{backgrounds}
 \usetikzlibrary{fit}
 \usetikzlibrary{positioning}
-
-\makeatother
 
 \usepackage{listings}
 \renewcommand{\lstlistingname}{Listing}
@@ -87,18 +84,18 @@ In the remainder of this section, we cover differences of
 the language described in this document with previous revisions of the
 SyGuS input language~\cite{sygusFormat} and cover the necessary preliminaries.
 Then,
-Section~\ref{sec:syntax}
+\cref{sec:syntax}
 gives the concrete syntax for commands in the SyGuS input language.
-Section~\ref{sec:semantics}
+\cref{sec:semantics}
 documents the well-formedness and the semantics of input commands.
-Section~\ref{sec:output}
+\cref{sec:output}
 documents the expected output of synthesis solvers in response to these commands.
-Section~\ref{sec:sygus-logic}
+\cref{sec:sygus-logic}
 describes formally the notion of a \emph{SyGuS logic} and how it restricts
 the set of commands that are allowed in an input.
-Section~\ref{sec:logical-semantics}
-formalizes what consistutes a correct response to a SyGuS input.
-Finally, Section~\ref{sec:examples}
+\cref{sec:logical-semantics}
+formalizes what constitutes a correct response to a SyGuS input.
+Finally, \cref{sec:examples}
 provides examples of possible inputs in the SyGuS language
 and solvers responses to them.
 
@@ -113,14 +110,14 @@ and the extensions described in~\cite{sygusSyntax2015,sygusSyntax2016}.
 
 \item The syntax for providing grammars inside the $\synthfunkwd$ command
 now requires that non-terminal symbols are declared upfront
-in a \emph{predeclaration}, see Section~\ref{ssec:dec-synth-fun}
+in a \emph{predeclaration}, see \cref{ssec:dec-synth-fun}
 for details.
 %\rem{Mention Start symbol change if applicable.}
 
 \item 
 The keyword ${\tt Start}$, which 
 denoted the starting (non-terminal) symbol of
-grammars in this previous standard, has been removed.
+grammars in the previous standard, has been removed.
 Instead, the first symbol listed in the grammar is assumed
 to be the starting symbol.
 
@@ -138,9 +135,9 @@ and the latter has no affect on the grammar.
 and related syntactic features have been removed.
 The standard SMT-LIB version 2.6 commands
 for declaring datatypes are now adopted,
-see Section~\ref{ssec:declaring-sorts} for details.
+see \cref{ssec:declaring-sorts} for details.
 
-\item The $\setoptskwd$ has been renamed $\setoptkwd$ to 
+\item The $\setoptskwd$ command has been renamed $\setoptkwd$ to 
 correlate to the existing SMT-LIB version 2.6 command.
 
 \item 
@@ -171,7 +168,7 @@ Thus, certain new symbols are now present in the signature,
 and some existing ones have changed names.
 For example,
 the conversion functions between strings and their integer representations
-${\tt str.to.int}$ and ${\tt int.to.str}$ have been renamed
+${\tt str.to.int}$ and ${\tt int.to.str}$ have been renamed to
 ${\tt str.to}$-${\tt int}$ and ${\tt str.from}$-${\tt int}$.
 The semantics of all operators,
 which was not specified previously,
@@ -182,7 +179,7 @@ is now the one given by~\cite{smtlibStrings}.
 %from other SMT theories assumes the syntax
 %prescribed in theory definitions from SMT-LIB~\cite{}.
 
-\item The command $\primedvardeclkwd$, which was syntax
+\item The command $\primedvardeclkwd$, which was a syntactic
 sugar for two $\vardeclkwd$ commands in the previous standard, has been removed
 for the sake of simplicity.
 This command did not provide any benefit to
@@ -214,8 +211,8 @@ has been added to the language,
 which is used for further refining
 the constraints, grammars and commands that may appear in an input.
 
-\item The expected output for fail responses from a solver has changed,
-in particular,
+\item The expected output for fail responses from a solver has changed.
+In particular,
 the response ${\tt (fail)}$ from the previous standard
 should now be provided as ${\tt fail}$, that is, without parentheses.
 Additionally, a solver may answer ${\tt infeasible}$, indicating
@@ -231,7 +228,7 @@ We assume the reader is familiar
 with sorts, well-sorted terms, (quantified) formulas
 and free variables\footnote{
 The definition of each of these coincides with
-the definition given in the SMT-LIB standarard~\cite{BarFT-RR-17}.
+the definition given in the SMT-LIB standard~\cite{BarFT-RR-17}.
 }
 If $e$ is a term or formula,
 then we write $e[x]$ to denote that $x$ occurs free in $e$,
@@ -275,7 +272,8 @@ After encountering a semicolon, the rest of the line is ignored.
 
 A \emph{literal} $\literal$ is a special sequence of characters,
 typically used to denote values or constant terms.
-The SyGuS format includes syntax for several kinds of literals, listed below.
+The SyGuS format includes syntax for several kinds of literals,
+which are listed below.
 This treatment of most of these literals coincides with
 those in the SMT-LIB version 2.6 format.
 For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
@@ -301,7 +299,7 @@ The syntax for decimal numbers is $\intconst{\tt .\kstar{0}}\intconst$.
 Symbols $\truekwd$ and $\falsekwd$ denote the Booleans true and false.
 
 \paragraph{Hexidecimals ($\hexconst$)}
-Hexidecimals are written with ${\tt \#x}$
+Hexadecimals are written with ${\tt \#x}$
 followed by a non-empty sequence of (case-insensitive) 
 digits and letters taken from the ranges $\left[{\tt A}-{\tt F}\right]$
 and $\left[{\tt 0}-{\tt 9}\right]$.
@@ -339,7 +337,7 @@ The theory of bit-vectors uses both
 hexadecimal and binary constants in the above syntax
 to denote bit-vector values.
 %For more details on common theories,
-%see Section~\ref{ssec:smt-logic}.
+%see \cref{ssec:smt-logic}.
 
 \subsection{Symbols}
 
@@ -347,7 +345,7 @@ Symbols are denoted with the non-terminal $\symbol$.
 A symbol
 is any non-empty sequence of upper- and lower-case alphabets, digits,
 and certain special characters (listed below), with the restriction that it may not
-begin with a digit and is not a reserved word (see Appendix~\ref{apx:reserved} 
+begin with a digit and is not a reserved word (see \cref{apx:reserved} 
 for a full list of reserved words).
 A special character is any of the following:
 \[
@@ -389,9 +387,9 @@ The \emph{arity} of the sort is the number of (sort) arguments it takes.
 A \emph{parametric} sort is one whose arity is greater than zero.
 Theories associate identifiers with sorts and sort constructors
 that have an intended semantics.
-Sorts may be defined by theories (see examples in Section~\ref{ssec:smt-logic})
+Sorts may be defined by theories (see examples in \cref{ssec:smt-logic})
 or may be user-defined
-(see Section~\ref{ssec:declaring-sorts}).
+(see \cref{ssec:declaring-sorts}).
 
 \subsection{Terms}
 
@@ -426,7 +424,7 @@ for a parametric list.
 
 Like sorts, the identifiers that comprise terms
 can either be defined by the user or by background theories.
-Examples of the latter are given in Section~\ref{ssec:smt-logic}.
+Examples of the latter are given in \cref{ssec:smt-logic}.
 \end{comment}
 \begin{alignat*}{1}
  & \begin{array}{rcl}
@@ -448,7 +446,7 @@ we distinguish a subclass of \emph{binder-free} terms $\bfterm$ in the syntax ab
 which do not contain bound (local) variables.
 Like sorts, the identifiers that comprise terms
 can either be defined by the user or by background theories.
-%Examples of the latter are given in Section~\ref{ssec:smt-logic}.
+%Examples of the latter are given in \cref{ssec:smt-logic}.
 
 \subsection{Features}
 \label{ssec:syntax-features}
@@ -463,7 +461,7 @@ It is an enumeration in the following syntax.
  %|\mbox{ }\fquantifierskwd
 \end{array}
 \end{alignat*}
-More details on features are given in Section~\ref{ssec:feature-sets}.
+More details on features are given in \cref{ssec:feature-sets}.
 
 \subsection{Commands}
 
@@ -513,10 +511,10 @@ we distinguish between two kinds of commands above.
 The commands listed under $\cmd$ are specific to the SyGuS version 2.0 standard.
 The remaining commands listed under $\smtcmd$
 are borrowed from the SMT-LIB version 2.6 standard.
-Details on the semantics of these commands are given in Section~\ref{sec:semantics}.
+Details on the semantics of these commands are given in \cref{sec:semantics}.
 
 %\paragraph{Reserved Words}
-%All strings mentioned in Section~\ref{ssec:literals}
+%All strings mentioned in \cref{ssec:literals}
 
 \section{Semantics of Commands}
 \label{sec:semantics}
@@ -560,7 +558,7 @@ In the initial state of a SyGuS input,
 the lists of functions-to-synthesize, 
 universal variables, constraints, and the signature are empty,
 and the SyGuS logic is the default one 
-(for details on the default SyGuS logic, see Section~\ref{sec:sygus-logic}).
+(for details on the default SyGuS logic, see \cref{sec:sygus-logic}).
 %that is, 
 %no restrictions are placed on the set of terms that may appear 
 %in constraints and grammars.
@@ -605,7 +603,7 @@ the output logic determines
 what terms can appear in grammars and solutions.
 The feature set places additional restrictions or extensions 
 on the constraints, grammars as well as the commands that are allowed in an input.
-These are described in detail in Section~\ref{sec:sygus-logic}.
+These are described in detail in \cref{sec:sygus-logic}.
 
 \begin{itemize}
 \item $\paren{\setlogickwd\mbox{ }S}$
@@ -625,7 +623,7 @@ state may involve universal quantification.
 If this command is well-formed and $S$ is an SMT-LIB standard logic,
 then this command sets the SyGuS logic to the one whose
 input and output logics are ${\tt QF\_}S$ and whose feature
-set is the default one defined in this document (Section~\ref{ssec:feature-sets}).
+set is the default one defined in this document (\cref{ssec:feature-sets}).
 In other words, when this command has $S$ as an argument
 and $S$ is an SMT-LIB standard logic, this
 indicates that that terms in the logic of $S$ are 
@@ -637,7 +635,7 @@ allowed by default when $S$ is a standard SMT-LIB logic
 %by symbols $S$ that correspond to SMT-LIB standard logics
 have at most two levels of quantifier alternation.
 %For examples of common SMT logics, 
-%see Section~\ref{ssec:smt-logic}.
+%see \cref{ssec:smt-logic}.
 %If $S$ is a standard SMT-LIB logic,
 %then this command adds the set of sort and function symbols
 %from that logic to the current signature.
@@ -648,7 +646,7 @@ have at most two levels of quantifier alternation.
 %restrictions on both the kinds of terms that
 %may appear in constraints, and may appear in grammars.
 %We give details on the default settings of the logic for SyGuS inputs
-%in Section~\ref{sec:sygus-logic}.
+%in \cref{sec:sygus-logic}.
 %In other words, the input logic is set to the quantifier-free
 %version of the logic $S$ indicating that arbitrary quantified formulas
 %cannot appear in constraints, and
@@ -667,7 +665,7 @@ or may be solver-specific.
 This command adds the set of sort and function symbols
 from the logic to the current signature.
 Some of the standard logics defined by SMT-LIB that can be an argument of this
-command are given in Section~\ref{ssec:smt-logic}.
+command are given in \cref{ssec:smt-logic}.
 
 \item $\paren{\setlogicoutputkwd\mbox{ }S}$
 
@@ -700,7 +698,7 @@ if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
 %or further refinements to the restrictions placed
 %on the set of allowed constraints and grammars.
 All features standardized by this document 
-are given in Section~\ref{ssec:feature-sets}.
+are given in \cref{ssec:feature-sets}.
 
 \end{itemize}
 
@@ -769,7 +767,7 @@ If $g_{ij}$ is an ordinary term, then its free variables may contain $y_1, \ldot
 as well as $S$ itself.
 If the grammar contains $S$ itself, then it is possible that the definition
 given for $S$ in a solution is recursive, however,
-this feature is disallowed in the default logic (see Section~\ref{sec:sygus-logic}).
+this feature is disallowed in the default logic (see \cref{sec:sygus-logic}).
 
 This command is not well-formed if
 $\tau_1$ (the type of the start symbol) is not $\sigma$.
@@ -781,7 +779,7 @@ that does not have type $\tau_i$ for some $i$.
 If provided, the grammar $G$ must also be one that is allowed
 by the output logic of the current SyGuS logic.
 For more details on the restrictions imposed on grammars by the logic,
-see Section~\ref{sec:sygus-logic}.
+see \cref{sec:sygus-logic}.
 If $G$ does not meet the restrictions
 of the background logic, it should be rejected.
 
@@ -792,7 +790,7 @@ in the output logic may be given in the body of a solution for $S$.
 More details on grammars and the terms
 they generate, as well as what denotes a term that meets the syntactic
 restrictions of a function-to-synthesize
-is discussed in detail in Section~\ref{ssec:sat-syntactic}.
+is discussed in detail in \cref{ssec:sat-syntactic}.
 
 \begin{comment}
 If $G$ is not provided,
@@ -872,7 +870,7 @@ of sort $D_i \rightarrow \sigma_{j\ell}$.
 This command should be rejected if any of the above symbols this command
 adds to the signature are already
 a symbol in the current signature.
-We provide examples of datatype definitions in Section~\ref{sec:examples}.
+We provide examples of datatype definitions in \cref{sec:examples}.
 For full details on well-formed datatype declarations,
 refer to Section 4.2.3 of the SMT-LIB version 2.6~\cite{BarFT-RR-17}.
 
@@ -930,7 +928,7 @@ that is, a well-sorted term of sort $\sbool$.
 Furthermore,
 the term $t$ should be allowed
 based on the restrictions of the current logic,
-see Section~\ref{sec:sygus-logic} for more details.
+see \cref{sec:sygus-logic} for more details.
 
 \item $\paren{\constraintinvkwd\mbox{ }S\mbox{ }S_{pre}\mbox{ }S_{trans}\mbox{ }S_{post}}$
 
@@ -994,7 +992,7 @@ where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
 This asks the synthesis solver to find a solution for the synthesis conjecture
 corresponding to the current list of functions-to-synthesize,
 universal variables and constraints.
-The expected output from the synthesis solver is covered in Section~\ref{sec:output}.
+The expected output from the synthesis solver is covered in \cref{sec:output}.
 \end{itemize}
 
 \subsection{Setting Solver Options}
@@ -1003,7 +1001,7 @@ The expected output from the synthesis solver is covered in Section~\ref{sec:out
 \item $\paren{\setoptkwd\mbox{ }:S\mbox{ }L}$
 
 This sets the solver-specific option specified by the symbol $S$ 
-to the (literal) value $L$, whose syntax is given in Section~\ref{ssec:literals}.
+to the (literal) value $L$, whose syntax is given in \cref{ssec:literals}.
 We do not give concrete examples of such options in this document. %\rem{Any needed?}
 It is recommended that synthesis solvers
 ignore unrecognized options, 
@@ -1066,7 +1064,7 @@ indicating that the solver failed to find a solution to the conjecture.
 A response to $\checksynthkwd$ of the first kind is a correct solution if
 it satisfies both the semantic and syntactic restrictions given by
 the current state.
-We describe this in more detail in Section~\ref{sec:logical-semantics}.
+We describe this in more detail in \cref{sec:logical-semantics}.
 
 We do not define the correctness of an ${\tt infeasible}$ response 
 in this document. 
@@ -1090,7 +1088,7 @@ the conjecture is infeasible.
 In this section,
 we describe how the background logic
 restricts the constraints and grammars that are allowed as inputs.
-%As mentioned in Section~\ref{ssec:set-logic},
+%As mentioned in \cref{ssec:set-logic},
 %a SyGuS input may be given a background logic
 %specified by a symbol $S$,
 %where $S$ may be a standard SMT-LIB logic
@@ -1134,13 +1132,12 @@ The default SyGuS logic is the one
 whose input and output logics include only the core theory of Booleans,
 and whose feature set enables grammars and the core commands of the language.
 We describe logics and feature sets
-in more detail in
-Sections~\ref{ssec:smt-logic} and~\ref{ssec:feature-sets}.
+in more detail in \cref{ssec:smt-logic,ssec:feature-sets}.
 A formal definition of how these
 restrict the set of terms that may appear 
 in constraints and grammars
-is then given in Sections~\ref{ssec:logicr-constraints} and~\ref{ssec:logicr-grammars}.
-%We give three such examples in Section~\ref{ssec:logicr-grammars}
+is then given in \cref{ssec:logicr-constraints,ssec:logicr-grammars}.
+%We give three such examples in \cref{ssec:logicr-grammars}
 %below.
 %\rem{Standard extension to base logic + extensions?}
 %This section pertains only to 
@@ -1168,7 +1165,7 @@ of the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
 We briefly review some of the important logics and theories in the following.
 More concrete details on
 standard SMT-LIB logics can be found in the reference
-grammars in Appendix~\ref{apx:ref-grammars}.
+grammars in \cref{apx:ref-grammars}.
 
 The input and output logic components of the default SyGuS logic include only the
 \emph{core theory}.
@@ -1194,7 +1191,7 @@ addition ${\tt +}$
 and multiplication ${\tt *}$.
 Unary negation and subtraction are specified by ${\tt -}$.
 Constants of the theory are integer constants.
-Positive integers and zero are specified by the syntax $\intconst$ from Section~\ref{ssec:literals},
+Positive integers and zero are specified by the syntax $\intconst$ from \cref{ssec:literals},
 whereas negative integers are specified as the unary negation of positive integer,
 that is, ${\tt (-\ 2)}$ denotes negative two.
 Analogously, 
@@ -1202,7 +1199,7 @@ the theory of reals is enabled
 in logics like linear real arithmetic ${\tt LRA}$
 or non-linear real arithmetic ${\tt NRA}$.
 Its signature includes the real sort ${\tt Real}$.
-Some of the function symbols of arithmetic are syntacticaly identical to
+Some of the function symbols of arithmetic are syntactically identical to
 those from the theory of integers, including
 ${\tt +}$, ${\tt -}$ and ${\tt *}$.
 The signature of the theory of reals additionally includes
@@ -1226,7 +1223,7 @@ including bit-wise, arithmetic, and shifting operations.
 
 \paragraph{Strings}
 The theory of (unbounded) unicode strings and regular expressions
-is included in some logics specifed with ${\tt S}$ as a prefix,
+is included in some logics specified with ${\tt S}$ as a prefix,
 such as ${\tt S}$ (strings) or ${\tt SLIA}$ (strings
 with linear integer arithmetic).
 The string of this theory includes the string sort ${\tt String}$,
@@ -1239,7 +1236,7 @@ a string in another, and so on.
 A full description of this theory is given by the proposal in~\cite{smtlibStrings}.
 
 \paragraph{Arrays}
-The theory of arrays is included in logics specifed with ${\tt A}$ as a prefix,
+The theory of arrays is included in logics specified with ${\tt A}$ as a prefix,
 such as ${\tt ABV}$ or ${\tt ALIA}$.
 The signature of this theory includes a parametric sort ${\tt Array}$
 of arity two, whose sort parameters
@@ -1257,7 +1254,7 @@ whereas all others do not.
 The signature of the theory of datatypes
 is largely determined by the concrete datatypes definitions provided
 by the user.
-As mentioned in Section~\ref{ssec:declaring-sorts}, these commands append datatype sorts, 
+As mentioned in \cref{ssec:declaring-sorts}, these commands append datatype sorts, 
 constructors and selectors to the current signature.
 Constructor symbols are used for constructing
 values (e.g. ${\tt cons}$ constructs a list from an element and another list),
@@ -1300,7 +1297,7 @@ that includes concrete syntax for function sorts.
 
 A feature set is a set of values, called \emph{features},
 which for the purposes of this document can be seen as an enumeration type.
-Their syntax is given in Section~\ref{ssec:syntax-features}.
+Their syntax is given in \cref{ssec:syntax-features}.
 The meaning of all features standardized by this document are listed below.
 \begin{itemize}
 \item $\fgrammarskwd$: if enabled, 
@@ -1315,7 +1312,7 @@ grammars of $\synthfunkwd$ can generate terms that correspond to recursive defin
 %arbitrary quantification is allowed in constraints.
 \end{itemize}
 Formal definition of these features are given within the 
-Sections~\ref{ssec:logicr-constraints} and~\ref{ssec:logicr-grammars}.
+\cref{ssec:logicr-constraints,ssec:logicr-grammars}.
 Other features and their meanings may be solver specific, 
 which are not covered here.
 
@@ -1332,7 +1329,7 @@ forward declarations and recursion are not permitted by default.
 %For the latter,
 %we give details on the default settings of the logic
 %with respect to restrictions on terms that may appear in grammars
-%in Section~\ref{sec:sygus-logic}.
+%in \cref{sec:sygus-logic}.
 
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
@@ -1344,7 +1341,7 @@ if it is not allowed by the input logic of $\slogic$,
 according to the definition of that logic in the SMT-LIB standard.
 %Exceptions to this rule are described here.
 
-%By convention, as stated in Section~\ref{ssec:set-logic}, 
+%By convention, as stated in \cref{ssec:set-logic}, 
 %the base logic specified
 %by a $\setlogickwd$ in a SyGuS file must allow quantifiers.
 %%This is due to the fact that
@@ -1388,7 +1385,7 @@ Grammar $G$ may be allowed in the logic of linear integer arithmetic
 even if it has a rule whose conclusion is $y_c * t$, 
 noting that no non-linear terms can be generated from this rule,
 provided that no non-linear terms can be generated from $t$.
-An example demonstrating this case is given in Section~\ref{sec:examples}.
+An example demonstrating this case is given in \cref{sec:examples}.
 %then the term $y_c * y$ may be the conclusion
 %grammar terms $g_{ij}$ may involve
 %the multiplication of two non-constant integer terms $t_1$ and $t_2$
@@ -1461,13 +1458,13 @@ this means that formulas are limited to those that
 are (syntactically) a conjunction of three implications, 
 for a single predicate symbol $I$:
 \begin{enumerate}
-\item The first is an implication whose antecedant (the pre-condition) 
+\item The first is an implication whose antecedent (the pre-condition) 
 is an arbitrary formula
 in the logic $X$ and
 and whose conclusion is
 an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
 
-\item The second is an implication whose antecedant is
+\item The second is an implication whose antecedent is
 $I( \vec x ) \wedge \varphi$
 where $\vec x$ is a tuple of unique variables and $\varphi$ (the transition relation) 
 is an arbitrary formula
@@ -1475,7 +1472,7 @@ in the logic $X$,
 and whose conclusion is $I( \vec y )$
 where $\vec y$ is a tuple of unique variables disjoint from $\vec x$,
 
-\item The third is an implication whose antecedant is 
+\item The third is an implication whose antecedent is 
 an application $I( \vec x )$ where $\vec x$ is a tuple of unique variables,
 and whose conclusion (the post-condition) is an arbitrary formula in the logic $X$.
 \end{enumerate}
@@ -1509,7 +1506,7 @@ In this section,
 we formalize the notion of satisfying the \emph{syntactic specification}
 of the synthesis conjecture.
 
-As described in Section~\ref{ssec:dec-synth-fun},
+As described in \cref{ssec:dec-synth-fun},
 a grammar $G$ is specified as
 a \emph{grouped rule listing} of the form
 \[
@@ -1638,7 +1635,7 @@ in a constraint,
 then it would not be allowed since it is the
 multiplication of two non-constant terms and thus is not allowed by the input logic ${\tt LIA}$.
 However, 
-by the definition of our restrictions on grammars in Section~\ref{ssec:logicr-grammars},
+by the definition of our restrictions on grammars in \cref{ssec:logicr-grammars},
 this grammar \emph{is allowed},
 since all closed terms that the grammar generates are allowed by linear arithmetic.
 A possible correct solution to this synthesis conjecture is:
@@ -1711,7 +1708,7 @@ Consider the following example:
 (constraint (= (f #x00000000) #x00000000))
 (check-synth)
 \end{lstlisting}
-The this example, the logic is set to bitvectors ${\tt BV}$.
+The this example, the logic is set to bit-vectors ${\tt BV}$.
 A single function-to-synthesize $f$ is given that takes a
 bit-vector of bit-width 32 as input and returns a bit-vector of the same width as output.
 Its grammar involves non-terminals whose sorts are bit-vectors of
@@ -1729,7 +1726,7 @@ A possible correct solution for $f$ is:
 \end{lstlisting}
 In other words, a possible solution for $f$ 
 returns the concatenation of bits $15$ to $0$ of its argument
-with the the bit-vector $\#x0000$.
+with the bit-vector ${\tt \#x0000}$.
 \end{example}
 
 \begin{comment}
@@ -1797,7 +1794,7 @@ which abbreviates adding one to its argument.
 This grammar is allowed in the default SyGuS logic
 and in this example.
 The grammar for $g$ contains an application of a macro ${\tt fx\_plus\_one}$,
-whose exanded form contains a previously declared function-to-synthesize $f$.
+whose expanded form contains a previously declared function-to-synthesize $f$.
 This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this example.
 The grammar for $h$ contains a rule that contains an application of $h$ itself.
 This grammar is allowed since $\frecursionkwd$ is enabled in this example.
@@ -1883,7 +1880,7 @@ A possible correct response from the synthesis solver in this example is:
 \label{apx:reserved}
 
 A \emph{reserved word} is any of the 
-literals from Section~\ref{ssec:literals},
+literals from \cref{ssec:literals},
 or any of the following keywords:
 $\checksynthkwd$,
 $\constantkwd$,
@@ -1928,7 +1925,7 @@ available at \url{www.smt-lib.org}.
 For each grammar, we omit 
 the predicate symbols that are shared by all logics
 according to the SMT-LIB standard, that is,
-those included in the core theory described in Section~\ref{ssec:smt-logic},
+those included in the core theory described in \cref{ssec:smt-logic},
 which includes Boolean connectives and equality.
 We provide the grammar
 for a single function over one of the sorts in the logic,
@@ -2070,7 +2067,7 @@ and signed-less-than ${\tt bvslt}$.
 These extended operators can be seen as syntactic sugar for the
 operators in the grammar below.
 Example inputs that involve 
-some of the omitted operators are given in Section~\ref{sec:examples}.
+some of the omitted operators are given in \cref{sec:examples}.
 
 % ajr: full grammar 
 \begin{comment}
@@ -2188,7 +2185,7 @@ Here, we omit discussion of regular expressions and characters.
 %char.code
 %char.from-int
 String constants may be specified by text delimited by double quotes
-based on the syntax $\stringconst$ described in Section~\ref{ssec:literals}.
+based on the syntax $\stringconst$ described in \cref{ssec:literals}.
 
 Notice that since the logic specified above is ${\tt S}$.
 The signature of this logic includes 
