@@ -1840,7 +1840,8 @@ In this example, four constraints are given, each of which meet the
 restriction of being a PBE equality.
 A possible correct response from the synthesis solver in this example is:
 \begin{lstlisting}[basicstyle={\ttfamily}]
-(define-fun f ((fname String) (lname String)) String (str.++ fname lname))
+(define-fun f ((fname String) (lname String)) String
+  (str.++ fname (str.++ " " lname)))
 \end{lstlisting}
 \end{example}
 
