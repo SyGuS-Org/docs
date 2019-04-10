@@ -2,8 +2,7 @@
 \label{sec:participation}
 
 In addition to last year's benchmarks, we received over $100$ new benchmarks this year,
-which are summarized in \Cref{tbl:new-benchmarks}.
-\verify{I can cite the sources for Inv benchmarks, but do we know the sources for others?}
+across various competition tracks, which are summarized below in \Cref{tbl:new-benchmarks}.
 
 \begin{table}[!h]
 	\def\arraystretch{1.1}
@@ -18,6 +17,7 @@ which are summarized in \Cref{tbl:new-benchmarks}.
 			PBE-Strings   & 10 		   & Woosuk Lee (University of Pennsylvania) \\
 		\end{tabular}
 	\end{center}
+	\captionsetup{skip=0em}
 	\caption{New benchmarks contributed to various tracks}
 	\label{tbl:new-benchmarks}
 \end{table}
@@ -37,18 +37,20 @@ and \Cref{tbl:solvers-in-tracks} shows the tracks in which each solver participa
 	\small
 	\begin{center}
 		\scalebox{0.975}{
+		\renewcommand{\arraystretch}{1.2}
 		\begin{tabular}{r||l}
-			Solver 			& Authors \\ \hline \hline
+			\textbf{Solver} & \textbf{Authors} \\ \hline \hline
 			\cvcnew 		& Andrew Reynolds (Univ. of Iowa), Haniel Barbosa (Univ. of Iowa), Andrez Notzli (Stanford), \\
-							& Cesare Tinelli (Univ. of Iowa), and Clark Barrett (Stanford) \\[5pt]
+							& Cesare Tinelli (Univ. of Iowa), and Clark Barrett (Stanford) \\[6pt]
 			\dryd           & KangJing Huang (Purdue Univ.), Xiaokang Qiu (Purdue Univ.), Qi Tan (Nanjing Univ.), and \\
-							& Yanjun Wang (Purdue Univ.) \\[5pt]
-			\eusolvernew  	& Arjun Radhakrishna (Microsoft) and Abhishek Udupa (Microsoft) \\[5pt]
+							& Yanjun Wang (Purdue Univ.) \\[6pt]
+			\eusolvernew  	& Arjun Radhakrishna (Microsoft) and Abhishek Udupa (Microsoft) \\[6pt]
 			\horndini  		& Deepak D’Souza (IISc, Bangalore), P. Ezudheen (IISc, Bangalore), P. Madhusudan (UIUC), \\
-							& Pranav Garg (Amazon), Daniel Neider (MPI-SWS), and Shubham Ugare (IIT, Guwahati) \\[5pt]
+							& Pranav Garg (Amazon), Daniel Neider (MPI-SWS), and Shubham Ugare (IIT, Guwahati) \\[6pt]
 			\lig            & Saswat Padhi (UCLA), Rahul Sharma (Microsoft Research), and Todd Millstein (UCLA) \\
 		\end{tabular}}
 	\end{center}
+	\captionsetup{skip=0em}
 	\caption{List of registered solvers}
 	\label{tbl:solvers-authors}
 \end{table}
@@ -75,8 +77,8 @@ and are then unified into the overall expression using machine learning methods 
 	\def\arraystretch{1.15}
 	\begin{center}
 		\begin{tabular}{r||rrrrr}
-			& \multicolumn{5}{c}{Solvers} \\[8pt]
-			Tracks & \rot{\cvcnew} & \rot{\dryd} & \rot{\eusolvernew} & \rot{\horndini} & \rot{\lig} \\ \hline \hline
+			& \multicolumn{5}{c}{\textbf{Solver}} \\[8pt]
+			\textbf{Track} & \rot{\cvcnew} & \rot{\dryd} & \rot{\eusolvernew} & \rot{\horndini} & \rot{\lig} \\ \hline \hline
 			CLIA        & 1 & 1 & 1 & 0 & 0 \\
 			INV         & 1 & 1 & 1 & 1 & 1 \\
 			General     & 1 & 0 & 1 & 0 & 0 \\ 
@@ -96,7 +98,7 @@ works in polynomial time, and uses statistical heuristics to learn small trees t
 
 The \lig\ solver~\cite{PadhiM17} for invariant synthesis extends the data-driven approach to inferring sufficient loop invariants from a collection of program states~\cite{PadhiSM16}.
 Previous approaches to invariant synthesis were restricted to using a fixed set, or a fixed template for features,
-e.g., ICE-DT~\cite{ICEDT,GNMR16} requires the shape of constraints (such as octagonal) to be fixed apriori.
+e.g., ICE-DT~\cite{GNMR16} requires the shape of constraints (such as octagonal) to be fixed apriori.
 Instead \lig\ starts with no initial features, and automatically grows the feature set as necessary using program synthesis techniques.
 It reduces the problem of loop invariant inference to a series of precondition inference problems,
 and uses a counterexample-guided inductive synthesis (CEGIS) loop to revise the current candidate.

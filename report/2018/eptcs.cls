@@ -73,17 +73,18 @@
 \renewcommand\maketitle{\par
   \begingroup
     \providecommand{\event}{}
-    \ifadraft
-      \providecommand{\publicationstatus}{\Large DRAFT\quad\today}
-    \else\ifsubmission
-      \providecommand{\publicationstatus}{Submitted to:\\
-      \event}
-    \else\ifpreliminary
-      \providecommand{\publicationstatus}{Preliminary Report. Final version to appear in:\\
-      \event}
-    \else
-      \providecommand{\publicationstatus}{To appear in EPTCS.}
-    \fi\fi\fi
+    \providecommand{\publicationstatus}{}
+    % \ifadraft
+    %   \providecommand{\publicationstatus}{\Large DRAFT\quad\today}
+    % \else\ifsubmission
+    %   \providecommand{\publicationstatus}{Submitted to:\\
+    %   \event}
+    % \else\ifpreliminary
+    %   \providecommand{\publicationstatus}{Preliminary Report. Final version to appear in:\\
+    %   \event}
+    % \else
+    %   \providecommand{\publicationstatus}{To appear in EPTCS.}
+    % \fi\fi\fi
     \providecommand{\titlerunning}{Please define {\tt $\backslash$titlerunning}}
     \providecommand{\authorrunning}{Please define {\tt $\backslash$authorrunning}}
     \providecommand{\copyrightholders}{\authorrunning}
