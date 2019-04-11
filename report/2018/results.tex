@@ -15,7 +15,11 @@
 
 The primary criterion for winning a track was the number of benchmarks solved,
 but we also analyzed the time to solve and the the size of the generated expressions.
-Both were classified using a pseudo-logarithmic scale as follows.
+The overall score for each solver was computed as $5N + 3S + F$.
+Here $N$ denotes the number of benchmarks solved by the solver,
+$F$ denotes the number of benchmarks solved among the fastest,
+and $S$ denotes the number of benchmarks for which the size of the generated solution was among the shortest.
+We used a pseudo-logarithmic scale for $F$ and $S$.
 For time to solve, the scale is: $[0,1)$, $[1,3)$, $[3,10)$, $[10,30)$, $[30, 100)$,
 $[100,300)$, $[300, 1000)$, $[1000,3600)$, $\geqslant 3600$.
 That is, the first ``bucket'' refers to termination in less than one second,
@@ -26,15 +30,13 @@ as that of the solver which solved that benchmark in minimum time.
 Similarly, for expression sizes, the pseudo-logarithmic scale we use is:
 $[1,10)$, $[10,30)$, $[30,100)$, $[100,300)$, $[300,1000)$, $\geqslant 1000$,
 where expression size is the number of nodes in the SyGuS parse-tree.
-In some tracks there was a tie or almost a tie in terms of the number of solved benchmarks,
-but the differences in the time to solve where significant.
 We also report on the number of benchmarks \emph{solved uniquely} by a solver,
-\emph{i.e.} the number of benchmarks which no other solver but this particular solver could solve.
+\emph{i.e.} the number of benchmarks which no solver other than the particular solver could solve.
 
-\Cref{fig:resultsPerTrack} shows the percentage of benchmarks solved,
-the percentage of those among the fastest,
-and the percentage of synthesized expressions among the smallest size
-for each solver in each track.
+In \Cref{fig:resultsPerTrack}, we show the number of benchmarks solved,
+the number of benchmarks solved among the fastest,
+and the number of synthesized expressions among the smallest size;
+per solver per track.
 
 \begin{figure}
 	\begin{center}
@@ -108,7 +110,8 @@ and similarly there are $9$ benchmarks that only \eusolver\ could solve.
 	\label{tbl:general-categories}
 \end{table}
 
-We partition the benchmarks of the general track to a number of categories, each containing a set of related benchmarks.
+We partitioned the benchmarks of the general track to a number of categories,
+each containing a set of related benchmarks.
 The results per category are given in the Table~\ref{tbl:general-categories}.
 We observe that \eusolvernew\ preformed significantly better in the ``Multiple Functions'' and ``ICFP'' categories.
 While the \cvcnew\ solver preformed better in the other categories,
@@ -145,18 +148,20 @@ In the invariant generation track, the \lig\ solver solved $115$ out of $127$ be
 In terms of the time to solve, \lig\ solved $102$ benchmarks among the fastest, followed by \cvcnew\ which solved $82$,
 \dryd\ which solved $81$, \horndini\ which solved $21$, and \eusolvernew\ which solved $15$.
 There was one benchmark that was solved by a unique solver -- the \texttt{fib_17n.sl} benchmark solved by \lig. 
-
+\vspace{-0.5em}
 \paragraph{Programming By Example (Bit Vectors) Track}
 In the PBE track on the theory of bit vectors, the \cvcnew\ solver solved $724$ out of $750$ benchmarks
 and \eusolvernew\ solved $677$ benchmarks.
 In terms of the time to solve, \cvcnew\ solved $508$ benchmarks among the fastest,
 and \eusolvernew\ solved $468$.
+However, \eusolvernew\ generates shorter expressions than \cvcnew\ in significantly many cases.
 There were four benchmarks that were solved uniquely by \cvcnew,
 and one benchmark that was solved uniquely by \eusolvernew.
-
+\vspace{-0.5em}
 \paragraph{Programming By Example (Strings) Track}
 In the PBE track on the theory of strings, the \cvcnew\ solver solved $102$ out of $118$ benchmarks,
 and \eusolvernew\ solved $79$ benchmarks.
 In terms of the time to solve, \cvcnew\ solved $98$ benchmarks among the fastest,
 and \eusolvernew\ solved $79$.
+We note again that \eusolvernew\ generates shorter expressions than \cvcnew\ in several cases.
 There were $21$ benchmarks that were solved uniquely by \cvcnew.

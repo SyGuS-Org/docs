@@ -1,20 +1,20 @@
 \section{Submitted Benchmarks and Solvers}
 \label{sec:participation}
 
-In addition to last year's benchmarks, we received over $100$ new benchmarks this year,
-across various competition tracks, which are summarized below in \Cref{tbl:new-benchmarks}.
+In addition to the benchmarks from the last year's competition,
+we received over $100$ new benchmarks this year,
+across various competition tracks, which we summarize below in \Cref{tbl:new-benchmarks}.
 
 \begin{table}[!h]
 	\def\arraystretch{1.1}
 	\small
 	\begin{center}
 		\begin{tabular}{r||c|l}
-			Track 	  	  & Benchmarks & Contributors \\
-			\hline \hline
-			CLIA 		  & 15 		   & Kangjing Huang (Purdue University) \\
-			General 	  & 29 		   & Qinheping Hu and Loris D' Antoni (University of Wisconsin-Madison) \\
-			Invariants 	  & 21 + 32    & Saswat Padhi (UCLA) $\enskip$+$\enskip$ Kangjing Huang (Purdue University) \\
-			PBE-Strings   & 10 		   & Woosuk Lee (University of Pennsylvania) \\
+			\textbf{Track} & \textbf{Benchmarks} 	& \textbf{Contributors} \\\hline \hline
+			CLIA 		   & 	15 		   			& Kangjing Huang (Purdue University) \\
+			General 	   & 	29 		   			& Qinheping Hu and Loris D' Antoni (University of Wisconsin-Madison) \\
+			Invariants 	   & 	21 + 32    			& Saswat Padhi (UCLA) $\enskip$+$\enskip$ Kangjing Huang (Purdue University) \\
+			PBE-Strings    & 	10 		   			& Woosuk Lee (University of Pennsylvania) \\
 		\end{tabular}
 	\end{center}
 	\captionsetup{skip=0em}
@@ -66,15 +66,14 @@ It considers benchmarks in conditional linear integer arithmetic theory (LIA), a
 It then tries to first get the correct height of a normal form decision tree, and then tries to synthesize a solution of that height.
 It makes use of parallelization, using as many cores as are available, and of optimizations based on solutions of typical LIA SyGuS problems.
 
-The \eusolvernew\ solver uses a divide-and-conquer strategy~\cite{AlurCAV15}.
-The idea is to find different expressions that satisfy different subsets of the input space,
-and unify them into a solution that works well for the entire space of inputs.
-The sub-expressions are typically found using enumeration techniques
-and are then unified into the overall expression using machine learning methods for decision trees~\cite{AlurRU17}.
+The \eusolvernew\ solver uses a divide-and-conquer strategy~\cite{AlurCAV15} to find different expressions that satisfy different subsets of the input space,
+and then unifies them into a solution that works well for the entire space of inputs.
+Subexpressions are typically found using enumeration techniques
+and are then unified into the final solutions using decision tree learning~\cite{AlurRU17}.
 
-\begin{wraptable}{r}{55mm}
-	\setlength{\tabcolsep}{5pt}
-	\def\arraystretch{1.15}
+\begin{wraptable}{r}{5cm}
+	\setlength{\tabcolsep}{4pt}
+	\def\arraystretch{1.2}
 	\begin{center}
 		\begin{tabular}{r||rrrrr}
 			& \multicolumn{5}{c}{\textbf{Solver}} \\[8pt]
@@ -86,6 +85,7 @@ and are then unified into the overall expression using machine learning methods 
 			PBE-BV      & 1 & 0 & 1 & 0 & 0 \\
 		\end{tabular}
 	\end{center}
+	\captionsetup{skip=0em}
 	\caption{Participating solvers}
 	\label{tbl:solvers-in-tracks}
 \end{wraptable}
@@ -96,9 +96,10 @@ which extends the ICE-learning model.
 The authors describe a decision-tree learning algorithm that learns from Horn-ICE samples,
 works in polynomial time, and uses statistical heuristics to learn small trees that satisfy the samples.
 
-The \lig\ solver~\cite{PadhiM17} for invariant synthesis extends the data-driven approach to inferring sufficient loop invariants from a collection of program states~\cite{PadhiSM16}.
+The \lig\ solver~\cite{PadhiM17} for invariant synthesis extends the data-driven approach to inferring sufficient loop invariants
+from a set of program states~\cite{PadhiSM16}.
 Previous approaches to invariant synthesis were restricted to using a fixed set, or a fixed template for features,
 e.g., ICE-DT~\cite{GNMR16} requires the shape of constraints (such as octagonal) to be fixed apriori.
-Instead \lig\ starts with no initial features, and automatically grows the feature set as necessary using program synthesis techniques.
+Instead \lig\ starts with no initial features, and automatically learns features as necessary using program synthesis.
 It reduces the problem of loop invariant inference to a series of precondition inference problems,
 and uses a counterexample-guided inductive synthesis (CEGIS) loop to revise the current candidate.
