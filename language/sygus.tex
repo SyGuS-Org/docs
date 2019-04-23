@@ -1648,7 +1648,7 @@ A possible correct solution to this synthesis conjecture is:
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic DTLIA)
-(declare-datatypes ((List 0)) ((nil) (cons (head Int) (tail (List Int)))))
+(declare-datatypes ((List 0)) ((nil) (cons (head Int) (tail List))))
 (synth-fun f ((x List)) Int
    ((I Int) (L List) (B Bool))
    ((I Int (0 1 
@@ -1783,7 +1783,7 @@ Consider the following example:
 (synth-fun h ((x Int)) Int
    ((I Int) (B Bool))
    ((I Int (0 1 x (- I 1) (+ I I) (h I) (ite B I I)))
-    (B Bool ((= I I) (> I I))))
+    (B Bool ((= I I) (> I I)))))
 (declare-var y Int)
 (constraint (= (h y) (- (g y) (f y))))
 (check-synth)
@@ -1819,7 +1819,7 @@ Consider the following example:
                        (str.++ ntString ntString)
                        (str.replace ntString ntString ntString)
                        (str.at ntString ntInt)
-                       (str.from-int ntString)
+                       (str.from-int ntInt)
                        (str.substr ntString ntInt ntInt)))
      (ntInt Int (0 1 2
                  (+ ntInt ntInt)
