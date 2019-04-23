@@ -1648,7 +1648,7 @@ A possible correct solution to this synthesis conjecture is:
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic DTLIA)
-(declare-datatypes ((List 0)) ((nil) (cons (head Int) (tail List))))
+(declare-datatypes ((List 0)) (((nil) (cons (head Int) (tail List)))))
 (synth-fun f ((x List)) Int
    ((I Int) (L List) (B Bool))
    ((I Int (0 1 
