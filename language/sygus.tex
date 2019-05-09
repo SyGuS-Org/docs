@@ -358,7 +358,7 @@ A special character is any of the following:
 \[
 {\tt \_}\mbox{ }{\tt +}\mbox{ }{\tt -}\mbox{ }{\tt *}\mbox{ }{\tt \&}\mbox{ }{\tt |}\mbox{ }{\tt !}\mbox{ }{\tt \sim}\mbox{ }{\tt <}\mbox{ }{\tt >}\mbox{ }{\tt =}\mbox{ }{\tt /}\mbox{ }{\tt \%}\mbox{ }{\tt ?}\mbox{ }{\tt .}\mbox{ }{\tt \$}\mbox{ }{\tt \mathcircumflex}
 \]
-Note this definition coincides with
+Note this definition coincides with simple
 symbols in Section 3.1 of the SMT-LIB version 2.6 format,
 apart from differences in their reserved words.
 
@@ -499,6 +499,7 @@ A command $\cmd$ is given by the following syntax.
  %& | & \paren{\recfundefkwd\mbox{ }\fundef} \\
  %& | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
  & | & \paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
+ & | & \paren{\setinfokwd\mbox{ }:\symbol{ }\literal} \\
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
  & | & \paren{\setoptkwd\mbox{ }:\symbol\mbox{ }\literal} \\[2ex]
  \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
@@ -999,9 +1000,31 @@ where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
 This asks the synthesis solver to find a solution for the synthesis conjecture
 corresponding to the current list of functions-to-synthesize,
 universal variables and constraints.
-The expected output from the synthesis solver is covered in \cref{sec:output}.
+The expected output
+from the synthesis solver is covered in \cref{sec:output}.
 \end{itemize}
 
+\subsection{Setting Benchmark Information}
+
+\begin{itemize}
+\item $\paren{\setinfokwd\mbox{ }:S\mbox{ }L}$
+
+This sets meta-information specified by the symbol $S$
+to the (literal) value $L$, whose syntax is given in \cref{ssec:literals}.
+This has no impact on the state, and is used to annotate the
+benchmark with relevant information.
+For the purposes of this document, we define the meaning of
+the concrete symbol, ${\tt sygus\mbox{-}version}$,
+which when passed to this command is used to indicate the version of the SyGuS
+language of the benchmark.
+A benchmark whose header contains the line
+\[
+\paren{\setinfokwd\mbox{ }:{\tt sygus\mbox{-}version}\mbox{ }2.0}
+\]
+will use the version 2.0 syntax as specified by this document,
+whereas a value of $1.0$ indicates that the benchmark will use the
+syntax in the previous SyGuS language document~\cite{sygusFormat}.
+\end{itemize}
 \subsection{Setting Solver Options}
 
 \begin{itemize}
@@ -1455,9 +1478,9 @@ By construction of the overall synthesis conjecture, a SyGuS command sequence
 meets the requirements of the input logic ${\tt PBE\_}X$
 if and only if each ${\tt constraint}$ command takes as argument a PBE equality.
 
-\paragraph{Single Invariant-to-Synthesize (INV)}
+\paragraph{Single Invariant-to-Synthesize (Inv)}
 Given an SMT-LIB standard logic $X$,
-the base logic ${\tt INV\_}X$ denotes the logic
+the base logic ${\tt Inv\_}X$ denotes the logic
 where formulas are limited to the invariant synthesis
 problem for a single invariant-to-synthesize.
 Concretely,
@@ -1486,11 +1509,11 @@ and whose conclusion (the post-condition) is an arbitrary formula in the logic $
 The variables $\vec x$ in each of these three formulas are not required to be the same.
 
 Like the previous section, 
-we use the logic string ${\tt INV\_}X$ to refer to SyGuS logics as well.
+we use the logic string ${\tt Inv\_}X$ to refer to SyGuS logics as well.
 Given an SMT-LIB standard logic $X$
 that does not contain the prefix ${\tt QF\_}$,
-logic ${\tt INV\_}X$ denotes the SyGuS logic
-whose input logic is ${\tt INV\_QF\_}X$,
+logic ${\tt Inv\_}X$ denotes the SyGuS logic
+whose input logic is ${\tt Inv\_QF\_}X$,
 whose output logic is ${\tt QF\_}X$,
 and whose feature set is the default one.
 
@@ -1498,7 +1521,7 @@ Note that if a SyGuS command sequence is such that
 (1) it contains one $\synthinvkwd$ command,
 (2) it contains one $\constraintinvkwd$ command whose arguments are predicates whose definitions belong to logic $X$,
 and (3) it contains no other commands that introduce constraints,
-then its constraints are guaranteed to meet the requirements of the input logic ${\tt INV\_}X$.
+then its constraints are guaranteed to meet the requirements of the input logic ${\tt Inv\_}X$.
 
 \section{Formal Semantics}
 \label{sec:logical-semantics}
@@ -1852,10 +1875,10 @@ A possible correct response from the synthesis solver in this example is:
 \end{lstlisting}
 \end{example}
 
-\begin{example}[Invariant Synthesis (INV)]
+\begin{example}[Invariant Synthesis (Inv)]
 Consider the following example:
 \begin{lstlisting}[basicstyle={\ttfamily}]
-(set-logic INV_LIA)
+(set-logic Inv_LIA)
 (synth-inv inv-f ((x Int) (y Int)))
 (define-fun pre-f ((x Int) (y Int)) Bool 
   (and (>= x 5) (<= x 9) (>= y 1) (<= y 3)))
@@ -1866,7 +1889,7 @@ Consider the following example:
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set to the SyGuS-specific logic
-${\tt INV\_LIA}$, indicating linear integer arithmetic
+${\tt Inv\_LIA}$, indicating linear integer arithmetic
 where constraints are limited to the invariant synthesis problem for
 a single invariant-to-synthesize.
 Since this example contains only linear integer arithmetic terms,
@@ -1905,6 +1928,7 @@ $\constraintinvkwd$,
 $\letkwd$,
 $\setfeaturekwd$,
 %$\setfeaturesetkwd$,
+$\setinfokwd$,
 $\setlogickwd$,
 %$\setlogicinputkwd$,
 %$\setlogicoutputkwd$,
