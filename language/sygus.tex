@@ -42,6 +42,10 @@
 \usepackage{amsthm}
 \usepackage[noabbrev,capitalize,nameinlink]{cleveref}
 
+\usepackage{enumitem}
+\setenumerate{itemsep=0.25em,topsep=0.25em,leftmargin=2em}
+\setitemize{itemsep=0.25em,topsep=0.25em,leftmargin=2em}
+
 \usetikzlibrary{automata}
 \usetikzlibrary{backgrounds}
 \usetikzlibrary{fit}
@@ -54,27 +58,24 @@
 
 \title{The SyGuS Language Standard Version 2.0}
 
-
 \author{Mukund Raghothaman \and Andrew Reynolds \and Abhishek Udupa}
 
 \maketitle
-\input{macros.tex}
 
-\input{sygus-macros.tex}
+\input{macros}
+\input{sygus-macros}
 
-\section{Introduction}
-\label{sec:Introduction}
 \input{introduction}
 
 %\ajr{Intro to sygus and example}
 
 \paragraph{Overview of This Document}
-This document defines the SyGuS input language version 2.0,
+This document defines the SyGuS format version 2.0,
 which is intended to be used as the standard input and output language
-for solvers targeting the syntax-guided synthesis problem and users of these solvers.
+for solvers targeting the syntax-guided synthesis problem.
 The language borrows many concepts and language constructs
 from the standard format for Satisfiability Modulo Theories (SMT)
-solvers, the SMT-LIB language (version 2.6)~\cite{BarFT-RR-17}.
+solvers, the SMT-LIB standard (version 2.6)~\cite{BarFT-RR-17}.
 
 \begin{comment}
 We would like to thank the following people for their helpful
@@ -88,8 +89,8 @@ Cesare Tinelli.
 
 \paragraph{Outline}
 In the remainder of this section, we cover differences of
-the language described in this document with previous revisions of the
-SyGuS input language~\cite{sygusFormat} and cover the necessary preliminaries.
+the SyGuS format described in this document with previous revisions~\cite{sygusFormat,sygusSyntax2015,sygusSyntax2016}
+and cover the necessary preliminaries.
 Then,
 \cref{sec:syntax}
 gives the concrete syntax for commands in the SyGuS input language.
@@ -110,8 +111,8 @@ and solvers responses to them.
 
 In this section, we cover the differences
 in this format with respect to the one described in the previous
-SyGuS standard document~\cite{sygusFormat},
-and the extensions described in~\cite{sygusSyntax2015,sygusSyntax2016}.
+version of the SyGuS format~\cite{sygusFormat},
+and its extensions~\cite{sygusSyntax2015,sygusSyntax2016}.
 
 \begin{enumerate}
 
@@ -140,7 +141,7 @@ and the latter has no affect on the grammar.
 
 \item The datatype keyword $\enumkwd$
 and related syntactic features have been removed.
-The standard SMT-LIB version 2.6 commands
+The standard SMT-LIB 2.6 commands
 for declaring datatypes are now adopted,
 see \cref{ssec:declaring-sorts} for details.
 
@@ -169,8 +170,8 @@ Now, it must be written in the SMT-LIB compliant
 way ${\tt (let\ ((x\ t)) ...)}$.
 
 \item
-The signature, syntax and semantics for the theory of strings 
-is now the one given in an initial proposal to SMT-LIB~\cite{smtlibStrings}.
+The signature, syntax and semantics for the theory of strings
+is now the one given in an initial proposal~\cite{smtlibStrings} to SMT-LIB.
 Thus, certain new symbols are now present in the signature,
 and some existing ones have changed names.
 For example,
@@ -179,7 +180,7 @@ ${\tt str.to.int}$ and ${\tt int.to.str}$ have been renamed to
 ${\tt str.to}$-${\tt int}$ and ${\tt str.from}$-${\tt int}$.
 The semantics of all operators,
 which was not specified previously,
-is now the one given by~\cite{smtlibStrings}.
+is now consistent with that provided in the proposal~\cite{smtlibStrings}.
 
 %Furthermore, wherever applicable,
 %the syntax for sorts and terms
@@ -187,7 +188,7 @@ is now the one given by~\cite{smtlibStrings}.
 %prescribed in theory definitions from SMT-LIB~\cite{}.
 
 \item The command $\primedvardeclkwd$, which was a syntactic
-sugar for two $\vardeclkwd$ commands in the previous standard, has been removed
+sugar for two $\vardeclkwd$ commands in the previous language standard, has been removed
 for the sake of simplicity.
 This command did not provide any benefit to
 invariant synthesis problems, since constraints declared via $\constraintinvkwd$
@@ -205,7 +206,7 @@ do not accept global variables.
 \item 
 The command $\fundeclkwd$,
 which declared a universal variable of function type
-in the previous standard,
+in the previous language standard,
 has been removed.
 %Solvers that wish to support synthesis conjectures
 %with higher-order quantification
@@ -220,7 +221,7 @@ the constraints, grammars and commands that may appear in an input.
 
 \item The expected output for fail responses from a solver has changed.
 In particular,
-the response ${\tt (fail)}$ from the previous standard
+the response ${\tt (fail)}$ from the previous language standard
 should now be provided as ${\tt fail}$, that is, without parentheses.
 Additionally, a solver may answer ${\tt infeasible}$, indicating
 that it has determined there are no solutions to the given conjecture.
@@ -235,7 +236,7 @@ We assume the reader is familiar
 with sorts, well-sorted terms, (quantified) formulas
 and free variables\footnote{
 The definition of each of these coincides with
-the definition given in the SMT-LIB standard~\cite{BarFT-RR-17}.
+the definition given in the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}.
 }
 If $e$ is a term or formula,
 then we write $e[x]$ to denote that $x$ occurs free in $e$,
@@ -253,9 +254,9 @@ then its \emph{beta-reduction} is the term $t[\vec{s}]$.
 \label{sec:syntax}
 
 In this section, we describe the concrete syntax
-of SyGuS version 2.0 inputs.
+for the SyGuS 2.0 input language.
 Many constructs in this syntax coincide
-with those in the SMT-LIB version 2.6 format~\cite{BarFT-RR-17}.
+with those in SMT-LIB 2.6 standard~\cite{BarFT-RR-17}.
 In the following description,
 italic text within angle-brackets represents EBNF non-terminals,
 and text in typewriter font represents terminal symbols.
@@ -266,8 +267,8 @@ A SyGuS input $\sygus$ is thus a sequence of zero or more commands.
 \sygus & ::= & \kstar{\cmd}\\[2ex]
 \end{array}
 \]
-The syntax for commands $\cmd$ is given at the end of this section.
-We first introduce the necessary preliminary definitions.
+We first introduce the necessary preliminary definitions,
+and then provide the syntax for commands $\cmd$ at the end of this section.
 
 \subsection{Comments}
 
@@ -282,8 +283,8 @@ typically used to denote values or constant terms.
 The SyGuS format includes syntax for several kinds of literals,
 which are listed below.
 This treatment of most of these literals coincides with
-those in the SMT-LIB version 2.6 format.
-For full details, see Section 3.1 of~\cite{BarFT-RR-17}.
+those in SMT-LIB version 2.6.
+For full details, see Section 3.1 of the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}.
 
 \begin{alignat*}{1}
  & \begin{array}{rcl}
@@ -359,7 +360,7 @@ A special character is any of the following:
 {\tt \_}\mbox{ }{\tt +}\mbox{ }{\tt -}\mbox{ }{\tt *}\mbox{ }{\tt \&}\mbox{ }{\tt |}\mbox{ }{\tt !}\mbox{ }{\tt \sim}\mbox{ }{\tt <}\mbox{ }{\tt >}\mbox{ }{\tt =}\mbox{ }{\tt /}\mbox{ }{\tt \%}\mbox{ }{\tt ?}\mbox{ }{\tt .}\mbox{ }{\tt \$}\mbox{ }{\tt \mathcircumflex}
 \]
 Note this definition coincides with simple
-symbols in Section 3.1 of the SMT-LIB version 2.6 format,
+symbols in Section 3.1 of SMT-LIB version 2.6,
 apart from differences in their reserved words.
 
 \subsection{Identifiers}
@@ -378,7 +379,7 @@ that includes symbols that are indexed by integer constants or other symbols.
 \end{array}
 \]
 Note this definition coincides with
-identifiers in Section 3.1 of the SMT-LIB version 2.6 format.
+identifiers in Section 3.1 of SMT-LIB version 2.6.
 
 \subsection{Sorts}
 
@@ -516,9 +517,9 @@ A command $\cmd$ is given by the following syntax.
 \]
 For convenience,
 we distinguish between two kinds of commands above.
-The commands listed under $\cmd$ are specific to the SyGuS version 2.0 standard.
+The commands listed under $\cmd$ are specific to the SyGuS 2.0 format.
 The remaining commands listed under $\smtcmd$
-are borrowed from the SMT-LIB version 2.6 standard.
+are borrowed from SMT-LIB 2.6.
 Details on the semantics of these commands are given in \cref{sec:semantics}.
 
 %\paragraph{Reserved Words}
@@ -566,7 +567,7 @@ In the initial state of a SyGuS input,
 the lists of functions-to-synthesize, 
 universal variables, constraints, and the signature are empty,
 and the SyGuS logic is the default one 
-(for details on the default SyGuS logic, see \cref{sec:sygus-logic}).
+(see \cref{sec:sygus-logic} for details).
 %that is, 
 %no restrictions are placed on the set of terms that may appear 
 %in constraints and grammars.
@@ -602,7 +603,7 @@ followed by zero or more instances of the other SyGuS commands.
 
 \subsection{Setting the Logic}
 \label{ssec:set-logic}
-The logic of SyGuS consists of three parts,
+The logic of a SyGuS specification consists of three parts ---
 an \emph{input logic}, an \emph{output logic} and a \emph{feature set}.
 Roughly, 
 the input logic determines what terms
@@ -618,7 +619,7 @@ These are described in detail in \cref{sec:sygus-logic}.
 
 This sets the SyGuS background logic
 to the one that $S$ refers to.
-The logic string $S$ can be a standard one defined in SMT-LIB~\cite{BarFT-RR-17}
+The logic string $S$ can be a standard one defined in the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}
 or may be solver-specific.
 If $S$ is an SMT-LIB standard logic,
 then it must 
@@ -705,7 +706,7 @@ if $b$ is $\truekwd$, or disables it if $b$ is $\falsekwd$.
 %allowed in an input,
 %or further refinements to the restrictions placed
 %on the set of allowed constraints and grammars.
-All features standardized by this document 
+All features standardized in SyGuS 2.0
 are given in \cref{ssec:feature-sets}.
 
 \end{itemize}
@@ -717,8 +718,8 @@ are given in \cref{ssec:feature-sets}.
 
 This command appends $S$ to the current list of universal variables
 and adds the symbol $S$ of sort $\sigma$ to the current signature.
-This command should be rejected if $S$ is already
-a symbol in the current signature.
+This command should be rejected if $S$ already
+exists in the current signature.
 
 %\item $\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}$
 
@@ -880,7 +881,7 @@ adds to the signature are already
 a symbol in the current signature.
 We provide examples of datatype definitions in \cref{sec:examples}.
 For full details on well-formed datatype declarations,
-refer to Section 4.2.3 of the SMT-LIB version 2.6~\cite{BarFT-RR-17}.
+refer to Section 4.2.3 of the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}.
 
 \item $\paren{\sortdeclkwd\mbox{ }S\mbox{ }n}$
 
@@ -1016,14 +1017,14 @@ benchmark with relevant information.
 For the purposes of this document, we define the meaning of
 the concrete symbol, ${\tt sygus\mbox{-}version}$,
 which when passed to this command is used to indicate the version of the SyGuS
-language of the benchmark.
+format used in the benchmark.
 A benchmark whose header contains the line
 \[
-\paren{\setinfokwd\mbox{ }:{\tt sygus\mbox{-}version}\mbox{ }2.0}
+\paren{\setinfokwd\mbox{ }:{\tt sygus\mbox{-}version\mbox{ }2.0}}
 \]
 will use the version 2.0 syntax as specified by this document,
 whereas a value of $1.0$ indicates that the benchmark will use the
-syntax in the previous SyGuS language document~\cite{sygusFormat}.
+syntax in the previous SyGuS format~\cite{sygusFormat,sygusSyntax2015,sygusSyntax2016}.
 \end{itemize}
 \subsection{Setting Solver Options}
 
@@ -1191,7 +1192,7 @@ If a logic includes a theory, then its symbols are added
 to the current signature when a $\setlogickwd$ command is issued.
 Further details on the formal definition of 
 theory and logic declarations can be found in Sections 3.7 and 3.8
-of the SMT-LIB version 2.6 standard~\cite{BarFT-RR-17}.
+of the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}.
 We briefly review some of the important logics and theories in the following.
 More concrete details on
 standard SMT-LIB logics can be found in the reference
@@ -1261,9 +1262,9 @@ interpreted as the set of all unicode strings.
 Functions in this signature include string concatenation ${\tt str.++}$,
 string length ${\tt str.len}$ as well as many extended functions
 such as string containment ${\tt str.contains}$,
-string index-of ${\tt str.indexof}$ which returns the index of
+string search ${\tt str.indexof}$ which returns the index of
 a string in another, and so on.
-A full description of this theory is given by the proposal in~\cite{smtlibStrings}.
+A full description of this theory is given in a proposal to SMT-LIB~\cite{smtlibStrings}.
 
 \paragraph{Arrays}
 The theory of arrays is included in logics specified with ${\tt A}$ as a prefix,
@@ -1290,15 +1291,15 @@ Constructor symbols are used for constructing
 values (e.g. ${\tt cons}$ constructs a list from an element and another list),
 and selectors access subfields (e.g. ${\tt tail}$ returns its second argument).
 Notice that the value of \emph{wrongly applied} selectors, e.g. ${\tt tail}$ applied
-to the nil list, is underspecified and hence freely interpreted
+to the ${\tt nil}$ list, is underspecified and hence freely interpreted
 in models of this theory.
-The only fixed symbol of the theory of datatypes is the unary
+The only fixed symbol in the theory of datatypes is the unary
 indexed \emph{discriminator} predicate ${\tt(\_\ is\ C)}$,
 which holds if and only if its argument is an application of constructor $C$.
 For example, assuming the standard definition of a list datatype
 with constructors ${\tt cons}$ and ${\tt nil}$,
 we have that ${\tt ((\_\ is\ nil)\ x)}$ holds if and only if
-$x$ is the nil list.
+$x$ is the ${\tt nil}$ list.
 
 \paragraph{Uninterpreted Functions}
 In SMT-LIB, uninterpreted functions and sorts may be declared in
@@ -1306,7 +1307,7 @@ logics that include the substring ${\tt UF}$,
 whose interpretations are not fixed.
 Declarations for functions and sorts are made via SMT-LIB commands 
 $\fundeclkwd$ and $\sortdeclkwd$ respectively.
-In the SyGuS standard language, we do not permit
+In the SyGuS language, we do not permit
 the declaration of functions with $\fundeclkwd$ command.
 Instead, the language includes only the latter command.
 Thus, the only effect that specifying ${\tt UF}$ in the logic string has is
