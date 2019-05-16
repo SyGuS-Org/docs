@@ -1906,6 +1906,7 @@ A possible correct response from the synthesis solver in this example is:
 \bibliographystyle{plain}
 \bibliography{references}
 
+\newpage
 \begin{appendix}
 
 \section{Reserved Words}
@@ -1963,7 +1964,7 @@ which includes Boolean connectives and equality.
 We provide the grammar
 for a single function over one of the sorts in the logic,
 and assume it has one variable in its argument list
-for each non-Boolean sort that the grammar contains.
+for each non-Boolean sort in the grammar.
 
 \subsection{Integer Arithmetic}
 
@@ -1986,10 +1987,11 @@ linear integer arithmetic (LIA) with one free integer variable ${\tt x}$.
                   (abs y_term)
                   (ite y_pred y_term y_term)))
     (y_cons Int  ((Constant Int)))
-    (y_pred Bool ((> y_term y_term)
+    (y_pred Bool ((= y_term y_term)
+                  (> y_term y_term)
                   (>= y_term y_term)
-                  (< y_term y_term
-                  (<= y_term y_term))))))
+                  (< y_term y_term)
+                  (<= y_term y_term)))))
 \end{lstlisting}
 Above, ${\tt div}$
 denotes integer division,
@@ -2006,7 +2008,7 @@ with one free integer variable ${\tt x}$.
 (set-logic NIA)
 (synth-fun g ((x Int)) Int
    ((y_term Int) (y_pred Bool))
-   ((y_term Int  ((Constant Real) 
+   ((y_term Int  ((Constant Int) 
                   (Variable Int)
                   (- y_term)
                   (+ y_term y_term)
@@ -2016,10 +2018,11 @@ with one free integer variable ${\tt x}$.
                   (mod y_term y_term)
                   (abs y_term)
                   (ite y_pred y_term y_term)))
-    (y_pred Bool ((> y_term y_term)
+    (y_pred Bool ((= y_term y_term)
+                  (> y_term y_term)
                   (>= y_term y_term)
-                  (< y_term y_term
-                  (<= y_term y_term))))))
+                  (< y_term y_term)
+                  (<= y_term y_term)))))
 \end{lstlisting}
 
 \subsection{Real Arithmetic}
@@ -2041,10 +2044,11 @@ with one free real variable ${\tt x}$.
                   (* y_term y_cons)
                   (ite y_pred y_term y_term)))
     (y_cons Real ((Constant Real)))
-    (y_pred Bool ((> y_term y_term)
+    (y_pred Bool ((= y_term y_term)
+                  (> y_term y_term)
                   (>= y_term y_term)
-                  (< y_term y_term
-                  (<= y_term y_term))))))
+                  (< y_term y_term)
+                  (<= y_term y_term)))))
 \end{lstlisting}
 Notice that positive real constants and zero can either be written 
 as decimal values using the syntax $\realconst$
@@ -2073,8 +2077,8 @@ with one free real variable ${\tt x}$.
     (y_pred Bool ((= y_term y_term)
                   (> y_term y_term)
                   (>= y_term y_term)
-                  (< y_term y_term
-                  (<= y_term y_term))))))
+                  (< y_term y_term)
+                  (<= y_term y_term)))))
 \end{lstlisting}
 
 \subsection{Fixed-Width Bit-Vectors}
@@ -2158,7 +2162,7 @@ some of the omitted operators are given in \cref{sec:examples}.
                            (bvshl y_term y_term)
                            (bvlshr y_term y_term)
                            (ite y_pred y_term y_term)))
-    (y_pred Bool ((bvult y_pred y_pred))))))
+    (y_pred Bool ((bvult y_pred y_pred)))))
 \end{lstlisting}
 Bit-vector constants may be specified
 using either the hexadecimal format $\hexconst$
@@ -2186,7 +2190,7 @@ Here, we omit discussion of regular expressions and characters.
                         (str.replace y_term_str y_term_str y_term_str)
                         (str.from-int y_term_int)
                         (ite y_pred y_term_str y_term_str)))
-   ((y_term_int String ((Variable Int)
+    (y_term_int String ((Variable Int)
                         (str.len y_term_str)
                         (str.to-int y_term_str)
                         (ite y_pred y_term_int y_term_int)))
@@ -2194,7 +2198,7 @@ Here, we omit discussion of regular expressions and characters.
                   (str.prefixof y_term_str y_term_str)
                   (str.suffixof y_term_str y_term_str)
                   (str.< y_term_str y_term_str)
-                  (str.<= y_term_str y_term_str))))))
+                  (str.<= y_term_str y_term_str)))))
 \end{lstlisting}
 % ===== RE
 %str.to-re
