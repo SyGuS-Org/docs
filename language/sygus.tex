@@ -2180,7 +2180,7 @@ Here, we omit discussion of regular expressions and characters.
 \begin{lstlisting}[basicstyle={\ttfamily}]
 (set-logic S)
 (synth-fun f ((xs String) (xi Int)) String
-   ((y_term_str String) (y_term_int String) (y_pred Bool))
+   ((y_term_str String) (y_term_int Int) (y_pred Bool))
    ((y_term_str String ((Constant String)
                         (Variable String)
                         (str.++ y_term_str y_term_str)
