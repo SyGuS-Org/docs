@@ -2135,14 +2135,14 @@ some of the omitted operators are given in \cref{sec:examples}.
                            (bvashr y_term y_term)
                            (ite y_pred y_term y_term)))
     (y_pred Bool (...
-                  (bvult y_pred y_pred)
-                  (bvule y_pred y_pred)
-                  (bvugt y_pred y_pred)
-                  (bvuge y_pred y_pred)
-                  (bvslt y_pred y_pred)
-                  (bvsle y_pred y_pred)
-                  (bvsgt y_pred y_pred)
-                  (bvsge y_pred y_pred))))))
+                  (bvult y_term y_term)
+                  (bvule y_term y_term)
+                  (bvugt y_term y_term)
+                  (bvuge y_term y_term)
+                  (bvslt y_term y_term)
+                  (bvsle y_term y_term)
+                  (bvsgt y_term y_term)
+                  (bvsge y_term y_term))))))
 \end{lstlisting}
 \end{comment}
 \begin{lstlisting}[basicstyle={\ttfamily}]
@@ -2162,7 +2162,7 @@ some of the omitted operators are given in \cref{sec:examples}.
                            (bvshl y_term y_term)
                            (bvlshr y_term y_term)
                            (ite y_pred y_term y_term)))
-    (y_pred Bool ((bvult y_pred y_pred)))))
+    (y_pred Bool ((bvult y_term y_term))))))
 \end{lstlisting}
 Bit-vector constants may be specified
 using either the hexadecimal format $\hexconst$
