@@ -235,8 +235,9 @@ the function symbol $\syntax{mkMultiset}$ whose sort definition is
 )
 \end{verbatim}
 The term $\syntax{(mkMultiset\ t_1\ ...\ t_n)}$ is
-interpreted as the multiset containing the (unordered) elements $\syntax{t_1,\ ...\ t_n}$, 
-where notice that $\syntax{t_i}$ may be equal to $\syntax{t_j}$ for any $\syntax{i},\syntax{j}$.
+interpreted as the multiset containing elements $\syntax{t_1,\ ...\ t_n}$, 
+where notice the order of these elements is irrelevant
+and $\syntax{t_i}$ may be equal to $\syntax{t_j}$ for any $\syntax{i},\syntax{j}$.
 
 \subsubsection{Multiset Count}
 The signature $\sigtable$ includes 
@@ -489,7 +490,7 @@ and finally applying a \emph{finalization} function $f$
 to the multiset $M_i$ and to the result of the aforementioned computation.
 Then,
 $A( t, b, c, f)$ is
-the union of (singleton) tuples $\{ (r_1), \ldots, (r_n) \}$.
+the multiset union of (singleton) tuples $\{ (r_1), \ldots, (r_n) \}$.
 
 \paragraph{Notes}
 \begin{itemize}
