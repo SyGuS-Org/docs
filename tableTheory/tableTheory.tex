@@ -135,12 +135,12 @@ We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table 
 The signature $\sigtable$ includes function symbols for
 lambda abstractions,
 tuples, multisets, and
-three parametric function symbols denoting table operations.
+three function symbols denoting table operations.
 We list these in the following.
-Function symbols in its signature may be parametric.
-To provide the sort of (classes of) parametric functions,
+Function symbols in its signature may be polymorphic.
+To provide the sort of (classes of) polymorphic functions,
 we follow the convention for theory definitions in SMT-LIB. %~\cite{}.
-In particular, the \emph{sort definition} for a parametric function $\syntax{f}$
+In particular, the \emph{sort definition} for a polymorphic function $\syntax{f}$
 has the following syntax:
 \begin{verbatim}
 (par (X_1 ... X_j) (f T_1 ... T_k T))
