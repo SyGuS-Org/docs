@@ -1,0 +1,534 @@
+\pdfoutput=1
+
+\documentclass[english,a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{xargs}[2008/03/08]
+\usepackage{xspace}
+\usepackage[unicode=true,
+            pdfusetitle,
+            bookmarks=true,
+            bookmarksnumbered=false,
+            bookmarksopen=false,
+            breaklinks=false,
+            pdfborder={0 0 0},
+            backref=false,
+            colorlinks=true,
+            citecolor=blue]
+ {hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% For printing a cirumflex inside a formula
+\newcommand{\mathcircumflex}[0]{\mbox{\^{}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{bussproofs}
+\usepackage{centernot}
+\usepackage{datetime}
+\usepackage{filecontents}
+\usepackage{fullpage}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{comment}
+\usepackage{amsthm}
+\usepackage[noabbrev,capitalize,nameinlink]{cleveref}
+
+\usepackage{enumitem}
+\setenumerate{itemsep=0.25em,topsep=0.25em,leftmargin=2em}
+\setitemize{itemsep=0.25em,topsep=0.25em,leftmargin=2em}
+
+\usetikzlibrary{automata}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Listing}
+
+\begin{document}
+
+\title{Proposal for Theory of Tables}
+
+\author{Andrew Reynolds \and Chenglong Wang}
+
+\maketitle
+
+\input{macros}
+
+\section{Theory of Tables}
+
+This document describes a SMT-LIB theory of tables $\thtable$.
+We provide its signature $\sigtable$ in two parts,
+first describing its sorts and then its function symbols.
+We assume that the signature of $\thtable$ includes the symbols of the core theory, 
+namely, the Boolean sort denoted $\syntax{Bool}$,
+a binary polymorphic predicate $\syntax{=}$ denoting equality, for all sorts.
+
+\section{Sort Symbols}
+
+The theory of tables contains the following three (parametric) sorts.
+
+\subsection{Function Sorts}
+The signature $\sigtable$ includes all sorts of the form:
+\begin{align*}
+\syntax{(->\ T_1\ ...\ T_k T)}
+\end{align*}
+for all sorts $\syntax{T_1, ..., T_k, T}$ where $k \geq 1$.
+This sort denotes the class of functions taking arguments of sorts $\syntax{T_1, ..., T_k}$
+and having return sort $\syntax{T}$.
+Note that a predicate sort is a function sort whose return
+type is Boolean.
+
+\begin{comment}
+\paragraph{Notes}
+\begin{itemize}
+\item The term $\syntax{ 
+(lambda\ ((x_1\ T_1)\ ...\ (x_n\ T_n))\ t)
+}$
+has sort 
+$\syntax{(->\ T_1\ ...\ T_n\ T)}$
+when $\syntax{t}$ has sort $\syntax{T}$.
+\end{itemize}
+\end{comment}
+
+\subsection{Tuple Sorts}
+
+The signature $\sigtable$ includes all sorts of the form:
+\begin{align*}
+\syntax{ (Tuple\ T_1\ ...\ T_k) }
+\end{align*}
+for all sorts $\syntax{T_1, ..., T_k}$.
+This sort denotes tuples taking arguments of sorts $\syntax{T_1, ..., T_k}$.
+
+\subsection{Multiset Sorts}
+The signature $\sigtable$ includes all sorts of the form:
+\begin{align*}
+\syntax{ (Multiset\ T) }
+\end{align*}
+for all sorts $\syntax{T}$. 
+This sort denotes multisets of elements of sort $\syntax{T}$.
+Note that multisets allow duplication of elements and do not maintain an order
+of the elements they contain.
+The \emph{cardinality} of a multiset is the number of elements it contains.
+%An element may occur with any multiplicity in a multiset.
+%The elements of a multiset are unordered.
+
+\paragraph{Notes}
+A table is multiset whose elements are tuples.
+We write $\syntax{ (Table\ T_1 ...\ T_k)}$ as shorthand for 
+the sort $\syntax{ (Multiset\ (Tuple\ T_1\ ...\ T_k)) }$ 
+in the remainder of the document.
+We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table type above.
+
+\section{Function Symbols}
+
+The signature $\sigtable$ includes function symbols for
+lambda abstractions,
+tuples, multisets, and
+three parametric function symbols denoting table operations.
+We list these in the following.
+Function symbols in its signature may be parametric.
+To provide the sort of (classes of) parametric functions,
+we follow the convention for theory definitions in SMT-LIB. %~\cite{}.
+In particular, the \emph{sort definition} for a parametric function $\syntax{f}$
+has the following syntax:
+\begin{verbatim}
+(par (X_1 ... X_j) (f T_1 ... T_k T))
+\end{verbatim}
+Above, $\syntax{X_1\ ...\ X_j}$ are \emph{sort parameters}
+that may freely occur in sorts $\syntax{T_1,\ ...\ T_k}$ and $\syntax{T}$.
+Above, $\syntax{T_1,\ ...\ T_k}$ are the argument sorts of $\syntax{f}$
+and $\syntax{T}$ is its return sort.
+
+\subsection{Functions}
+We assume
+the symbol $\syntax{lambda}$ denotes lambda abstraction.
+Its syntax is:
+\begin{align*}
+\syntax{ 
+(lambda\ ((x_1\ T_1)\ ...\ (x_n\ T_n))\ t)
+}
+\end{align*}
+where $\syntax{t}$ is a term,
+and $\syntax{x_1\ ...\ x_n}$ are bound variables.
+It has sort $\syntax{(->\ T_1\ ...\ T_n\ T)}$
+when $\syntax{t}$ has sort $\syntax{T}$.
+It denotes the anonymous function
+returning $t$ for input arguments $\syntax{x_1}, \ldots, \syntax{x_n}$.
+%The term 
+%$\syntax{((lambda\ ((x_1\ T_1)\ ...\ (x_n\ T_n))\ t)\ s_1\ ...\ s_n)}$
+%is interpreted as $t$ where $x_1, \ldots, x_n$ are replaced by
+%$s_1, \ldots, s_n$.
+
+\subsection{Tuples}
+
+\subsubsection{Tuple Construction}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{mkTuple}$.
+Its sort definition is
+\begin{verbatim}
+(par (X_1 ... X_j) 
+  (mkTuple
+  
+    ; The arguments of the tuple we are constructing
+    X_1 ... X_j
+    
+    ; The return sort
+    (Tuple X_1 ... X_j)
+  )
+)
+\end{verbatim}
+The term $\syntax{(mkTuple\ u_1\ ...\ u_n)}$ is
+interpreted as the tuple the (ordered) list of arguments $\syntax{u_1,\ ...\ u_n}$. 
+
+\subsubsection{Tuple Selection}
+The signature $\sigtable$ includes 
+all indexed function symbols of the form
+\begin{align*}
+\syntax{ 
+(\_\ tupSel\ n)
+}
+\end{align*}
+where $\syntax{n}$ is a numeral.
+Its sort definition is
+\begin{verbatim}
+(par (X_1 ... X_j) 
+  ((_ tupSel n)
+  
+    ; The tuple we are selecting from
+    (Tuple X_1 ... X_j)
+    
+    ; The return sort
+    X_n
+  )
+)
+\end{verbatim}
+where $1 \leq \syntax{n} \leq \syntax{j}$.
+The term $\syntax{((\_\ tupSel\ n)\ t)}$ is
+interpreted as the $\syntax{n}^{th}$ argument of the tuple $\syntax{t}$.
+
+\subsection{Multisets}
+
+\subsubsection{Multiset Construction}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{mkMultiset}$ whose sort definition is
+\begin{verbatim}
+(par (X) 
+  (mkMultiset
+  
+    ; The arguments of the multiset we are constructing
+    X ... X
+    
+    ; The return sort
+    (Multiset X)
+  )
+)
+\end{verbatim}
+The term $\syntax{(mkMultiset\ t_1\ ...\ t_n)}$ is
+interpreted as the multiset containing the (unordered) elements $\syntax{t_1,\ ...\ t_n}$, 
+where notice that $\syntax{t_i}$ may be equal to $\syntax{t_j}$ for any $\syntax{i},\syntax{j}$.
+
+\subsubsection{Multiset Count}
+The signature $\sigtable$ includes 
+the predicate symbol $\syntax{count}$ whose sort definition is
+\begin{verbatim}
+(par (X)
+  (count 
+  
+    ; The element we are counting
+    X 
+    
+    ; The multiset in which the element may occur
+    (Multiset X)
+    
+    ; The return sort
+    Int
+  )
+)
+\end{verbatim}
+The term $\syntax{(count\ u\ t)}$ is
+interpreted as the number of times element $\syntax{u}$ occurs in $\syntax{t}$.
+
+\subsubsection{Multiset Compositions}
+The signature $\sigtable$ includes 
+the binary function symbols 
+$\syntax{union}$, $\syntax{intersect}$, and $\syntax{difference}$.
+Each $\syntax{f} \in \{ \syntax{union}, \syntax{intersect}, \syntax{difference} \}$
+has sort definition
+\begin{verbatim}
+(par (X) (f (Multiset X) (Multiset X) (Multiset X)))
+\end{verbatim}
+These functions denote multiset union, multiset intersection, and multiset difference
+respectively.
+
+\subsubsection{Multiset Filtering}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{filter}$. Its sort definition is:
+
+\begin{verbatim}
+(par (X)
+  (filter
+  
+    ; The multiset to filter
+    (Multiset X)
+    
+    ; The predicate we are filtering based on
+    (-> X Bool)
+    
+    ; The return sort
+    (Multiset X)
+  )
+)
+\end{verbatim}
+
+\paragraph{Semantics}
+The filter operator keeps only the elements
+from its first argument
+for which the predicate of its second argument is true.
+In other words,
+$\syntax{(filter\ t\ P)}$
+is the multiset containing exactly
+the elements $u \in \syntax{t}$
+such that $\syntax{P}(u)$ is true.
+
+\subsection{Tables}
+
+\subsubsection{Table Projection}
+The signature $\sigtable$ includes 
+all indexed functions symbols of the form
+\begin{align*}
+\syntax{ 
+(\_\ project\ n_1\ ...\ n_k)
+}
+\end{align*}
+where $n_1, \ldots, n_k$ are numerals.
+Its sort definition is:
+\begin{verbatim}
+(par (X_1 ... X_j) 
+  ((_ project n_1 ... n_k)
+  
+    ; The table to project
+    (Table X_1 ... X_j)
+    
+    ; The return sort
+    (Table X_{n_1} ... X_{n_k})
+  )
+)
+\end{verbatim}
+where for each $i = 1, \ldots, j$,
+$1 \leq n_i \leq j$. 
+Note that
+$\syntax{project}$ without indices
+denotes the operator above where $k=0$.
+
+\paragraph{Semantics}
+
+A projection operator keeps (copies) of the given columns
+in each (tuple) element of its argument.
+In other words,
+let $p$ be the projection operator denoted by $\syntax{(\_\ project\ n_1\ ...\ n_k)}$
+and let $t$ be a table.
+Then, $p(t)$
+is the table containing a tuple of the form
+$(u_{n_1}, \ldots, u_{n_k})$
+for each tuple $(u_1, \ldots, u_j)$ from $t$.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+It may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
+in which case two (or more) copies of the column at that position
+are in the result of the projection.
+\item
+The cardinality of $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$ is
+same as the cardinality of $\syntax{t}$.
+\end{itemize}
+
+\subsubsection{Table Join}
+The signature $\sigtable$ includes 
+all indexed functions symbols of the form
+\begin{align*}
+\syntax{ 
+(\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)
+}
+\end{align*}
+where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
+Its sort definition is:
+
+\begin{verbatim}
+(par (X_1 ... X_j Y_1 ... Y_l)
+  ((_ join n_1 m_1 ... n_k m_k)
+  
+    ; The tables to join
+    (Table X_1 ... X_j)
+    (Table Y_1 ... Y_j)
+    
+    ; The return sort
+    (Table X_1 ... X_j Y_1 ... Y_j)
+  )
+)
+\end{verbatim}
+where for all $i = 1, \ldots k$,
+we have that $1 \leq \syntax{n_1} \leq \syntax{j}$ and $1 \leq \syntax{m_i} \leq \syntax{l}$. 
+Note that
+$\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
+
+\paragraph{Semantics}
+When $\syntax{k}=0$, we have that $\syntax{(join\ t_1\ t_2)}$
+denotes the table containing a tuple corresponding to the concatentation
+of tuples $u_1$ and $u_2$
+for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
+When $\syntax{k}>0$, $\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
+is syntax sugar for $\syntax{(filter\ (join\ t_1\ t_2)\ P)}$ where $\syntax{P}$ is
+the predicate:
+\begin{verbatim}
+(lambda ((t_1 (Tuple X_1 ... X_j Y_1 ... Y_l)))
+  (and
+    (= ((_ tupSel n_1) t_1) ((_ tupSel o_1) t_2))
+    ...
+    (= ((_ tupSel n_k) t_1) ((_ tupSel o_k) t_2))
+  )
+)
+\end{verbatim}
+where $\syntax{o_i}$ is the numeral $\syntax{j+m_i}$ for each $i = 1, \ldots, k$.
+In other words,
+the join keeps only concatenations of tuples $u_1 \in \syntax{t_1}$ and
+$u_2 \in \syntax{t_2}$ 
+that match on each of the pairs of argument indices (columns) specified by
+the indices of the operator,
+where $n_1\ ...\ n_k$ are indices corresponding to arguments of $u_1$
+and $m_1\ ...\ m_k$ are indices corresponding to arguments of $u_2$.
+
+\paragraph{Notes}
+\begin{itemize}
+\item The cardinality of $\syntax{(join\ t_1\ t_2)}$
+is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
+\end{itemize}
+
+
+\subsubsection{Table Aggregation}
+The signature $\sigtable$ includes 
+all indexed function symbols of the form
+\begin{align*}
+\syntax{ 
+(\_\ aggr\ n_1\ ...\ n_k\ n)
+}
+\end{align*}
+where $n_1, \ldots, n_k, n$ are numerals,
+called \emph{table aggregation operations}. Their sort definition is:
+
+\begin{verbatim}
+(par (X_1 ... X_j X_a X_f) 
+  ((_ aggr n_1 ... n_k n)
+  
+    ; The table to aggregate
+    (Table X_1 ... X_j)
+    
+    ; The "initial value"
+    X_a
+    
+    ; The "combining function"
+    (-> (Tuple X_1 ... X_j) X_a X_a)
+    
+    ; The (optional) "finalize function"
+    (-> (Table X_1 ... X_j) X_a X_f)
+    
+    ; The return sort
+    (Table X_f)
+  )
+)
+\end{verbatim}
+
+\paragraph{Semantics}
+Let $A$ be the aggregation function
+denoted by $
+\syntax{(\_\ aggr\ n_1\ ...\ n_k\ n)}$.
+Let $a$ be a function that is associatiative and commutative.
+The term $A( t, b, a, f)$ is
+the union of tuples computed via a fold operation involving $b$, $a$, and $f$
+that run over subsets that form a partition of $t$, as described in following.
+
+In detail,
+let $\{ t_1, \ldots, t_n \}$ be a partition of table $t$
+where for each table $t_i$, each of its (tuple) elements
+are identical for arguments $n_1, \ldots, n_k$.
+%In other words, 
+%all elements of $\syntax{((\_\ project\ n_1\ ...\ n_k) t_i)}$
+%are identical.
+For each $i = 1, \ldots, n$,
+let $M_i$ be the multiset $p(t_i)$
+where $p$ is the projection operator denoted by $\syntax{(\_\ project\ n)}$.
+For each such multiset $M_i = \{ u_{i1}, \ldots, u_{in} \}$,
+assume an arbitrary ordering over these elements $\preceq$.
+Let $r_i$ be the term:
+\begin{align*}
+f( M_i, a( u_{in}, \ldots, a( u_{i1}, b ) \ldots ) )
+\end{align*}
+where $u_{i1} \preceq \ldots \preceq u_{in}$.
+%which is a term whose type is that of the $n^{th}$ column of the type of $t$.
+In other words,
+$r_i$ is the result of a fold operation
+starting with \emph{initial value} $b$,
+applying \emph{combining function} $a$ to
+the accumulated value and each of the tuples $u_{i1}, \ldots, u_{in}$,
+and finally applying a \emph{finalization} function $f$
+to the multiset $M_i$ and to the result of the aforementioned computation.
+Then,
+$A( t, b, a, f)$ is
+the union of (singleton) tuples $\{ (r_1), \ldots, (r_n) \}$.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+The semantics above impose no restrictions on the ordering $\preceq$,
+which determines in which the tuples $\{ u_{i1}, \ldots, u_{in} \}$
+are passed to the combining function $a$.
+Moreover, 
+we do not provide syntax to specify such an ordering.
+However, notice if the operator $a$ is associatiative
+and commutative, 
+this ordering is irrelevant since any ordering
+will result in the same $r_i$.
+Thus, as stated, the above semantics assume that $a$
+is associatiative and commutative.
+The semantics
+of aggregation functions $A$ over
+combining functions that are not associative and/or commutative are undefined.
+%Thus, we assume that the operator $a$ is
+%associatiative and commutative.
+\end{itemize}
+
+\paragraph{Unspecified Finalize Function}
+We overload the aggregation function
+such that its fourth argument is optional.
+If the fourth argument is not specified,
+then 
+$
+\syntax{
+((\_\ aggr\ n_1\ ...\ n_k\ n)\ t\ b\ a)
+}
+$
+is syntax sugar for
+$
+\syntax{
+((\_\ aggr\ n_1\ ...\ n_k\ n)\ t\ b\ a\ ident)
+}
+$
+where $\syntax{ident}$ is the function
+$\syntax{(lambda\ ((y\ (Table\ T_1 ...\ T_k))\ (x\ X_a))\ x)}$.
+In other words, this function returns the result of the
+fold computation described above unchanged.
+
+\section{Examples}
+
+
+
+\end{document}
