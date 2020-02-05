@@ -68,13 +68,15 @@
 This document describes a SMT-LIB theory of tables $\thtable$.
 We provide its signature $\sigtable$ in two parts,
 first describing its sorts and then its function symbols.
-We assume that the signature of $\thtable$ includes the symbols of the core theory, 
+We assume that $\sigtable$ includes the symbols of the core theory, 
 namely, the Boolean sort denoted $\syntax{Bool}$,
 a binary polymorphic predicate $\syntax{=}$ denoting equality, for all sorts.
 
 \section{Sort Symbols}
 
-The theory of tables contains the following three (parametric) sorts.
+The signature $\sigtable$ contains 
+the integer sort $\syntax{Int}$ as well as
+the following three (parametric) sorts.
 
 \subsection{Function Sorts}
 The signature $\sigtable$ includes all sorts of the form:
@@ -377,7 +379,7 @@ Its sort definition is:
 )
 \end{verbatim}
 where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_1} \leq \syntax{j}$ and $1 \leq \syntax{m_i} \leq \syntax{l}$. 
+we have that $1 \leq \syntax{n_i} \leq \syntax{j}$ and $1 \leq \syntax{m_i} \leq \syntax{l}$. 
 Note that
 $\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
 
@@ -446,14 +448,18 @@ called \emph{table aggregation operations}. Their sort definition is:
   )
 )
 \end{verbatim}
+where for all $i = 1, \ldots k$,
+we have that $1 \leq \syntax{n_i} \leq \syntax{j}$ and $1 \leq \syntax{n} \leq \syntax{j}$. 
 
 \paragraph{Semantics}
 Let $A$ be the aggregation function
 denoted by $
 \syntax{(\_\ aggr\ n_1\ ...\ n_k\ n)}$.
-Let $a$ be a function that is associatiative and commutative.
-The term $A( t, b, a, f)$ is
-the union of tuples computed via a fold operation involving $b$, $a$, and $f$
+Let $A( t, b, c, f)$ be a well-typed term
+according to the above sort definition for some $t, b, c, f$,
+and moreover assume that $c$ is \emph{order-agnostic} (see below).
+The term $A( t, b, c, f)$ is
+the union of tuples computed via a fold operation involving $b$, $c$, and $f$
 that run over subsets that form a partition of $t$, as described in following.
 
 In detail,
@@ -470,19 +476,19 @@ For each such multiset $M_i = \{ u_{i1}, \ldots, u_{in} \}$,
 assume an arbitrary ordering over these elements $\preceq$.
 Let $r_i$ be the term:
 \begin{align*}
-f( M_i, a( u_{in}, \ldots, a( u_{i1}, b ) \ldots ) )
+f( M_i, c( u_{in}, \ldots, c( u_{i1}, b ) \ldots ) )
 \end{align*}
 where $u_{i1} \preceq \ldots \preceq u_{in}$.
 %which is a term whose type is that of the $n^{th}$ column of the type of $t$.
 In other words,
 $r_i$ is the result of a fold operation
 starting with \emph{initial value} $b$,
-applying \emph{combining function} $a$ to
+applying \emph{combining function} $c$ to
 the accumulated value and each of the tuples $u_{i1}, \ldots, u_{in}$,
 and finally applying a \emph{finalization} function $f$
 to the multiset $M_i$ and to the result of the aforementioned computation.
 Then,
-$A( t, b, a, f)$ is
+$A( t, b, c, f)$ is
 the union of (singleton) tuples $\{ (r_1), \ldots, (r_n) \}$.
 
 \paragraph{Notes}
@@ -490,19 +496,28 @@ the union of (singleton) tuples $\{ (r_1), \ldots, (r_n) \}$.
 \item
 The semantics above impose no restrictions on the ordering $\preceq$,
 which determines in which the tuples $\{ u_{i1}, \ldots, u_{in} \}$
-are passed to the combining function $a$.
+are passed to the combining function $c$.
 Moreover, 
 we do not provide syntax to specify such an ordering.
-However, notice if the operator $a$ is associatiative
-and commutative, 
-this ordering is irrelevant since any ordering
-will result in the same $r_i$.
-Thus, as stated, the above semantics assume that $a$
-is associatiative and commutative.
+Instead, 
+we remark that the above semantics
+do not require an ordering when the combining function is
+\emph{order-agnostic},
+that is, for all $b, v_1, \ldots, v_n$,
+we have that:
+\begin{align*}
+c( v_1, \ldots, c( v_n, b ) \ldots ) = 
+c( w_1, \ldots, c( w_n, b ) \ldots )
+\end{align*}
+for all permutations $( w_1, \ldots, w_n )$ of $( v_1, \ldots, v_n )$.
+If the function $c$ is order-agnostic,
+then each $r_i$ in the above computation will be the same regardless
+of the ordering $\preceq$.
+Thus, as stated, the above semantics assume that $c$ is order-agnostic.
 The semantics
 of aggregation functions $A$ over
-combining functions that are not associative and/or commutative are undefined.
-%Thus, we assume that the operator $a$ is
+combining functions that are not order-agnostic are undefined.
+%Thus, we assume that the operator $c$ is
 %associatiative and commutative.
 \end{itemize}
 
@@ -513,13 +528,13 @@ If the fourth argument is not specified,
 then 
 $
 \syntax{
-((\_\ aggr\ n_1\ ...\ n_k\ n)\ t\ b\ a)
+((\_\ aggr\ n_1\ ...\ n_k\ n)\ t\ b\ c)
 }
 $
 is syntax sugar for
 $
 \syntax{
-((\_\ aggr\ n_1\ ...\ n_k\ n)\ t\ b\ a\ ident)
+((\_\ aggr\ n_1\ ...\ n_k\ n)\ t\ b\ c\ ident)
 }
 $
 where $\syntax{ident}$ is the function
