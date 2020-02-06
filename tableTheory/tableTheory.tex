@@ -238,10 +238,21 @@ The term $\syntax{(mkMultiset\ t_1\ ...\ t_n)}$ is
 interpreted as the multiset containing elements $\syntax{t_1,\ ...\ t_n}$, 
 where notice the order of these elements is irrelevant
 and $\syntax{t_i}$ may be equal to $\syntax{t_j}$ for any $\syntax{i},\syntax{j}$.
+If $n=0$,
+then $\syntax{mkMultiset}$ denotes the empty multiset.
+
+\subsubsection{Multiset Cardinality}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{card}$ whose sort definition is
+\begin{verbatim}
+(par (X) (card (Multiset X) Int))
+\end{verbatim}
+The term $\syntax{(card\ t)}$ is equal to
+the total number of elements that occur in the multiset $\syntax{t}$.
 
 \subsubsection{Multiset Count}
 The signature $\sigtable$ includes 
-the predicate symbol $\syntax{count}$ whose sort definition is
+the function symbol $\syntax{count}$ whose sort definition is
 \begin{verbatim}
 (par (X)
   (count 
@@ -301,6 +312,36 @@ $\syntax{(filter\ t\ P)}$
 is the multiset containing exactly
 the elements $u \in \syntax{t}$
 such that $\syntax{P}(u)$ is true.
+
+\subsubsection{Multiset Map}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{map}$. Its sort definition is:
+
+\begin{verbatim}
+(par (X_1 X_2)
+  (map
+  
+    ; The multiset to process
+    (Multiset X_1)
+    
+    ; The function we are applying
+    (-> X_1 X_2)
+    
+    ; The return sort
+    (Multiset X_2)
+  )
+)
+\end{verbatim}
+
+\paragraph{Semantics}
+The map operator runs the function provided
+in the second argument to all elements in the multiset.
+In other words,
+$\syntax{(map\ t\ f)}$
+is the multiset containing exactly
+the elements $\syntax{f}(u) \in \syntax{t}$
+for each $u \in \syntax{t}$.
+
 
 \subsection{Tables}
 
