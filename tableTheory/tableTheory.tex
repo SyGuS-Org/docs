@@ -116,7 +116,7 @@ The signature $\sigtable$ includes all sorts of the form:
 \syntax{ (Bag\ T) }
 \end{align*}
 for all sorts $\syntax{T}$. 
-This sort denotes bags (i.e. bags) of elements of sort $\syntax{T}$.
+This sort denotes bags (i.e. multisets) of elements of sort $\syntax{T}$.
 Note that bags allow duplication of elements and do not maintain an order
 of the elements they contain.
 The \emph{cardinality} of a bag is the number of elements it contains.
@@ -128,7 +128,8 @@ A table is bag whose elements are tuples.
 We write $\syntax{ (Table\ T_1 ...\ T_k)}$ as shorthand for 
 the sort $\syntax{ (Bag\ (Tuple\ T_1\ ...\ T_k)) }$ 
 in the remainder of the document.
-We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table sort above.
+We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table sort above,
+and the elements of a given table as its \emph{rows}.
 
 \section{Function Symbols}
 
@@ -238,13 +239,13 @@ Its sort definition is:
   )
 )
 \end{verbatim}
-where for each $i = 1, \ldots, j$,
+where for each $i = 1, \ldots, k$,
 $1 \leq n_i \leq j$.
 The term
 $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
 returns the tuple obtained by concatenating the
 values from $t$ at positions $n_1 \ldots n_k$.
-In particular, this term is equivalent to the
+In other words, this term is equivalent to the
 term $\syntax{(tuple\ ((\_\ sel\ n_1)\ t)\ ...\ ((\_\ sel\ n_k)\ t))}$.
 
 \paragraph{Notes}
@@ -355,8 +356,8 @@ the function symbol $\syntax{card}$ whose sort definition is
 The term $\syntax{(card\ t)}$ is equal to
 the total number of elements (taking into account multiplicity)
 that occur in the bag $\syntax{t}$.
-For example, the term $\syntax{(card (bag\ t\ n))}$ is
-interpreted as $n$.
+For example, the term $\syntax{(card\ (bag\ t\ n))}$ is
+equivalent to $\syntax{n}$.
 
 \subsubsection{Bag Filtering}
 The signature $\sigtable$ includes 
@@ -386,8 +387,8 @@ In other words,
 $\syntax{(filter\ P\ t)}$
 is the bag containing exactly
 the elements $u$ from $\syntax{t}$
-such that $\syntax{P}(u)$ is true.
-Notice that if $\syntax{P}(u)$ is true,
+such that $\syntax{(P\ u)}$ is true.
+Notice that if $\syntax{(P\ u)}$ is true,
 then $u$ has the same multiplicity in $\syntax{(filter\ P\ t)}$
 as it did in $\syntax{t}$.
 
@@ -449,22 +450,24 @@ the function symbol $\syntax{fold}$. Its sort definition is:
 
 
 \paragraph{Semantics}
-Given a bag $t$ whose elements are $u_{1}, \ldots, u_{n}$,
+Given a bag $t$ whose elements are $\syntax{u_1}, \ldots, \syntax{u_n}$,
 assume an arbitrary total ordering over these elements $\preceq$.
-Then, $\syntax{(fold\ c\ i\ t)}$ is equivalent to:
-\begin{verbatim}
-(c u_n ... (c u_2 (c u_1 b)) ... )
-\end{verbatim}
-In other words, given a start value $b$,
-we apply the combining function $c$, taking these elements
+Then, $\syntax{(fold\ c\ i\ t)}$ is equivalent to
+$
+\syntax{
+(c\ u_n\ ...\ (c\ u_2\ (c\ u_1\ b))\ ...\ )
+}
+$.
+In other words, given a start value $\syntax{b}$,
+we apply the combining function $\syntax{c}$, taking these elements
 as first arguments in order.
 
 \paragraph{Notes}
 \begin{itemize}
 \item
 The semantics above impose no restrictions on the ordering $\preceq$,
-which determines in which the tuples $\{ u_{i1}, \ldots, u_{in} \}$
-are passed to the combining function $c$.
+which determines in which the tuples $\syntax{u_1}, \ldots, \syntax{u_n}$
+are passed to the combining function $\syntax{c}$.
 Moreover, 
 we do not provide syntax to specify such an ordering.
 Instead, 
@@ -473,17 +476,16 @@ do not require an ordering when the combining function is
 \emph{order-agnostic},
 that is, for all $b, v_1, \ldots, v_n$,
 we have that:
-\begin{verbatim}
-(c v_1 ... (c v_n b) ... ) = (c w_1 ... (c w_n b) ... )
-\end{verbatim}
-for all permutations $( w_1, \ldots, w_n )$ of $( v_1, \ldots, v_n )$.
-If the function $c$ is order-agnostic,
-then each $r_i$ in the above computation will be the same regardless
+\begin{eqnarray*}
+\syntax{(c\ v_1\ ...\ (c\ v_n\ b)\ ...\ )\ =\ (c\ w_1\ ...\ (c\ w_n\ b)\ ...\ )}
+\end{eqnarray*}
+for all permutations $( \syntax{w_1}, \ldots, \syntax{w_n} )$ of $( \syntax{v_1}, \ldots, \syntax{v_n} )$.
+If the function $\syntax{c}$ is order-agnostic,
+then the result of the fold in the above computation will be the same regardless
 of the ordering $\preceq$.
-Thus, as stated, the above semantics assume that $c$ is order-agnostic.
+Thus, as stated, the above semantics assume that $\syntax{c}$ is order-agnostic.
 The semantics
-of aggregation functions $A$ over
-combining functions that are not order-agnostic are undefined.
+of fold over combining functions that are not order-agnostic are undefined.
 %Thus, we assume that the operator $c$ is
 %associatiative and commutative.
 \end{itemize}
@@ -520,10 +522,14 @@ we have that $k=l$ if and only if $\syntax{(r\ u_i\ u_j)}$ is true.
 \paragraph{Notes}
 \begin{itemize}
 \item
-We expect that the argument $r$ passed as the
-first argument to $\syntax{partition}$ is an equivalence relation.
+The argument $r$ passed as the
+first argument to $\syntax{partition}$ is expected to be an equivalence relation.
 In particular, this means it is reflexive, symmetric and transitive.
-Otherwise, $\syntax{partition}$ applied to that relation is undefined.
+This ensures that a partition with the above properties
+can be computed.
+The semantics of applications of $\syntax{partition}$ for relations $\syntax{r}$
+that are not equivalence relations
+are undefined.
 \item
 If $\syntax{u}$ occurs with some multiplicity $n$ in $\syntax{t}$,
 then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
@@ -619,7 +625,8 @@ Its sort definition is:
 )
 \end{verbatim}
 where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_i} \leq \syntax{j}$ and $1 \leq \syntax{m_i} \leq \syntax{l}$. 
+we have that $1 \leq \syntax{n_i} \leq \syntax{j}$, $1 \leq \syntax{m_i} \leq \syntax{l}$
+and $X_{n_i}$ is the same type as $Y_{m_i}$.
 Note that
 $\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
 
@@ -636,7 +643,6 @@ the predicate:
   (= ((_ project n_1 ... n_k) t_1) ((_ project m_1 ... m_k) t_2))
 )
 \end{verbatim}
-where $\syntax{o_i}$ is the numeral $\syntax{j+m_i}$ for each $i = 1, \ldots, k$.
 In other words,
 the join keeps only concatenations of tuples $u_1 \in \syntax{t_1}$ and
 $u_2 \in \syntax{t_2}$ 
@@ -690,10 +696,10 @@ be a well-sorted term for
 combining function $\syntax{c}$, 
 initial value $\syntax{i}$,
 and table-to-aggregate $\syntax{t}$.
-Assume that $c$ is \emph{order-agnostic} (see Section~\ref{sec:fold}).
-The term $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$ is
-the union of elements computed via a fold operation involving $i$, $c$, and $f$
-that run over elements in a partition of $t$.
+Assume that $\syntax{c}$ is \emph{order-agnostic} (see Section~\ref{sec:fold}).
+The application $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$ is
+the union of elements computed via a fold operation involving $\syntax{c}$ and $\syntax{i}$
+that run over elements in a partition of the table $\syntax{t}$.
 In particular, this application of an aggregation function is syntax sugar for:
 \begin{verbatim}
 (map (fold c i) (partition eq t))
