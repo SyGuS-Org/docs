@@ -455,7 +455,7 @@ assume an arbitrary total ordering over these elements $\preceq$.
 Then, $\syntax{(fold\ c\ i\ t)}$ is equivalent to
 $
 \syntax{
-(c\ u_n\ ...\ (c\ u_2\ (c\ u_1\ b))\ ...\ )
+(c\ u_n\ ...\ (c\ u_2\ (c\ u_1\ i))\ ...\ )
 }
 $.
 In other words, given a start value $\syntax{b}$,
@@ -474,10 +474,10 @@ Instead,
 we remark that the above semantics
 do not require an ordering when the combining function is
 \emph{order-agnostic},
-that is, for all $b, v_1, \ldots, v_n$,
+that is, for all $\syntax{i}, \syntax{v_1}, \ldots, \syntax{v_n}$,
 we have that:
 \begin{eqnarray*}
-\syntax{(c\ v_1\ ...\ (c\ v_n\ b)\ ...\ )\ =\ (c\ w_1\ ...\ (c\ w_n\ b)\ ...\ )}
+\syntax{(c\ v_1\ ...\ (c\ v_n\ i)\ ...\ )\ =\ (c\ w_1\ ...\ (c\ w_n\ i)\ ...\ )}
 \end{eqnarray*}
 for all permutations $( \syntax{w_1}, \ldots, \syntax{w_n} )$ of $( \syntax{v_1}, \ldots, \syntax{v_n} )$.
 If the function $\syntax{c}$ is order-agnostic,
