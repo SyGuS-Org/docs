@@ -81,13 +81,13 @@ the following three (parametric) sorts.
 \subsection{Function Sorts}
 The signature $\sigtable$ includes all sorts of the form:
 \begin{align*}
-\syntax{(->\ T_1\ ...\ T_k T)}
+\syntax{(->\ T_1\ ...\ T_k\ T)}
 \end{align*}
 for all sorts $\syntax{T_1, ..., T_k, T}$ where $k \geq 1$.
 This sort denotes the class of functions taking arguments of sorts $\syntax{T_1, ..., T_k}$
 and having return sort $\syntax{T}$.
 Note that a predicate sort is a function sort whose return
-type is Boolean.
+sort is Boolean.
 
 \begin{comment}
 \paragraph{Notes}
@@ -128,7 +128,7 @@ A table is bag whose elements are tuples.
 We write $\syntax{ (Table\ T_1 ...\ T_k)}$ as shorthand for 
 the sort $\syntax{ (Bag\ (Tuple\ T_1\ ...\ T_k)) }$ 
 in the remainder of the document.
-We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table type above.
+We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table sort above.
 
 \section{Function Symbols}
 
@@ -174,11 +174,11 @@ returning $t$ for input arguments $\syntax{x_1}, \ldots, \syntax{x_n}$.
 
 \subsubsection{Tuple Construction}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{mkTuple}$.
+the function symbol $\syntax{tuple}$.
 Its sort definition is
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  (mkTuple
+  (tuple
   
     ; The arguments of the tuple we are constructing
     X_1 ... X_j
@@ -188,22 +188,21 @@ Its sort definition is
   )
 )
 \end{verbatim}
-The term $\syntax{(mkTuple\ u_1\ ...\ u_n)}$ is
-interpreted as the tuple the (ordered) list of arguments $\syntax{u_1,\ ...\ u_n}$. 
+The term $\syntax{(tuple\ u_1\ ...\ u_n)}$ is
+interpreted as the tuple comprised of 
+the (ordered) list of elements $\syntax{u_1,\ ...\ u_n}$. 
 
 \subsubsection{Tuple Selection}
 The signature $\sigtable$ includes 
 all indexed function symbols of the form
-\begin{align*}
-\syntax{ 
-(\_\ tupSel\ n)
-}
-\end{align*}
+$\syntax{ 
+(\_\ sel\ n)
+}$
 where $\syntax{n}$ is a numeral.
 Its sort definition is
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ tupSel n)
+  ((_ sel n)
   
     ; The tuple we are selecting from
     (Tuple X_1 ... X_j)
@@ -214,8 +213,48 @@ Its sort definition is
 )
 \end{verbatim}
 where $1 \leq \syntax{n} \leq \syntax{j}$.
-The term $\syntax{((\_\ tupSel\ n)\ t)}$ is
+The term $\syntax{((\_\ sel\ n)\ t)}$ is
 interpreted as the $\syntax{n}^{th}$ argument of the tuple $\syntax{t}$.
+
+\subsubsection{Tuple Projection}
+\label{sec:tup-project}
+The signature $\sigtable$ includes 
+all indexed function symbols of the form
+$
+\syntax{ 
+(\_\ project\ n_1\ ...\ n_k)
+}$
+where $\syntax{n_1}, \ldots, \syntax{n_k}$ are numerals.
+Its sort definition is:
+\begin{verbatim}
+(par (X_1 ... X_j) 
+  ((_ project n_1 ... n_k)
+  
+    ; The table to project
+    (Tuple X_1 ... X_j)
+    
+    ; The return sort
+    (Tuple X_{n_1} ... X_{n_k})
+  )
+)
+\end{verbatim}
+where for each $i = 1, \ldots, j$,
+$1 \leq n_i \leq j$.
+The term
+$\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
+returns the tuple obtained by concatenating the
+values from $t$ at positions $n_1 \ldots n_k$.
+In particular, this term is equivalent to the
+term $\syntax{(tuple\ ((\_\ sel\ n_1)\ t)\ ...\ ((\_\ sel\ n_k)\ t))}$.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+The function
+$\syntax{project}$ (without indices)
+denotes the operator above where $k=0$, which always returns the empty
+tuple.
+\end{itemize}
 
 \subsection{Bags}
 
@@ -240,18 +279,9 @@ interpreted as the bag containing $n$ copies of the element $\syntax{t}$.
 %and $\syntax{t_i}$ may be equal to $\syntax{t_j}$ for any $\syntax{i},\syntax{j}$.
 %If $n=0$,
 %then $\syntax{bag}$ denotes the empty bag.
-
-\subsubsection{Bag Cardinality}
-The signature $\sigtable$ includes 
-the function symbol $\syntax{card}$ whose sort definition is
-\begin{verbatim}
-(par (X) (card (Bag X) Int))
-\end{verbatim}
-The term $\syntax{(card\ t)}$ is equal to
-the total number of elements (taking into account multiplicity)
-that occur in the bag $\syntax{t}$.
-For example, the term $\syntax{(card (bag\ t\ n))}$ is
-interpreted as $n$.
+Notice that bags containing multiple distinct elements
+can be constructed using $\syntax{union\_disjoint}$,
+introduced in Section~\ref{sec:bag-compositions}
 
 \subsubsection{Bag Count}
 The signature $\sigtable$ includes 
@@ -283,6 +313,7 @@ is a member of $\syntax{t}$ (with any multiplicity).
 \end{itemize}
 
 \subsubsection{Bag Compositions}
+\label{sec:bag-compositions}
 The signature $\sigtable$ includes 
 the binary function symbols 
 $\syntax{union\_max}$, $\syntax{union\_disjoint}$, 
@@ -302,6 +333,30 @@ and bags $\syntax{A,B}$:
 (count x (difference_subtract A B))  = (max (- (count x A) (count x B)) 0)
 (count x (difference_remove A B))    = (ite (> (count x B) 0) 0 (count x A))
 \end{verbatim}
+where $\syntax{max}$ and $\syntax{min}$ are binary functions
+returning the maximum (resp. minimum) of two integers, and $\syntax{ite}$
+is the if-then-else construct.
+
+\subsubsection{Bag Cardinality}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{card}$ whose sort definition is
+\begin{verbatim}
+(par (X) 
+  (card 
+  
+    ; The bag to process
+    (Bag X) 
+    
+    ; The return sort
+    Int
+  )
+)
+\end{verbatim}
+The term $\syntax{(card\ t)}$ is equal to
+the total number of elements (taking into account multiplicity)
+that occur in the bag $\syntax{t}$.
+For example, the term $\syntax{(card (bag\ t\ n))}$ is
+interpreted as $n$.
 
 \subsubsection{Bag Filtering}
 The signature $\sigtable$ includes 
@@ -362,9 +417,117 @@ in the second argument to all elements in the bag.
 In other words,
 $\syntax{(map\ f\ t)}$
 is the bag containing exactly
-the elements $\syntax{f}(u) \in \syntax{t}$
-for each $u \in \syntax{t}$.
+the elements $\syntax{(f\ u)}$
+for each $\syntax{u}$ that occurs in $\syntax{t}$.
+The multiplicity of $\syntax{(f\ u)}$
+in $\syntax{(map\ f\ t)}$
+is the same as the multiplicity of $\syntax{u}$ in $\syntax{t}$.
 
+\subsubsection{Bag Fold}
+\label{sec:fold}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{fold}$. Its sort definition is:
+
+\begin{verbatim}
+(par (X_1 X_2)
+  (fold
+    
+    ; The "combining" function we are applying
+    (-> X_1 X_2 X_2)
+    
+    ; The initial value of the fold
+    X_2
+  
+    ; The bag to process
+    (Bag X_1)
+    
+    ; The return sort
+    X_2
+  )
+)
+\end{verbatim}
+
+
+\paragraph{Semantics}
+Given a bag $t$ whose elements are $u_{1}, \ldots, u_{n}$,
+assume an arbitrary total ordering over these elements $\preceq$.
+Then, $\syntax{(fold\ c\ i\ t)}$ is equivalent to:
+\begin{verbatim}
+(c u_n ... (c u_2 (c u_1 b)) ... )
+\end{verbatim}
+In other words, given a start value $b$,
+we apply the combining function $c$, taking these elements
+as first arguments in order.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+The semantics above impose no restrictions on the ordering $\preceq$,
+which determines in which the tuples $\{ u_{i1}, \ldots, u_{in} \}$
+are passed to the combining function $c$.
+Moreover, 
+we do not provide syntax to specify such an ordering.
+Instead, 
+we remark that the above semantics
+do not require an ordering when the combining function is
+\emph{order-agnostic},
+that is, for all $b, v_1, \ldots, v_n$,
+we have that:
+\begin{verbatim}
+(c v_1 ... (c v_n b) ... ) = (c w_1 ... (c w_n b) ... )
+\end{verbatim}
+for all permutations $( w_1, \ldots, w_n )$ of $( v_1, \ldots, v_n )$.
+If the function $c$ is order-agnostic,
+then each $r_i$ in the above computation will be the same regardless
+of the ordering $\preceq$.
+Thus, as stated, the above semantics assume that $c$ is order-agnostic.
+The semantics
+of aggregation functions $A$ over
+combining functions that are not order-agnostic are undefined.
+%Thus, we assume that the operator $c$ is
+%associatiative and commutative.
+\end{itemize}
+
+\subsubsection{Bag Partition}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{partition}$. Its sort definition is:
+
+\begin{verbatim}
+(par (X)
+  (partition
+    
+    ; The equivalence relation
+    (-> X X Bool)
+  
+    ; The bag to process
+    (Bag X)
+    
+    ; The return sort
+    (Bag (Bag X))
+  )
+)
+\end{verbatim}
+
+\paragraph{Semantics}
+Given a bag $t$, 
+the term $\syntax{(partition\ r\ t)}$ is interpreted
+as a bag of bags that partition the elements of $\syntax{t}$,
+whose elements (of bag sort) are $\syntax{t_1}, \ldots, \syntax{t_n}$.
+For each pair of elements $\syntax{u_i}, \syntax{u_j}$
+occurring in $\syntax{t_k}, \syntax{t_l}$ respectively,
+we have that $k=l$ if and only if $\syntax{(r\ u_i\ u_j)}$ is true.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+We expect that the argument $r$ passed as the
+first argument to $\syntax{partition}$ is an equivalence relation.
+In particular, this means it is reflexive, symmetric and transitive.
+Otherwise, $\syntax{partition}$ applied to that relation is undefined.
+\item
+If $\syntax{u}$ occurs with some multiplicity $n$ in $\syntax{t}$,
+then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
+\end{itemize}
 
 \subsection{Tables}
 
@@ -377,6 +540,9 @@ all indexed functions symbols of the form
 }
 \end{align*}
 where $n_1, \ldots, n_k$ are numerals.
+Note this operator is overloaded,
+as a separate projection function (of the same name)
+is also defined for tuples in Section~\ref{sec:tup-project}.
 Its sort definition is:
 \begin{verbatim}
 (par (X_1 ... X_j) 
@@ -411,12 +577,14 @@ for each tuple $(u_1, \ldots, u_j)$ from $t$.
 \paragraph{Notes}
 \begin{itemize}
 \item
-The function $\syntax{((\_\ project\ n_1\ ...\ n_k) t)}$
-can be seen as syntax sugar for $\syntax{(map f t)}$ where $\syntax{f}$
-is a function from $\syntax{(Tuple\ X_1\ ...\ X_j)}$
-to $\syntax{(Tuple\ X_{n_1}\ ...\ X_{n_k})}$
-which returns a tuple obtained by concatenating the
-elements at positions $n_1, \ldots, n_k$ of its input.
+The term $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
+can be seen as syntax sugar for $\syntax{(map\ p\ t)}$ where $\syntax{p}$
+is a function that
+applies the tuple projection on tuples $\syntax{(Tuple\ X_1\ ...\ X_j)}$
+to obtain tuples $\syntax{(Tuple\ X_{n_1}\ ...\ X_{n_k})}$:
+\begin{verbatim}
+(lambda ((t (Tuple X_1 ... X_j))) ((_ project n_1 ... n_k) t))
+\end{verbatim}
 \item
 It may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
 in which case two (or more) copies of the column at that position
@@ -461,15 +629,11 @@ denotes the table containing a tuple corresponding to the concatentation
 of tuples $u_1$ and $u_2$
 for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
 When $\syntax{k}>0$, $\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
-is syntax sugar for $\syntax{(filter\ (join\ t_1\ t_2)\ P)}$ where $\syntax{P}$ is
+is syntax sugar for $\syntax{(filter\ P\ (join\ t_1\ t_2))}$ where $\syntax{P}$ is
 the predicate:
 \begin{verbatim}
 (lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple Y_1 ... Y_l)))
-  (and
-    (= ((_ tupSel n_1) t_1) ((_ tupSel o_1) t_2))
-    ...
-    (= ((_ tupSel n_k) t_1) ((_ tupSel o_k) t_2))
-  )
+  (= ((_ project n_1 ... n_k) t_1) ((_ project m_1 ... m_k) t_2))
 )
 \end{verbatim}
 where $\syntax{o_i}$ is the numeral $\syntax{j+m_i}$ for each $i = 1, \ldots, k$.
@@ -491,49 +655,62 @@ is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
 \subsubsection{Table Aggregation}
 The signature $\sigtable$ includes 
 all indexed function symbols of the form
-\begin{align*}
+$
 \syntax{ 
-(\_\ aggr\ n_1\ ...\ n_k\ n)
+(\_\ aggr\ n_1\ ...\ n_k)
 }
-\end{align*}
-where $n_1, \ldots, n_k, n$ are numerals,
+$
+where $\syntax{n_1}, \ldots, \syntax{n_k}$ are numerals,
 called \emph{table aggregation operations}. Their sort definition is:
 
 \begin{verbatim}
-(par (X_1 ... X_j X_a X_f) 
-  ((_ aggr n_1 ... n_k n)
-  
+(par (X_1 ... X_j X) 
+  ((_ aggr n_1 ... n_k)
+    
+    ; The "combining function"
+    (-> (Tuple X_1 ... X_j) X X)
+    
+    ; The "initial value"
+    X
+    
     ; The table to aggregate
     (Table X_1 ... X_j)
     
-    ; The "initial value"
-    X_a
-    
-    ; The "combining function"
-    (-> (Tuple X_1 ... X_j) X_a X_a)
-    
-    ; The (optional) "finalize function"
-    (-> (Table X_1 ... X_j) X_a X_f)
-    
     ; The return sort
-    (Table X_f)
+    (Bag X)
   )
 )
 \end{verbatim}
 where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_i} \leq \syntax{j}$ and $1 \leq \syntax{n} \leq \syntax{j}$. 
+we have that $1 \leq \syntax{n_i} \leq \syntax{j}$. 
 
 \paragraph{Semantics}
-Let $A$ be the aggregation function
-denoted by $
-\syntax{(\_\ aggr\ n_1\ ...\ n_k\ n)}$.
-Let $A( t, b, c, f)$ be a well-typed term
-according to the above sort definition for some $t, b, c, f$,
-and moreover assume that $c$ is \emph{order-agnostic} (see below).
-The term $A( t, b, c, f)$ is
-the union of tuples computed via a fold operation involving $b$, $c$, and $f$
-that run over subsets that form a partition of $t$, as described in following.
+Let $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$
+be a well-sorted term for
+combining function $\syntax{c}$, 
+initial value $\syntax{i}$,
+and table-to-aggregate $\syntax{t}$.
+Assume that $c$ is \emph{order-agnostic} (see Section~\ref{sec:fold}).
+The term $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$ is
+the union of elements computed via a fold operation involving $i$, $c$, and $f$
+that run over elements in a partition of $t$.
+In particular, this application of an aggregation function is syntax sugar for:
+\begin{verbatim}
+(map (fold c i) (partition eq t))
+\end{verbatim}
+where $\syntax{eq}$ is the relation over tuples that holds
+when tuples are equivalent for indices $\syntax{n_1}, \ldots, \syntax{n_k}$:
+\begin{verbatim}
+(lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple X_1 ... X_j)))
+  (= ((_ project n_1 ... n_k) t_1) ((_ project n_1 ... n_k) t_2))
+)
+\end{verbatim}
+Above, notice that 
+$\syntax{(fold\ c\ i)}$ is a partial application of the fold
+function which takes a $\syntax{(Bag\ (Tuple\ X_1\ ...\ X_j))}$
+and returns a term of type $\syntax{X}$.
 
+\begin{comment}
 In detail,
 let $\{ t_1, \ldots, t_n \}$ be a partition of table $t$
 where for each table $t_i$, each of its (tuple) elements
@@ -563,36 +740,6 @@ Then,
 $A( t, b, c, f)$ is
 the bag union of (single argument) tuples $\{ (r_1), \ldots, (r_n) \}$.
 
-\paragraph{Notes}
-\begin{itemize}
-\item
-The semantics above impose no restrictions on the ordering $\preceq$,
-which determines in which the tuples $\{ u_{i1}, \ldots, u_{in} \}$
-are passed to the combining function $c$.
-Moreover, 
-we do not provide syntax to specify such an ordering.
-Instead, 
-we remark that the above semantics
-do not require an ordering when the combining function is
-\emph{order-agnostic},
-that is, for all $b, v_1, \ldots, v_n$,
-we have that:
-\begin{align*}
-c( v_1, \ldots, c( v_n, b ) \ldots ) = 
-c( w_1, \ldots, c( w_n, b ) \ldots )
-\end{align*}
-for all permutations $( w_1, \ldots, w_n )$ of $( v_1, \ldots, v_n )$.
-If the function $c$ is order-agnostic,
-then each $r_i$ in the above computation will be the same regardless
-of the ordering $\preceq$.
-Thus, as stated, the above semantics assume that $c$ is order-agnostic.
-The semantics
-of aggregation functions $A$ over
-combining functions that are not order-agnostic are undefined.
-%Thus, we assume that the operator $c$ is
-%associatiative and commutative.
-\end{itemize}
-
 \paragraph{Unspecified Finalize Function}
 We overload the aggregation function
 such that its fourth argument is optional.
@@ -613,6 +760,7 @@ where $\syntax{ident}$ is the function
 $\syntax{(lambda\ ((y\ (Table\ T_1 ...\ T_k))\ (x\ X_a))\ x)}$.
 In other words, this function returns the result of the
 fold computation described above unchanged.
+\end{comment}
 
 \section{Examples}
 
