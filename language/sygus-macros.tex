@@ -7,6 +7,8 @@
 
 \global\long\def\smtcmd{\left\langle SmtCmd\right\rangle }
 
+\global\long\def\oraclecmd{\left\langle OracleCmd\right\rangle }
+
 
 \global\long\def\setlogiccmd{\left\langle SetLogicCmd\right\rangle }
 
@@ -27,6 +29,8 @@
 
 
 \global\long\def\constraintcmd{\left\langle ConstraintCmd\right\rangle }
+\global\long\def\assumecmd{\left\langle AssumeCmd\right\rangle }
+
 
 \global\long\def\fundefcmdkwd{\left\langle FunDefCmdKwd\right\rangle }
 
@@ -155,9 +159,28 @@
 
 \global\long\def\synthinvkwd{{\tt synth\mbox{-}inv}}
 
+\global\long\def\oracledeckwd{{\tt declare\mbox{-}oracle\mbox{-}fun}}
+
+\global\long\def\iooracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}io}}
+\global\long\def\cexoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}cex}}
+\global\long\def\corroracledeckwd{{\tt declare\mbox{-}correctness\mbox{-}oracle}}
+\global\long\def\memoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}membership}}
+% \global\long\def\dioracledeckwd{{\tt di\mbox{-}oracle}}
+\global\long\def\corrcexoracledeckwd{{\tt declare\mbox{-}correctness\mbox{-}cex\mbox{-}oracle}}
+\global\long\def\poswitnessoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}poswitness}}
+\global\long\def\negwitnessoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}negwitness}}
+
+
+% \global\long\def\falsifyoracledeckwd{{\tt declare\mbox{-}oracle\mbox{-}falsify}}
+
+
 
 \global\long\def\constraintkwd{{\tt constraint}}
+\global\long\def\assumekwd{{\tt assume}}
 \global\long\def\constraintinvkwd{{\tt inv\mbox{-}constraint}}
+
+\global\long\def\constraintoraclekwd{{\tt oracle\mbox{-}constraint}}
+\global\long\def\assumeoraclekwd{{\tt oracle\mbox{-}assume}}
 
 
 \global\long\def\checksynthkwd{{\tt check\mbox{-}synth}}
@@ -216,6 +239,7 @@
 \global\long\def\fquantifierskwd{{\tt quantifiers}}
 \global\long\def\ffwddeclskwd{{\tt fwd\mbox{-}decls}}
 \global\long\def\frecursionkwd{{\tt recursion}}
+\global\long\def\foracleskwd{{\tt oracles}}
 
 % the Boolean sort (not syntax)
 \global\long\def\sbool{\mathsf{Bool}}
