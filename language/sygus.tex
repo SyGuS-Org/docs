@@ -547,8 +547,8 @@ information:
 $f_1, \ldots, f_n$, which we refer to
 as the current list of \emph{functions to synthesize},
 \item A list 
-$x_1, \ldots, x_m$ of variables, 
-which we refer to the current list of \emph{universal variables}, 
+$v_1, \ldots, v_m$ of variables, 
+which we refer to as the current list of \emph{universal variables},
 \item A list of formulas
 $\varphi_1, \ldots, \varphi_p$,
 which we refer to as the current list of \emph{constraints},
@@ -1596,7 +1596,8 @@ A tuple of functions
 $( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n )$
 satisfies the syntactic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n.\, \varphi$
+in conjecture $\exists f_1, \ldots, f_n.\,\forall v_1, \ldots,
+v_m.\ \varphi$
 if $\lambda X_i.\, t_i$
 satisfies the syntactic specification for $f_i$
 for each $i=1,\ldots,n$.
@@ -1616,8 +1617,10 @@ A tuple of functions
 $( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n)$
 satisfies the semantic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n.\,  \varphi$ in background theory $T$
-if $\varphi$ is $T$-valid formula
+in conjecture $\exists f_1, \ldots, f_n.\,\forall v_1, \ldots,
+v_m.  \varphi$ in background theory $T$
+if $\forall v_1, \ldots,
+v_m.\, \varphi$ is $T$-valid formula
 when $f_1, \ldots, f_n$ are defined to be terms
 whose semantics are given by the functions
 $\lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n$.
