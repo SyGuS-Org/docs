@@ -1112,11 +1112,11 @@ $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$, the interpretation 
 It is syntactic sugar for:
 
 $$
-\paren{\vardeclkwd{S \mbox{}\paren{\rightarrow \sigma_1\ldots\sigma_n\mbox{}\sigma}}}\\
+\paren{\vardeclkwd{S \mbox{ }\paren{\rightarrow \sigma_1\ldots\sigma_n\mbox{ }\sigma}}}\\
 \paren{\assumeoraclekwd\mbox{ } \paren{N \mbox{ } 
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}}\mbox{ }
 \paren{\paren{x \mbox{ }\sigma}}  \mbox{ } 
-\paren{=\mbox{} x \paren{S \mbox x_1 \ldots x_n}}
+\paren{=\mbox{ } x \paren{S \mbox x_1 \ldots x_n}}
 }
 $$
 \end{itemize}
@@ -1199,7 +1199,7 @@ $
 where $F_c$ is a candidate implementation for $F$, and $R$ is a boolean that indicates that the oracle was able to find a counterexample.
 
 
-\item$\paren{\corroracledeckwd\mbox{ }S\mbox{}N\mbox{ } F\mbox{ }} $
+\item$\paren{\corroracledeckwd\mbox{ }S\mbox{ }N\mbox{ } F\mbox{ }} $
 
 This declares a correctness oracle, and adds associated function oracle symbol $S$ to the signature, that determines whether a candidate implementation of a synthesis function $F$,
 where $F$ is a synthesis function symbol in the current signature
