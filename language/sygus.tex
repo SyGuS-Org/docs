@@ -521,10 +521,10 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\setoptkwd\mbox{ }:\symbol\mbox{ }\literal} \\[2ex]
 
 \oraclecmd 
-& ::= & \paren{\assumeoraclekwd\mbox{ }\paren{\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }}
- \paren{\term}} \\
- & | & \paren{\constraintoraclekwd\mbox{ }\paren{\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }}
- \paren{\term}} \\
+& ::= & \paren{\assumeoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
+ \term} \\
+ & | & \paren{\constraintoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
+ \term} \\
 & | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }} \\
 & | &\paren{\iooracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
 & | &\paren{\cexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
@@ -567,9 +567,9 @@ A SyGuS input file is a sequence of commands,
 which at a high level
 are used for defining a (single) synthesis conjecture,
 and invoking a solver for this conjecture.
-This conjecture is of the form:
+This conjecture is a closed formula of the form:
 \begin{alignat*}{1}
- & \exists f_1,\ldots,f_n.\, \forall v_1,\ldots,v_m.\,(\alpha_1 \wedge \ldots \wedge \alpha_r)[f_1,\ldots,f_n,v_1,\ldots,v_m] \implies (\varphi_1 \wedge \ldots \wedge \varphi_q )[f_1,\ldots,f_n,v_1,\ldots,v_m]
+ & \exists f_1,\ldots,f_n.\, \forall v_1,\ldots,v_m.\,(\alpha_1 \wedge \ldots \wedge \alpha_r) \implies (\varphi_1 \wedge \ldots \wedge \varphi_q )
 \end{alignat*}
 We wil use $\Psi$ to refer to the formula $\forall v_1,\ldots,v_m.\,(\alpha_1 \wedge \ldots \wedge \alpha_r)\implies (\varphi_1 \wedge \ldots \wedge \varphi_q )$, and thus the synthesis conjecture can be written $\exists f_1,\ldots,f_n.\, \Psi$. 
 In this section, we define how this conjecture is
@@ -982,13 +982,9 @@ see \cref{sec:sygus-logic} for more details.
 \item $\paren{\assumekwd\mbox{ }t}$
 
 This adds $t$ to the set of assumptions.
-This command is well formed if $t$ is a well-sorted formula,
-that is, a well-sorted term of sort $\sbool$.
-% constraint
-%We further require that $t$ is in the logic of
-Furthermore,
-the term $t$ should be allowed
-based on the restrictions of the current logic.
+Like constraints,
+this command is well formed if $t$ is a well-sorted term of sort $\sbool$.
+and is allowed based on the restrictions of the current logic.
 
 \item $\paren{\constraintinvkwd\mbox{ }S\mbox{ }S_{pre}\mbox{ }S_{trans}\mbox{ }S_{post}}$
 
@@ -1046,79 +1042,74 @@ where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
 
 \subsection{Asserting Oracle Constraints and Assumptions}
 \begin{itemize}
-\item $\paren{\constraintoraclekwd\mbox{ } \paren{N \mbox{ } 
+\item $\paren{\constraintoraclekwd\mbox{ } N \mbox{ } 
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
-\paren{\paren{x_{n+1}\mbox{ }\sigma_{n+1}} \ldots \paren{x_{n+m}\mbox{ }\sigma_{n+m}}}}  \mbox{ } t}$
+\paren{\paren{x_{n+1}\mbox{ }\sigma_{n+1}} \ldots \paren{x_{n+m}\mbox{ }\sigma_{n+m}}}  \mbox{ } t}$
 
-This indicates the existance of an external binary with name $N$, of sort 
-$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma_{n+1} \times \ldots \times \sigma_{n+m}$. The variables $x_1, \ldots x_{n+m}$ occur free in $t$, denoted by $t[x_1, \ldots, x_{n+m}]$
-%
-When the solver makes a call to the oracle $N$ with a set of concrete values $c_1, \ldots, c_n$ corresponding to input arguments $x_1, \ldots x_n$, the binary returns a set of 
-concrete values $c_{n+1}, \ldots, c_{n+m}$ which correspond to the return arguments $x_{n_1}, \ldots x_{n+m}$. 
-%
-For each call to the oracle $N$, the formula $t[c_1 \ldots c_{n+m}]$, i.e., $t$ with all occurences of $x_1, \ldots, x_{n+m}$ replaced with $c_1, \ldots, c_{n+m}$, is added to the current list of constraints $\varphi$ in the conjecture. 
+This informs the solver of the existance of an external binary with name $N$
+which can be used as means of adding new constraints to the problem.
+This command is well-formed only if $N$
+\emph{implements} a function of sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma_{n+1} \times \ldots \times \sigma_{n+m}$
+(for a definition of the expected implementation of an external binary, see Section~\ref{sec:oracleimplementations}),
+and $t$ is a well-sorted term of sort $\sbool$ 
+whose free symbols may include those in the current signature, as well as any symbol in $x_1 \ldots x_{m+n}$,
+and moreover is allowed based on the restrictions of the current logic.
 
-The command is well formed if $N$ is the name of an external binary which takes as input a list of variables of sorts
-$\sigma_1 , \ldots ,\sigma_n$ and returns a string of variables of sorts $\sigma_{n+1} , \ldots ,\sigma_{n+m}$
- and $t$ is a well-sorted term of sort $\sbool$ which may use any valid symbol from the current signature, as well as any symbol in $x_1 \ldots x_{m+n}$. The solver may choose to query $N$ as many or as few times as they would like during the solving process. 
-%
-% constraint
-%We further require that $t$ is in the logic of
-Furthermore,
-the term $t$ should be allowed
-based on the restrictions of the current logic,
-see \cref{sec:sygus-logic} for more details.
+Assuming this command is well-formed,
+the interaction between the synthesis solver and the binary
+can be understood as the solver passing \emph{constant values}\footnote{
+A definition of constant value for $T$ coincides with terms generated by the
+SyGuS grammar term $\paren{\constantkwd\mbox{ }T}$.
+}
+$c_1, \ldots, c_n$ for $x_1, \ldots x_n$ as input to the binary,
+and the binary generating a list of constant values
+$c_{n+1}, \ldots, c_{n+m}$ corresponding to the output $x_{n_1}, \ldots x_{n+m}$.
+The expected implementation for passing
+constant values as input and output 
+is described in Section~\ref{sec:oracleimplementations}.
+For each such call,
+the formula $t[c_1 \ldots c_{n+m}]$, i.e., 
+$t$ with all occurences of $x_1, \ldots, x_{n+m}$ replaced with $c_1, \ldots, c_{n+m}$, 
+is added to the current list of constraints $\varphi$ in the conjecture.
 
-For details on how how to call the oracle, see Section~\ref{sec:oracleimplementations}.
-
+Note that 
+the synthesis solver may choose to call the binary $N$ 
+any time during solving, and as many times as it chooses.
+Note that it is possible that the synthesis solver may call the binary with
+the same input more than once.
 
 \item 
-$\paren{\assumeoraclekwd\mbox{ } \paren{N \mbox{ } 
+$\paren{\assumeoraclekwd\mbox{ } N \mbox{ } 
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
-\paren{\paren{x_{n+1}\mbox{ }\sigma_{n+1}} \ldots \paren{x_{n+m}\mbox{ }\sigma_{n+m}}}}  \mbox{ } t}$
+\paren{\paren{x_{n+1}\mbox{ }\sigma_{n+1}} \ldots \paren{x_{n+m}\mbox{ }\sigma_{n+m}}}  \mbox{ } t}$
 
-This indicates the existance of an external binary with name $N$, of sort 
-$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma_{n+1} \times \ldots \times \sigma_{n+m}$. The variables $x_1, \ldots x_{n+m}$ occur free in $t$, denoted by $t[x_1, \ldots, x_{n+m}]$
-%
-When the solver makes a call to the oracle $N$ with a set of concrete values $c_1, \ldots, c_n$ corresponding to input arguments $x_1, \ldots x_n$, the binary returns a set of 
-concrete values $c_{n+1}, \ldots, c_{n+m}$ which correspond to the return arguments $x_{n_1}, \ldots x_{n+m}$. 
-%
-For each call to the oracle $N$, the formula $t[c_1 \ldots c_{n+m}]$, i.e., $t$ with all occurences of $x_1, \ldots, x_{n+m}$ replaced with $c_1, \ldots, c_{n+m}$, is added to the current list of assumptions $\alpha$ in the conjecture. 
-
-The command is well formed if $N$ is the name of an external binary which takes as input a list of variables of sorts
-$\sigma_1 , \ldots ,\sigma_n$ and returns a string of variables of sorts $\sigma_{n+1} , \ldots ,\sigma_{n+m}$
- and $t$ is a well-sorted term of sort $\sbool$ which may use any valid symbol from the current signature, as well as any symbol in $x_1 \ldots x_{m+n}$. The solver may choose to query $N$ as many or as few times as they would like during the solving process. 
-%
-
-Furthermore,
-the term $t$ should be allowed
-based on the restrictions of the current logic,
-see \cref{sec:sygus-logic} for more details.
-
-For details on how how to call the oracle, see Section~\ref{sec:oracleimplementations}.
+This command is identical to $\constraintoraclekwd$,
+but the term $t[c_1 \ldots c_{n+m}]$ obtained from a call to the external binary
+is added to the set of assumptions instead of the set of constraints.
 
 \end{itemize}
-
-
 
 \subsection{Declaring Oracle Functional Symbols}
 
 \begin{itemize}
 \item $\paren{\oracledeckwd\mbox{ }S\mbox{ } N\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }\sigma}$
 
-This adds to the current signature a functional symbol $S$ of sort 
-$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$, the interpretation of which is associated to an external oracle also with name $N$. For every call to the oracle, an assumption about the behaviour of $S$ is added to the list of assumptions $\alpha$ in the conjecture.
+This adds to the current signature a symbol $S$ of function sort 
+$\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
+whose interpretation is given by an external oracle also with name $N$. 
+For every call to the oracle, an assumption about the behaviour of $S$ is added to the list of assumptions $\alpha$ in the conjecture.
+Note that this command is syntactic sugar for:
 
-It is syntactic sugar for:
-
-$$
-\paren{\vardeclkwd{S \mbox{ }\paren{\rightarrow \sigma_1\ldots\sigma_n\mbox{ }\sigma}}}\\
-\paren{\assumeoraclekwd\mbox{ } \paren{N \mbox{ } 
-\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}}\mbox{ }
+\[
+\begin{array}{l}
+\paren{\vardeclkwd\mbox{ }S \mbox{ }\paren{\funsortkwd\mbox{ }  \sigma_1\mbox{ } \ldots\mbox{ } \sigma_n\mbox{ } \mbox{ }\sigma}}\\
+\paren{\assumeoraclekwd\mbox{ } N \mbox{ } 
+\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
 \paren{\paren{x \mbox{ }\sigma}}  \mbox{ } 
-\paren{=\mbox{ } x \paren{S \mbox x_1 \ldots x_n}}
+\paren{{\tt=}\mbox{ } \paren{S \mbox{ } x_1 \mbox{ } \ldots \mbox{ } x_n}\mbox{ } x}
 }
-$$
+\end{array}
+\]
 \end{itemize}
 % The solver can call $S$ as many times as is necessary, and for every input on which $S$ has not been called, $S$ is treated as a universally quantified uninterpreted function. For more details see Section~\ref{sec:correctness-oracles}.
 
@@ -1129,32 +1120,31 @@ with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, each of the following 
 is used to declare an external oracle with name $N$, which generate specific types of oracle constraints and assumptions over the behaviour of $F$. 
 
 \begin{itemize}
-\item $\paren{\iooracledeckwd\mbox{ }N\mbox{ } F\mbox{ }}$
+\item $\paren{\iooracledeckwd\mbox{ }N\mbox{ } F}$
 
 This declares an input-output oracle for function $F$. 
 It is syntactic sugar for:
 
 
-$\paren{\constraintoraclekwd\mbox{ } \paren{N\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
-\paren{\paren{x \mbox{ }\sigma}}}
+$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
+\paren{\paren{x \mbox{ }\sigma}}
 \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}
 }
 $
 
 
-\item$\paren{\poswitnessoracledeckwd\mbox{ }N\mbox{ } F\mbox{ }} $
+\item$\paren{\poswitnessoracledeckwd\mbox{ }N\mbox{ } F} $
 
 This declares a positive witness oracle for synthesis function $F$ and is syntactic sugar for:
 
-$\paren{\constraintoraclekwd\mbox{ } \paren{N\mbox{ }
-\paren{}
+$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+\paren{}\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
-}
 \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}
 }
 $
 
-\item$\paren{\negwitnessoracledeckwd\mbox{ }N\mbox{ } F\mbox{ }}$
+\item$\paren{\negwitnessoracledeckwd\mbox{ }N\mbox{ } F}$
 
 This declares a negative witness oracle for synthesis function $F$ and  is syntactic sugar for:
 
@@ -1163,43 +1153,41 @@ This declares a negative witness oracle for synthesis function $F$ and  is synta
 % \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
 % }$
 
-$\paren{\constraintoraclekwd\mbox{ } \paren{N\mbox{ }
-\paren{}
+$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+\paren{}\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
-}
 \paren{{\tt not} \mbox{ } \paren{{\tt=} \mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}}}
 $
 
 
-\item$\paren{\memoracledeckwd\mbox{ }N\mbox{ } F\mbox{ }} $
+\item$\paren{\memoracledeckwd\mbox{ }N\mbox{ } F} $
 
 This declares a membership-query oracle for synthesis function $F$ and is syntactic sugar for:
 
 
-$\paren{\constraintoraclekwd \mbox{ } \paren{N\mbox{ }
-\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}
-\paren{\paren{R \mbox{ } \sbool}} \mbox{ }} \\
+$\paren{\constraintoraclekwd \mbox{ } N\mbox{ }
+\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
+\paren{\paren{R \mbox{ } \sbool}}\mbox{ } 
 %
-\paren{{\tt ite} \mbox{ } R \mbox{ }  \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n } \mbox{ }  x} 
- \paren{{\tt not}  \paren{{\tt=}\mbox{ } \paren{F \mbox{ }x_1 \ldots x_n}\mbox{ }  x}}}}
+\paren{{\tt=} \mbox{ } \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n } \mbox{ }  x} \mbox{ } R}}
 $
 
 % 
 
-\item$\paren{\cexoracledeckwd\mbox{ }N\mbox{ } F\mbox{ }} $
+\item$\paren{\cexoracledeckwd\mbox{ }N\mbox{ } F} $
 
 This declares a counter-example oracle for synthesis function $F$ and is syntactic sugar for:
 
-$\paren{\constraintoraclekwd\mbox{ } \paren{N\mbox{ }
-\paren{\paren{F_c \paren{\sigma_1  \ldots \sigma_n} \sigma}}
-\paren{\paren{R \mbox{ } \sbool} \paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }} \\
-\paren{{\tt \implies} R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}}
+$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+\paren{\paren{F_c \mbox{ } \paren{\funsortkwd \mbox{ } \sigma_1 \mbox{ } \ldots \mbox{ } \sigma_n \mbox{ } \sigma}}}
+\paren{\paren{R \mbox{ } \sbool} \paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} } \\
+\paren{\implopkwd \mbox{ } R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}}
 $
 
 where $F_c$ is a candidate implementation for $F$, and $R$ is a boolean that indicates that the oracle was able to find a counterexample.
 
 
-\item$\paren{\corroracledeckwd\mbox{ }S\mbox{ }N\mbox{ } F\mbox{ }} $
+\item$\paren{\corroracledeckwd\mbox{ }S\mbox{ }N\mbox{ } F} $
 
 This declares a correctness oracle, and adds associated function oracle symbol $S$ to the signature, that determines whether a candidate implementation of a synthesis function $F$,
 where $F$ is a synthesis function symbol in the current signature
@@ -1211,10 +1199,10 @@ This oracle is mandatory to call in order to determine correctness of the synthe
 $\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{\paren{
 x_1\mbox{ }
 \paren{
-\rightarrow \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}}
+\funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}}
 \sbool}\\
 %
-\constraintkwd{\paren{N \mbox{ } F}}
+\paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
 $
 
 
@@ -1226,20 +1214,20 @@ with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct and returns
 This oracle is mandatory to call to determine correctness of a synthesis function, and it adds a constraint to the oracle constraints, so it is syntactic sugar for the following commands:
 
 $
-\paren{\constraintoraclekwd\mbox{ } \paren{N\mbox{ }
-\paren{\paren{F_c \paren{\sigma_1  \ldots \sigma_n} \sigma}}
-\paren{\paren{R \mbox{ } \sbool} \paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }} \\
-\paren{{\tt \implies} R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}} \\
+\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+\paren{\paren{F_c \mbox{ } \paren{\funsortkwd \mbox{ } \sigma_1 \mbox{ } \ldots \mbox{ } \sigma_n \mbox{ } \sigma}}}
+\paren{\paren{R \mbox{ } \sbool} \paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} } \\
+\paren{\implopkwd R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}} \\
 $
 
 $
 \paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{\paren{
 x_1\mbox{ }
 \paren{
-\rightarrow \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}}
+\funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}}
 \sbool}\\
 %
-\constraintkwd{\paren{S\mbox{ }  F}}
+\paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
 $
 
 
@@ -1467,8 +1455,8 @@ and the parametric symbols ${\tt =}$ and ${\tt ite}$
 denoting equality and if-then-else terms for all sorts in the signature.
 %that is, no restrictions are placed on the set of terms that may 
 %appear, nor are any symbols predefined.
-The logics mentioned in this section supplement the signature
-of the current state with additional sorts and symbols.
+Logics that include the theories mentioned in this section supplement the signature
+of the current state with additional sorts and symbols of that theory.
 
 \paragraph{Arithmetic}
 The theory of integers is enabled 
@@ -1581,6 +1569,16 @@ Synthesis problems that involve universally quantified variables of function sor
 are planned to be addressed in a future revision of this document
 that includes concrete syntax for function sorts.
 
+\subsubsection{Other Theories}
+
+Many other theories
+are possible beyond those supported in the SMT-LIB standard.
+In this section, we mention theories that are of interest to synthesis applications
+that are not included in the SMT-LIB standard.
+
+\paragraph{Tables}
+TODO
+
 \subsection{Features and Feature Sets}
 \label{ssec:feature-sets}
 
@@ -1625,11 +1623,11 @@ forward declarations and recursion are not permitted by default.
 %This section defines restrictions on the terms $t$
 %that can appear in commands of the form $\paren{\constraintkwd\mbox{ }t}$.
 Let $\slogic$ be a SyGuS logic whose input logic
-is one from the SMT-LIB standard.
+is one from the SMT-LIB standard, or an externally defined logic.
 A term $t$ is not allowed by $\slogic$ 
 to be an argument to a $\constraintkwd$ command 
-if it is not allowed by the input logic of $\slogic$, 
-according to the definition of that logic in the SMT-LIB standard.
+if it is not allowed by the \emph{input} logic of $\slogic$, 
+according to the definition of that logic.
 %Exceptions to this rule are described here.
 
 %By convention, as stated in \cref{ssec:set-logic}, 
@@ -1657,8 +1655,8 @@ is one from the SMT-LIB standard.
 A grammar $G$ is not allowed by $\slogic$ if
 it generates some term $t$ with 
 no free occurrences of non-terminal
-symbols that is not allowed by the output logic of $\slogic$,
-according to the definition of that logic in the SMT-LIB standard.
+symbols that is not allowed by the \emph{output} logic of $\slogic$,
+according to the definition of that logic. % in the SMT-LIB standard.
 %For instance, 
 %this restriction disallows grammars
 %in the logic of \emph{linear} integer arithmetic
@@ -1900,6 +1898,12 @@ involve (defined) macros and recursive functions.
 \section{Calling Oracles}
 \label{sec:oracleimplementations}
 TODO: information on how to call oracles. Are these binaries. input format? 
+
+We say that a binary with name $N$ \emph{implements a function of sort
+$\sigma_1 \times \ldots \times \sigma_n \rightarrow 
+\sigma_{n+1} \times \ldots \times \sigma_{n+m}$}
+if
+$\ldots$ TODO $\ldots$
 
 \section{Examples}
 \label{sec:examples}
