@@ -58,7 +58,7 @@
 
 \title{The SyGuS Language Standard Version 2.1}
 
-\author{Mukund Raghothaman \and Andrew Reynolds \and Abhishek Udupa}
+\author{Elizabeth Polgreen \and Mukund Raghothaman \and Andrew Reynolds \and Abhishek Udupa}
 
 \maketitle
 
@@ -83,6 +83,7 @@ suggestions and feedback regarding this document (listed alphabetically):
 Haniel Barbosa,
 Andres N\"otzli,
 Saswat Padhi,
+Sanjit A.~Seshia,
 Rishabh Singh,
 Cesare Tinelli.
 \end{comment}
@@ -239,7 +240,7 @@ v_m. \alpha \implies \varphi$.
 
 \item Oracle Functions are introduced. These are functional symbols whose interpretation is associated to an external oracle. The functions are treated as universally quantified uninterpreted functions, and calls to that external oracle place with concrete input values generate assumptions over the behaviour of the uninterpreted function. These assumptions are conjoined to the list of assumptions $\alpha$ in the synthesis conjecture.
 
-\item A set of new commands are introduced to enable easy specification of specific types of oracles, for instance input-output oracles.
+\item A set of new commands are introduced to enable easy specification of specific types of oracles, for instance input-output oracles. These oracles are based on the formalization by Jha and Seshia~\cite{oracles}.
 \end{enumerate}
 
 
