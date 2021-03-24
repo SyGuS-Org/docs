@@ -1900,7 +1900,7 @@ involve (defined) macros and recursive functions.
 \label{sec:oracleimplementations}
 
 The SyGuS solver makes queries to an oracle via a text file with the extension \textit{.oracle}. The oracle is called by the solver with the command \textit{oracle-name textfile.oracle}.
-The text file should contain a list $\paren{v_1 \ldots v_n}$ specifying values for each argument to the oracle. The oracle will return a list $\paren{v_{n+1} \ldots v_{n+m}}$ specifying values for the return values of the oracle.\\
+The text file should contain the text $\paren{v_1 \ldots v_n}$ specifying values for each argument to the oracle, where $v_1 \ldots v_n$ are written using the same syntax for constant terms described in this document. The oracle will return the text $\paren{v_{n+1} \ldots v_{n+m}}$ specifying values for the return values of the oracle on the standard output channel.\\
 
 \noindent Consider an oracle declared with the following command:\\\\
 $\paren{\constraintoraclekwd\mbox{ } N \mbox{ }
