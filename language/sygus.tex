@@ -1899,7 +1899,9 @@ involve (defined) macros and recursive functions.
 \section{Calling Oracles}
 \label{sec:oracleimplementations}
 
+\begin{definition}
 The oracle is a binary that implements an iterface of sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$.
+\end{definition}
 The SyGuS solver makes queries to an oracle via a text file with the extension \textit{.oracle}. The oracle is called by the solver with the command \textit{oracle-name textfile.oracle}.
 The text file should contain the text $\paren{v_1 \ldots v_n}$ specifying values for each argument to the oracle, where $v_1 \ldots v_n$ are written using the same syntax for constant terms described in this document. The oracle will return the text $\paren{v_{n+1} \ldots v_{n+m}}$ specifying values for the return values of the oracle on the standard output channel.\\
 
