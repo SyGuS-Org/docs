@@ -1898,13 +1898,24 @@ involve (defined) macros and recursive functions.
 
 \section{Calling Oracles}
 \label{sec:oracleimplementations}
-TODO: information on how to call oracles. Are these binaries. input format? 
 
-We say that a binary with name $N$ \emph{implements a function of sort
-$\sigma_1 \times \ldots \times \sigma_n \rightarrow 
-\sigma_{n+1} \times \ldots \times \sigma_{n+m}$}
-if
-$\ldots$ TODO $\ldots$
+\begin{definition}
+The oracle is a binary that implements an iterface of sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$.
+\end{definition}
+The SyGuS solver makes queries to an oracle via a text file with the extension \textit{.oracle}. The oracle is called by the solver with the command \textit{oracle-name textfile.oracle}.
+The text file should contain the text $\paren{v_1 \ldots v_n}$ specifying values for each argument to the oracle, where $v_1 \ldots v_n$ are written using the same syntax for constant terms described in this document. The oracle will return the text $\paren{v_{n+1} \ldots v_{n+m}}$ specifying values for the return values of the oracle on the standard output channel.\\
+
+
+\noindent Consider an oracle that implements the interface declared with the following command:\\\\
+$\paren{\constraintoraclekwd\mbox{ } N \mbox{ }
+\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
+\paren{\paren{x_{n+1}\mbox{ }\sigma_{n+1}} \ldots \paren{x_{n+m}\mbox{ }\sigma_{n+m}}}  \mbox{ } t}$ \\
+
+The text file must contain a list of values $\paren{v_1 \ldots v_n}$ for the input parameters $x_1 \ldots x_n$, and $v_i$ must have the same sort of $\sigma_i$.
+The oracle will return a list of values $\paren{v_{n+1} \ldots v_{n+m}}$, corresponding to the output parameters $x_{n+1} \ldots x_{n+m}$.
+%
+The solver calls the oracle with the command ${\tt N \,\,textfile.oracle}$, where ${\tt N}$ is the name of the oracle implememtation as specified in the oracle constraint declaration.
+
 
 \section{Examples}
 \label{sec:examples}
