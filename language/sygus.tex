@@ -1940,8 +1940,10 @@ which is printed on the standard output channel.
 It is expected that the synthesis solver parses these values to
 ascertain the result of the query.
 
-It is important to note that the text file
-${\tt textfile.oracle}$ in the definition above is expected to take
+The oracle accepts the name of the text file
+(${\tt textfile.oracle}$ in the definition above)
+as its only command line argument.
+It is important to note that this text file is expected to take
 a tuple of values only.
 In some cases, 
 the syntax for those values may involve symbols that are user-defined.
@@ -1949,16 +1951,12 @@ As an example, consider an oracle
 implementing an interface whose input takes a user-defined datatype.
 The definition of that datatype is \emph{not} provided as a preamble
 to the given tuple of values.
-This means that an external binary is responsible for being able to
-parse the given text file, even when it uses symbols that
+This means that an external binary is responsible for
+parsing the given text file, even when it uses symbols whose definitions
 are not self-contained in that text file. 
-This is a reasonable assumption,
-considering that the user is providing both the oracle specification
-and the binary.
-
-The oracle accepts the name of the text file as the first command line
-argument. An oracle may optionally take additional command line
-arguments which are not standardized in this document.
+It is assumed that
+the user has ensured the syncronization of the oracle specification
+and the input format accepted by the binary.
 
 It is the responsibility of the user to specify oracles in
 SyGuS commands that implement interfaces of the appropriate sorts.
