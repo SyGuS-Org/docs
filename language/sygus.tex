@@ -53,6 +53,7 @@
 
 \usepackage{listings}
 \renewcommand{\lstlistingname}{Listing}
+\input{listing-style}
 
 \begin{document}
 
@@ -65,7 +66,57 @@
 \input{macros}
 \input{sygus-macros}
 
-\input{introduction}
+\section{Introduction}%
+\label{sec:Introduction}
+
+We present a language to specify instances of the syntax-guided synthesis
+(SyGuS) problem. An instance of a SyGuS problem specifies:
+
+\begin{enumerate}
+\item
+  The vocabularies, theories and the base types that are used to specify
+  (a) semantic constraints on the function to be synthesized, and (b) the
+  definition of the function to be synthesized itself. We refer to these as
+  the \emph{input} and \emph{output} logics respectively.
+\item
+  A finite set of typed functions $f_1, \ldots, f_n$ that are to be synthesized.
+\item
+  The syntactic constraints on each function $f_i, i \in [1,n]$ to be
+  synthesized. The syntactic constraints are specified using context-free
+  grammars $G_i$ which describe the syntactic structure of candidate
+  solution for each of these functions.
+  The grammar may only involve function
+  symbols and sorts from the specified output logic.
+\item
+  The semantic constraints and assumptions that describe the behavior of the functions to
+  be synthesized. Constraints are given as quantifier-free formulas $\varphi$ 
+  and assumptions are given as quantifier-free formulas $\alpha$
+  in the input logic, and may refer to the functions-to-synthesize as well as 
+  universally quantified variables
+  $v_1, \ldots, v_m$. 
+ 
+\end{enumerate}
+The objective then is to find definitions $e_i$ (in the form of
+expression bodies) for each function $f_i$ such that (a) the expression
+body belongs to the grammar $G_i$ that is used to syntactically constrain
+solutions for $f_i$, and 
+(b) the constraint 
+$\forall v_1, \ldots,
+v_m \ldotp \alpha \implies \varphi$ is valid in the background theory
+under the assumption that functions $f_1, \ldots, f_n$
+are interpreted as functions returning $e_1, \ldots, e_n$.
+%\varphi(f_1, f_2, \ldots, f_n, v_1, v_2, \ldots, v_m)[f_i \mathtt{:=}
+%  e_i, \ldots, f_n \mathtt{:=} e_n] $ 
+Note that each $e_i$ is
+an expression containing
+a fixed set of free variables which
+represent the argument list of the function $f_i$.
+%[Do we want to be
+%  more precise here and talk about synthesizing lambdas and talk about beta
+%  reduction]?
+% ajr: its a bit tricky since we allow recursion, best to keep it imprecise for now.
+%[TODO: Introduce an example from the old document here? Or do we wait until
+%  the Examples section later to talk about examples]
 
 %\ajr{Intro to sygus and example}
 
@@ -232,9 +283,10 @@ that it has determined there are no solutions to the given conjecture.
 \begin{enumerate}
 \item We introduce the command $\assumekwd$, which introduces a list of assumptions $\alpha$, and the 
 synthesis conjecture is now 
-$\exists f_1, \ldots, f_n \forall v_1, \ldots,
-v_m. \alpha \implies \varphi$. 
-\item Oracle constraints are introduced. Oracle constraints are constraints that are generated when an external oracle is called with a concrete set of input values. The constraints are conjoined to list of constraints $\varphi$ in the synthesis conjecture. 
+$\exists f_1, \ldots, f_n \ldotp \forall v_1, \ldots,
+v_m \ldotp \alpha \implies \varphi$. 
+
+\item Oracle constraints are introduced. Oracle constraints are constraints that are generated when an external oracle is called with a concrete set of input values. The constraints are conjoined to the list of constraints $\varphi$ in the synthesis conjecture.
 
 \item Oracle assumptions are introduced. Oracle assumptions are assumptions that are generated when an external oracle is called with a concrete set of input values. The assumptions are conjoined to the list of assumptions $\alpha$ in the synthesis conjecture.
 
@@ -256,11 +308,11 @@ the definition given in the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}.
 If $e$ is a term or formula,
 then we write $e[x]$ to denote that $x$ occurs free in $e$,
 and $e[t]$ to denote the result of replacing all occurrences of $x$ by $t$.
-We write $\lambda \vec{x}.\, t[\vec{x}]$ to denote a \emph{lambda term},
+We write $\lambda \vec{x} \ldotp t[\vec{x}]$ to denote a \emph{lambda term},
 that is, an anonymous function whose argument list is $\vec{x}$
 that returns the value of $t[\vec{s}]$ for all inputs $\vec{x} = \vec{s}$.
 Given an application of a lambda term to a concrete argument list $\vec{s}$,
-i.e. the term $(\lambda \vec{x}.\, t[\vec{x}])( \vec{s} )$,
+i.e. the term $(\lambda \vec{x} \ldotp t[\vec{x}])( \vec{s} )$,
 then its \emph{beta-reduction} is the term $t[\vec{s}]$.
 %In this document, we consider only \emph{simple} lambda terms 
 %whose body itself contains no lambda terms.
@@ -510,8 +562,8 @@ A command $\cmd$ is given by the following syntax.
  % ajr: removed
  %\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
 \smtcmd 
- & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdec} \\
- & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdec}{n+1}}} \\
+ & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdecl} \\
+ & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdecl}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
  & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
  %& | & \paren{\recfundefkwd\mbox{ }\fundef} \\
@@ -543,8 +595,8 @@ A command $\cmd$ is given by the following syntax.
  %\sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\  %ajr: used above
  %\fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
  %\fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
- \dtdec & ::= & \paren{\kplus{\dtconsdec}} \\
- \dtconsdec & ::= & \paren{\symbol\mbox{ }\kstar{\sortedvar}} \\
+ \dtdecl & ::= & \paren{\kplus{\dtconsdecl}} \\
+ \dtconsdecl & ::= & \paren{\symbol\mbox{ }\kstar{\sortedvar}} \\[2ex]
  \grammardef & ::= & \paren{\kstarn{\sortedvar}{n+1}}\mbox{ }\paren{\kstarn{\ntdef}{n+1}} \\
  \ntdef & ::= & \paren{\symbol\mbox{ }\sortexpr\mbox{ }\paren{ \kplus{\gterm} } } \\[2ex]
  \gterm 
@@ -556,12 +608,12 @@ we distinguish between two kinds of commands above.
 The commands listed under $\cmd$ and $\oraclecmd$ are specific to the SyGuS 2.0 format.
 The remaining commands listed under $\smtcmd$
 are borrowed from SMT-LIB 2.6.
-Details on the semantics of these commands are given in \cref{sec:semantics}.
+The semantics of these commands are detailed in \cref{sec:semantics}.
 
 %\paragraph{Reserved Words}
 %All strings mentioned in \cref{ssec:literals}
 
-\section{Semantics of Commands}
+\section{Semantics of Commands}%
 \label{sec:semantics}
 
 A SyGuS input file is a sequence of commands,
@@ -570,9 +622,9 @@ are used for defining a (single) synthesis conjecture,
 and invoking a solver for this conjecture.
 This conjecture is a closed formula of the form:
 \begin{alignat*}{1}
- & \exists f_1,\ldots,f_n.\, \forall v_1,\ldots,v_m.\,(\alpha_1 \wedge \ldots \wedge \alpha_r) \implies (\varphi_1 \wedge \ldots \wedge \varphi_q )
+ & \exists f_1,\ldots,f_n \ldotp \forall v_1,\ldots,v_m \ldotp (\alpha_1 \wedge \ldots \wedge \alpha_r) \implies (\varphi_1 \wedge \ldots \wedge \varphi_q )
 \end{alignat*}
-We wil use $\Psi$ to refer to the formula $\forall v_1,\ldots,v_m.\,(\alpha_1 \wedge \ldots \wedge \alpha_r)\implies (\varphi_1 \wedge \ldots \wedge \varphi_q )$, and thus the synthesis conjecture can be written $\exists f_1,\ldots,f_n.\, \Psi$. 
+We wil use $\Psi$ to refer to the formula $\forall v_1,\ldots,v_m \ldotp (\alpha_1 \wedge \ldots \wedge \alpha_r)\implies (\varphi_1 \wedge \ldots \wedge \varphi_q )$, and thus the synthesis conjecture can be written $\exists f_1,\ldots,f_n \ldotp \Psi$. 
 In this section, we define how this conjecture is
 is established via SyGuS commands.
 %At a high level, 
@@ -943,7 +995,7 @@ the symbol $S$ of sort $\sigma$
 if $n=0$ or $\sigma_1 \times \ldots \sigma_n \rightarrow \sigma$ if $n>0$.
 The variables $x_1, \ldots, x_n$ may occur freely in $t$.
 It defines $S$ as a term whose semantics are given by the function
-$\lambda x_1, \ldots, x_n.\, t$.
+$\lambda x_1, \ldots, x_n \ldotp t$.
 Notice that $t$ may not contain any free occurrences of $S$,
 that is, the definition above is not recursive.
 This command is not well-formed if $t$ is not a well-sorted
@@ -1005,13 +1057,13 @@ $S$ is the function-to-synthesize
 of sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sbool$,
 \item
 $S_{pre}$ is a defined symbol 
-whose definition is of the form $\lambda x_1, \ldots, x_n.\, \varphi_{pre}$,
+whose definition is of the form $\lambda x_1, \ldots, x_n \ldotp \varphi_{pre}$,
 \item
 $S_{trans}$ is a defined symbol 
-whose definition is of the form $\lambda x_1, \ldots, x_n, y_1, \ldots, y_n.\, \varphi_{trans}$, and
+whose definition is of the form $\lambda x_1, \ldots, x_n, y_1, \ldots, y_n \ldotp \varphi_{trans}$, and
 \item
 $S_{post}$ is a defined symbol 
-whose definition is of the form $\lambda x_1, \ldots, x_n.\, \varphi_{post}$.
+whose definition is of the form $\lambda x_1, \ldots, x_n \ldotp \varphi_{post}$.
 \end{enumerate}
 where $(x_1, \ldots, x_n)$ and $(y_1, \ldots, y_n)$
 are tuples of variables of sort $(\sigma_1, \ldots, \sigma_n)$ and
@@ -1020,21 +1072,21 @@ Given that this command is well-formed, given the above definitions,
 this command is syntax sugar for:
 \[
 \begin{array}{l}
-\paren{\vardeclkwd\mbox{ }v_1\mbox{ }\sigma_1}\\
-\paren{\vardeclkwd\mbox{ }v'_1\mbox{ }\sigma_1}\\
-\ldots\\
-\paren{\vardeclkwd\mbox{ }v_n\mbox{ }\sigma_n}\\
-\paren{\vardeclkwd\mbox{ }v'_n\mbox{ }\sigma_n}\\
-\paren{\constraintkwd\mbox{ }\paren{{\tt =>}\mbox{ }
-\paren{S_{pre}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
-\paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}}}\\
-\paren{\constraintkwd\mbox{ }\paren{{\tt =>}\mbox{ }
-\paren{{\tt and}\mbox{ }\paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
-\paren{S_{trans}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n\mbox{ }v'_1\mbox{ }\ldots\mbox{ }v'_n}}\mbox{ }
-\paren{S\mbox{ }v'_1\mbox{ }\ldots\mbox{ }v'_n}}}\\
-\paren{\constraintkwd\mbox{ }\paren{{\tt =>}\mbox{ }
-\paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
-\paren{S_{post}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}}}\\
+   \paren{\vardeclkwd\mbox{ }v_1\mbox{ }\sigma_1}\\
+   \paren{\vardeclkwd\mbox{ }v'_1\mbox{ }\sigma_1}\\
+   \ldots\\
+   \paren{\vardeclkwd\mbox{ }v_n\mbox{ }\sigma_n}\\
+   \paren{\vardeclkwd\mbox{ }v'_n\mbox{ }\sigma_n}\\
+   \paren{\constraintkwd\mbox{ }\paren{\texttt{=>}\mbox{ }
+   \paren{S_{pre}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
+   \paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}}}\\
+   \paren{\constraintkwd\mbox{ }\paren{\texttt{=>}\mbox{ }
+   \paren{\texttt{and}\mbox{ }\paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
+   \paren{S_{trans}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n\mbox{ }v'_1\mbox{ }\ldots\mbox{ }v'_n}}\mbox{ }
+   \paren{S\mbox{ }v'_1\mbox{ }\ldots\mbox{ }v'_n}}}\\
+   \paren{\constraintkwd\mbox{ }\paren{\texttt{=>}\mbox{ }
+   \paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
+   \paren{S_{post}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}}}\\
 \end{array}
 \]
 where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
@@ -1284,7 +1336,7 @@ and choose reasonable defaults when the
 options are left unspecified.
 \end{itemize}
 
-\section{Synthesis Solver Output}
+\section{Synthesis Solver Output}%
 \label{sec:output}
 
 This section covers the expected output from a synthesis solver,
@@ -1357,7 +1409,7 @@ the conjecture is infeasible.
 
 %\section{
 
-\section{SyGuS Background Logics}
+\section{SyGuS Background Logics}%
 \label{sec:sygus-logic}
 
 In this section,
@@ -1782,7 +1834,7 @@ then its constraints are guaranteed to meet the requirements of the input logic 
 
 
 
-\section{Formal Semantics}
+\section{Formal Semantics}%
 \label{sec:logical-semantics}
 
 Here we give the formal semantics
@@ -1830,7 +1882,7 @@ replacing an occurrence of some $y$ by $t$
 where $y \mapsto t$ is a rule in $G$.
 
 Let $f$ be a function to synthesize.
-A term $\lambda X.\, t$
+A term $\lambda X \ldotp t$
 satisfies the syntactic specification for $f$
 if one of the following hold:
 \begin{enumerate}
@@ -1851,11 +1903,11 @@ is the same as the return sort of $f$.
 
 Furthermore,
 A tuple of functions 
-$( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n )$
+$( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n )$
 satisfies the syntactic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n.\,\Psi$
-if $\lambda X_i.\, t_i$
+in conjecture $\exists f_1, \ldots, f_n \ldotp\Psi$
+if $\lambda X_i \ldotp t_i$
 satisfies the syntactic specification for $f_i$
 for each $i=1,\ldots,n$.
 %\end{def}
@@ -1871,16 +1923,16 @@ The notion of satisfying semantic restrictions for background theories
 that are not standardized in the SMT-LIB standard are not covered by this document.
 
 A tuple of functions 
-$( \lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n)$
+$( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
 satisfies the semantic restrictions
 for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n.\,\Psi$ in background theory $T$
+in conjecture $\exists f_1, \ldots, f_n \ldotp\Psi$ in background theory $T$
 if $\Psi$ is $T$-valid formula
 when $f_1, \ldots, f_n$ are defined to be terms
 whose semantics are given by the functions
-$\lambda X_1.\, t_1, \ldots, \lambda X_n.\, t_n$.
+$\lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n$.
 %where $\psi$ is the formula
-%$\varphi \{ f_1 \mapsto \lambda X_1.\, t_1, \ldots, f_n \mapsto \lambda X_n.\, t_n \}$
+%$\varphi \{ f_1 \mapsto \lambda X_1 \ldotp t_1, \ldots, f_n \mapsto \lambda X_n \ldotp t_n \}$
 %after beta-reduction.
 The formal definition for $T$-valid here
 corresponds to the definition given by SMT-LIB,
@@ -1892,7 +1944,7 @@ The formal definition of $T$-valid formulas that contain these kinds of
 function definitions assumes the semantics for SMT-LIB input formulas that 
 involve (defined) macros and recursive functions.
 
-\section{Calling Oracles}
+\section{Calling Oracles}%
 \label{sec:oracleimplementations}
 
 In the following, we formalize the interface between the
@@ -1976,14 +2028,14 @@ The oracle will return a list of values $\paren{w_{1} \ldots w_{m}}$, correspond
 The solver calls the oracle with the command ${\tt N \,\,textfile.oracle}$, where ${\tt N}$ is the name of the oracle implememtation as specified in the oracle constraint declaration.
 
 
-\section{Examples}
+\section{Examples}%
 \label{sec:examples}
 
 %\rem{Simple LIA example}
 
 \begin{example}[Linear Arithmetic with Constant Coefficients]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic LIA)
 (synth-fun f ((x Int) (y Int)) Int
    ((I Int) (Ic Int))
@@ -2012,14 +2064,14 @@ by the definition of our restrictions on grammars in \cref{ssec:logicr-grammars}
 this grammar \emph{is allowed},
 since all closed terms that the grammar generates are allowed by linear arithmetic.
 A possible correct solution to this synthesis conjecture is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
 \end{lstlisting}
 \end{example}
 
 \begin{example}[Datatypes with Linear Arithmetic]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic DTLIA)
 (declare-datatypes ((List 0)) (((nil) (cons (head Int) (tail List)))))
 (synth-fun f ((x List)) Int
@@ -2049,7 +2101,7 @@ and includes applications of constructors ${\tt nil}$ and ${\tt cons}$,
 selectors ${\tt head}$ and ${\tt tail}$, and
 discriminators ${\tt (\_\ is\ nil)}$ and ${\tt (\_\ is\ cons)}$.
 A possible correct solution to this synthesis conjecture is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
 \end{lstlisting}
 In other words, a possible solution for $f$ returns zero whenever its
@@ -2059,7 +2111,7 @@ and returns one plus the head of its argument otherwise.
 
 \begin{example}[Bit-Vectors with Concatenation and Extraction]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
    ((BV32 (_ BitVec 32)) (BV16 (_ BitVec 16)))
@@ -2093,7 +2145,7 @@ and the indexed operator ${\tt (\_\ extract\ n\ m)}$
 returns a bit-vector containing bits $n$ through $m$ of its
 argument, where $n \geq m$.
 A possible correct solution for $f$ is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun f ((x (_ BitVec 32))) (_ BitVec 32) 
    (concat ((_ extract 15 0) x) #x0000))
 \end{lstlisting}
@@ -2105,7 +2157,7 @@ with the bit-vector ${\tt \#x0000}$.
 \begin{comment}
 \begin{example}[Strings]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic SLIA)
 (synth-fun f ((x String)) String
    ((S String) (I Int))
@@ -2120,7 +2172,7 @@ Consider the following example:
 \end{lstlisting}
 This example sets the logic to strings with linear arithmetic (${\tt SLIA}$).
 A possible correct response from the synthesis solver in this example is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun f ((x String)) String (str.substr x 0 (- (str.len x) 1)))
 \end{lstlisting}
 In other words, the above definition returns 
@@ -2141,7 +2193,7 @@ is given in~\cite{smtlibStrings} and is the semantics assumed by this document.
 
 \begin{example}[Grammars with Defined Symbols, Forward Declarations and Recursion]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic LIA)
 (set-feature :fwd-decls true)
 (set-feature :recursion true)
@@ -2172,7 +2224,7 @@ This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this exa
 The grammar for $h$ contains a rule that contains an application of $h$ itself.
 This grammar is allowed since $\frecursionkwd$ is enabled in this example.
 A possible correct response from the synthesis solver in this example is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun f ((x Int)) Int x)
 (define-fun g ((x Int)) Int (fx_plus_one x))
 (define-fun h ((x Int)) Int 1)
@@ -2182,9 +2234,9 @@ in the order in which they were introduced via $\synthfunkwd$ commands
 in the input.
 \end{example}
 
-\begin{example}[Strings Programming by Examples (PBE)]
+\begin{example}[Programming by Examples (PBE) with Strings]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic PBE_SLIA)
 (synth-fun f ((fname String) (lname String)) String
     ((ntString String) (ntInt Int))
@@ -2212,15 +2264,15 @@ where constraints are limited to a conjunction of PBE equalities.
 In this example, four constraints are given, each of which meet the
 restriction of being a PBE equality.
 A possible correct response from the synthesis solver in this example is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun f ((fname String) (lname String)) String
   (str.++ fname (str.++ " " lname)))
 \end{lstlisting}
 \end{example}
 
-\begin{example}[Invariant Synthesis (Inv)]
+\begin{example}[Single Invariant Synthesis (Inv) over Linear Integer Arithmetic]
 Consider the following example:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic Inv_LIA)
 (synth-inv inv-f ((x Int) (y Int)))
 (define-fun pre-f ((x Int) (y Int)) Bool 
@@ -2240,7 +2292,7 @@ a single predicate-to-synthesize ${\tt inv-f}$,
 and only introduces constraints via a single $\constraintinvkwd$ command,
 it meets the restrictions of the logic.
 A possible correct response from the synthesis solver in this example is:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (define-fun inv-f ((x Int) (y Int)) Bool (>= x y))
 \end{lstlisting}
 \end{example}
@@ -2251,7 +2303,7 @@ A possible correct response from the synthesis solver in this example is:
 \newpage
 \begin{appendix}
 
-\section{Reserved Words}
+\section{Reserved Words}%
 \label{apx:reserved}
 
 A \emph{reserved word} is any of the 
@@ -2282,7 +2334,7 @@ $\synthinvkwd$, and
 $\varkwd$.
 
 
-\section{Reference Grammars}
+\section{Reference Grammars}%
 \label{apx:ref-grammars}
 
 In this section, for convenience, we provide the concrete syntax for
@@ -2313,7 +2365,7 @@ for each non-Boolean sort in the grammar.
 The following grammar for $f$
 generates exactly the integer-typed terms in the logic of
 linear integer arithmetic (LIA) with one free integer variable ${\tt x}$.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic LIA)
 (synth-fun f ((x Int)) Int
    ((y_term Int) (y_cons Int) (y_pred Bool))
@@ -2346,7 +2398,7 @@ are written as the unary negation of a positive integer constant.
 The following grammar for $g$ generates exactly the integer-typed terms in the logic of
 non-linear integer arithmetic (NIA)
 with one free integer variable ${\tt x}$.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic NIA)
 (synth-fun g ((x Int)) Int
    ((y_term Int) (y_pred Bool))
@@ -2373,7 +2425,7 @@ The following grammar for $f$
 generates exactly the real-typed terms in the logic of
 linear real arithmetic (LRA)
 with one free real variable ${\tt x}$.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic LRA)
 (synth-fun f ((x Real)) Real
    ((y_term Real) (y_cons Real) (y_pred Bool))
@@ -2404,7 +2456,7 @@ The grammar for $g$
 generates exactly the real-typed terms in the logic of
 non-linear real arithmetic (NRA)
 with one free real variable ${\tt x}$.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic NRA)
 (synth-fun g ((x Real)) Real
    ((y_term Real) (y_pred Bool))
@@ -2450,7 +2502,7 @@ some of the omitted operators are given in \cref{sec:examples}.
 
 % ajr: full grammar 
 \begin{comment}
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
    ((y_term (_ BitVec 32)) (y_pred Bool))
@@ -2487,7 +2539,7 @@ some of the omitted operators are given in \cref{sec:examples}.
                   (bvsge y_term y_term))))))
 \end{lstlisting}
 \end{comment}
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
    ((y_term (_ BitVec 32)) (y_pred Bool))
@@ -2519,19 +2571,21 @@ this document was written.
 Thus, we adopt (a subset of) the proposed standard~\cite{smtlibStrings}
 as of the time of the 2019 edition of the SyGuS competition.
 Here, we omit discussion of regular expressions and characters.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}[language=SyGuS]
 (set-logic S)
 (synth-fun f ((xs String) (xi Int)) String
    ((y_term_str String) (y_term_int Int) (y_pred Bool))
-   ((y_term_str String ((Constant String)
-                        (Variable String)
-                        (str.++ y_term_str y_term_str)
-                        (str.at y_term_str y_term_str)
-                        (str.substr y_term_str y_term_int y_term_int)
-                        (str.indexof y_term_str y_term_str y_term_int)
-                        (str.replace y_term_str y_term_str y_term_str)
-                        (str.from-int y_term_int)
-                        (ite y_pred y_term_str y_term_str)))
+   ((y_term_str String (
+        (Constant String)
+        (Variable String)
+        (str.++ y_term_str y_term_str)
+        (str.at y_term_str y_term_str)
+        (str.substr y_term_str y_term_int y_term_int)
+        (str.indexof y_term_str y_term_str y_term_int)
+        (str.replace y_term_str y_term_str y_term_str)
+        (str.from-int y_term_int)
+        (ite y_pred y_term_str y_term_str))
+    )
     (y_term_int Int ((Variable Int)
                      (str.len y_term_str)
                      (str.to-int y_term_str)
@@ -2581,7 +2635,8 @@ in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
 
 
 
-\section{Language Features of SMT-LIB not Covered}
+\section{Language Features of SMT-LIB not Covered}%
+\label{apx:not-covered}
 
 For the purpose of self-containment,
 many of the essential language features of SMT-LIB version 2.6
@@ -2599,7 +2654,7 @@ they use SMT-LIB compliant syntax, as described briefly below.
 We do not cover the concrete syntax or semantics of parametric datatypes (that
 is, datatypes whose arity is non-zero) in this document.
 An example of a datatype definition for a parametric list is given below.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}
 (declare-datatypes ((List 1)) (
   (par (T) ((nil) (cons (head T) (tail (List T)))))))
 \end{lstlisting}
@@ -2630,7 +2685,7 @@ The SMT-LIB version 2.6 includes a ${\tt match}$ term
 that case splits on the constructors of datatype terms.
 For example,
 the match term:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}
 (match x ((nil (- 1)) ((cons h t) h)))
 \end{lstlisting}
 returns negative one if the list $x$ is empty,
@@ -2644,7 +2699,7 @@ $\fundefkwd$.
 }
 An example, which computes the length of a (non-parametric) list 
 is given below.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}
 (define-fun-rec len ((x List)) Int 
   (match x ((nil 0) ((cons h t) (+ 1 (len t))))))
 \end{lstlisting}
@@ -2653,7 +2708,7 @@ them in a single block using the $\recfunsdefkwd$ command.
 An example, which defines two predicates ${\tt isEven}$ and ${\tt isOdd}$
 for determining whether a positive integer is even and odd respectively,
 is given in the following.
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}
 (define-funs-rec (
   (isEven ((x Int)) Bool)
   (isOdd ((x Int)) Bool)
@@ -2665,7 +2720,7 @@ is given in the following.
 Notice that recursive function definitions are not required to be terminating
 (the above functions do not terminate for negative integers).
 They are not even required to correspond to consistent definitions, for instance:
-\begin{lstlisting}[basicstyle={\ttfamily}]
+\begin{lstlisting}
 (define-fun-rec inconsistent ((x List)) Int 
   (+ (inconsistent x) 1))
 \end{lstlisting}
