@@ -105,8 +105,8 @@
 \global\long\def\feature{\left\langle Feature\right\rangle }
 
 % for datatypes
-\global\long\def\dtdec{\left\langle DTDec\right\rangle }
-\global\long\def\dtconsdec{\left\langle DTConsDec\right\rangle }
+\global\long\def\dtdecl{\left\langle DTDecl\right\rangle }
+\global\long\def\dtconsdecl{\left\langle DTConsDecl\right\rangle }
 
 
 \global\long\def\sortdecl{\left\langle SortDecl\right\rangle }
@@ -120,129 +120,129 @@
 
 \global\long\def\attribute{\left\langle Attr\right\rangle }
 
-\global\long\def\constdeclkwd{{\tt declare\mbox{-}const}}
+\global\long\def\constdeclkwd{\texttt{declare-const}}
 
 
-\global\long\def\dtdeclkwd{{\tt declare\mbox{-}datatype}}
+\global\long\def\dtdeclkwd{\texttt{declare-datatype}}
 
 
-\global\long\def\dtsdeclkwd{{\tt declare\mbox{-}datatypes}}
+\global\long\def\dtsdeclkwd{\texttt{declare-datatypes}}
 
 
-\global\long\def\recfundefkwd{{\tt define\mbox{-}fun\mbox{-}rec}}
+\global\long\def\recfundefkwd{\texttt{define-fun-rec}}
 
 
-\global\long\def\recfunsdefkwd{{\tt define\mbox{-}funs\mbox{-}rec}}
+\global\long\def\recfunsdefkwd{\texttt{define-funs-rec}}
 
-\global\long\def\setlogickwd{{\tt set\mbox{-}logic}}
-\global\long\def\setlogicinputkwd{{\tt set\mbox{-}logic\mbox{-}input}}
-\global\long\def\setlogicoutputkwd{{\tt set\mbox{-}logic\mbox{-}output}}
-\global\long\def\setinfokwd{{\tt set\mbox{-}info}}
-
-
-\global\long\def\sortdefkwd{{\tt define\mbox{-}sort}}
-
-\global\long\def\sortdeclkwd{{\tt declare\mbox{-}sort}}
-
-\global\long\def\fundefkwd{{\tt define\mbox{-}fun}}
+\global\long\def\setlogickwd{\texttt{set-logic}}
+\global\long\def\setlogicinputkwd{\texttt{set-logic-input}}
+\global\long\def\setlogicoutputkwd{\texttt{set-logic-output}}
+\global\long\def\setinfokwd{\texttt{set-info}}
 
 
-\global\long\def\vardeclkwd{{\tt declare\mbox{-}var}}
+\global\long\def\sortdefkwd{\texttt{define-sort}}
 
-\global\long\def\primedvardeclkwd{{\tt declare\mbox{-}primed\mbox{-}var}}
+\global\long\def\sortdeclkwd{\texttt{declare-sort}}
 
-
-\global\long\def\fundeclkwd{{\tt declare\mbox{-}fun}}
-
-
-\global\long\def\synthfunkwd{{\tt synth\mbox{-}fun}}
-
-\global\long\def\synthinvkwd{{\tt synth\mbox{-}inv}}
-
-\global\long\def\oracledeckwd{{\tt declare\mbox{-}oracle\mbox{-}fun}}
-
-\global\long\def\iooracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}io}}
-\global\long\def\cexoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}cex}}
-\global\long\def\corroracledeckwd{{\tt declare\mbox{-}correctness\mbox{-}oracle}}
-\global\long\def\memoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}membership}}
-% \global\long\def\dioracledeckwd{{\tt di\mbox{-}oracle}}
-\global\long\def\corrcexoracledeckwd{{\tt declare\mbox{-}correctness\mbox{-}cex\mbox{-}oracle}}
-\global\long\def\poswitnessoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}poswitness}}
-\global\long\def\negwitnessoracledeckwd{{\tt oracle\mbox{-}constraint\mbox{-}negwitness}}
+\global\long\def\fundefkwd{\texttt{define-fun}}
 
 
-% \global\long\def\falsifyoracledeckwd{{\tt declare\mbox{-}oracle\mbox{-}falsify}}
+\global\long\def\vardeclkwd{\texttt{declare-var}}
+
+\global\long\def\primedvardeclkwd{\texttt{declare-primed-var}}
+
+
+\global\long\def\fundeclkwd{\texttt{declare-fun}}
+
+
+\global\long\def\synthfunkwd{\texttt{synth-fun}}
+
+\global\long\def\synthinvkwd{\texttt{synth-inv}}
+
+\global\long\def\oracledeckwd{\texttt{declare-oracle-fun}}
+
+\global\long\def\iooracledeckwd{\texttt{oracle-constraint-io}}
+\global\long\def\cexoracledeckwd{\texttt{oracle-constraint-cex}}
+\global\long\def\corroracledeckwd{\texttt{declare-correctness-oracle}}
+\global\long\def\memoracledeckwd{\texttt{oracle-constraint-membership}}
+% \global\long\def\dioracledeckwd{\texttt{di-oracle}}
+\global\long\def\corrcexoracledeckwd{\texttt{declare-correctness-cex-oracle}}
+\global\long\def\poswitnessoracledeckwd{\texttt{oracle-constraint-poswitness}}
+\global\long\def\negwitnessoracledeckwd{\texttt{oracle-constraint-negwitness}}
+
+
+% \global\long\def\falsifyoracledeckwd{\texttt{declare-oracle-falsify}}
 
 
 
-\global\long\def\constraintkwd{{\tt constraint}}
-\global\long\def\assumekwd{{\tt assume}}
-\global\long\def\constraintinvkwd{{\tt inv\mbox{-}constraint}}
+\global\long\def\constraintkwd{\texttt{constraint}}
+\global\long\def\assumekwd{\texttt{assume}}
+\global\long\def\constraintinvkwd{\texttt{inv-constraint}}
 
-\global\long\def\constraintoraclekwd{{\tt oracle\mbox{-}constraint}}
-\global\long\def\assumeoraclekwd{{\tt oracle\mbox{-}assume}}
-
-
-\global\long\def\checksynthkwd{{\tt check\mbox{-}synth}}
+\global\long\def\constraintoraclekwd{\texttt{oracle-constraint}}
+\global\long\def\assumeoraclekwd{\texttt{oracle-assume}}
 
 
-\global\long\def\setoptkwd{{\tt set\mbox{-}option}}
-
-\global\long\def\setoptskwd{{\tt set\mbox{-}options}}
+\global\long\def\checksynthkwd{\texttt{check-synth}}
 
 
-\global\long\def\bitveckwd{{\tt BitVec}}
+\global\long\def\setoptkwd{\texttt{set-option}}
+
+\global\long\def\setoptskwd{\texttt{set-options}}
 
 
-\global\long\def\arraykwd{{\tt Array}}
+\global\long\def\bitveckwd{\texttt{BitVec}}
 
 
-\global\long\def\intkwd{{\tt Int}}
+\global\long\def\arraykwd{\texttt{Array}}
 
 
-\global\long\def\boolkwd{{\tt Bool}}
+\global\long\def\intkwd{\texttt{Int}}
 
 
-\global\long\def\enumkwd{{\tt Enum}}
+\global\long\def\boolkwd{\texttt{Bool}}
 
 
-\global\long\def\realkwd{{\tt Real}}
-
-\global\long\def\constantkwd{{\tt Constant}}
+\global\long\def\enumkwd{\texttt{Enum}}
 
 
-\global\long\def\varkwd{{\tt Variable}}
+\global\long\def\realkwd{\texttt{Real}}
+
+\global\long\def\constantkwd{\texttt{Constant}}
 
 
-\global\long\def\inputvarkwd{{\tt InputVariable}}
+\global\long\def\varkwd{\texttt{Variable}}
 
 
-\global\long\def\localvarkwd{{\tt LocalVariable}}
+\global\long\def\inputvarkwd{\texttt{InputVariable}}
 
 
-\global\long\def\letkwd{{\tt let}}
+\global\long\def\localvarkwd{\texttt{LocalVariable}}
 
 
-\global\long\def\funsortkwd{{\tt \mbox{->}}}
-\global\long\def\implopkwd{{\tt \mbox{=>}}}
+\global\long\def\letkwd{\texttt{let}}
 
-\global\long\def\askwd{{\tt as}}
 
-\global\long\def\forallkwd{{\tt forall}}
-\global\long\def\existskwd{{\tt exists}}
+\global\long\def\funsortkwd{\texttt{->}}
+\global\long\def\implopkwd{\texttt{=>}}
 
-\global\long\def\truekwd{{\tt true}}
-\global\long\def\falsekwd{{\tt false}}
+\global\long\def\askwd{\texttt{as}}
 
-\global\long\def\setfeaturekwd{{\tt set\mbox{-}feature}}
+\global\long\def\forallkwd{\texttt{forall}}
+\global\long\def\existskwd{\texttt{exists}}
 
-\global\long\def\setfeaturesetkwd{{\tt set\mbox{-}feature\mbox{-}set}}
+\global\long\def\truekwd{\texttt{true}}
+\global\long\def\falsekwd{\texttt{false}}
 
-\global\long\def\fgrammarskwd{{\tt grammars}}
-\global\long\def\fquantifierskwd{{\tt quantifiers}}
-\global\long\def\ffwddeclskwd{{\tt fwd\mbox{-}decls}}
-\global\long\def\frecursionkwd{{\tt recursion}}
-\global\long\def\foracleskwd{{\tt oracles}}
+\global\long\def\setfeaturekwd{\texttt{set-feature}}
+
+\global\long\def\setfeaturesetkwd{\texttt{set-feature-set}}
+
+\global\long\def\fgrammarskwd{\texttt{grammars}}
+\global\long\def\fquantifierskwd{\texttt{quantifiers}}
+\global\long\def\ffwddeclskwd{\texttt{fwd-decls}}
+\global\long\def\frecursionkwd{\texttt{recursion}}
+\global\long\def\foracleskwd{\texttt{oracles}}
 
 % the Boolean sort (not syntax)
 \global\long\def\sbool{\mathsf{Bool}}
