@@ -8,31 +8,36 @@
     showstringspaces=false,
     breaklines=true,
     commentstyle=\color{gray},
-    keywordstyle=[1]\color{orange!64!black},
-    keywordstyle=[2]\color{blue!72!black},
+    keywordstyle=[1]\color{blue!72!black},
+    keywordstyle=[2]\color{orange!64!black},
     keywordstyle=[3]\color{teal!80!black},
     keywordstyle=[4]\color{red!64!black},
-    keywordstyle=[5]\color{green!48!black},
+    keywordstyle=[5]\color{green!40!black},
     keywordstyle=[6]\color{purple!96!black},
     sensitive=true,
     numbers=left,
     numberblanklines=false,
     numbersep=8pt,
     numberstyle=\ttfamily\fontsize{8pt}{8.5}\selectfont\color{gray},
-    xleftmargin=2.25em,
+    xleftmargin=2em,
+}
+
+\lstdefinelanguage{C-Like}[]{C}{
+    keywords=[3]{assume, assert}
 }
 
 \lstdefinelanguage{SyGuS}{
     alsoletter={\_,-,+,*,=,>,<,:},
     escapeinside={([}{])},
+    mathescape=true,
     texcl=true,
     morecomment=[l]{;},
     morestring=[b]",
-    keywords=[1]{BV, DTLIA, DTNIA, LIA, LRA, NIA, S, SLIA, Inv\_LIA, PBE\_SLIA},
-    keywords=[2]{check-synth, set-feature, set-logic, set-option},
+    keywords=[1]{check-synth, set-feature, set-logic, set-option},
+    keywords=[2]{BV, CHC, CHC_, CHC_QF_, DTLIA, DTNIA, Inv, Inv_, Inv_QF_, LIA, LRA, NIA, PBE, PBE_, QF_, S, SLIA, CHC_LIA, Inv\_LIA, PBE\_SLIA},
     keywords=[3]{declare-var, declare-datatype, declare-datatypes, declare-sort, define-fun, define-sort},
-    keywords=[4]{assume, constraint, inv-constraint},
-    keywords=[5]{synth-fun, synth-inv},
+    keywords=[4]{assume, chc-constraint, constraint, inv-constraint},
+    keywords=[5]{synth-fun, synth-inv, synth-pred},
     keywords=[6]{:fwd-decls, :grammars, :oracles, :recursion}
 }
 

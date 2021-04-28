@@ -59,7 +59,13 @@
 
 \title{The SyGuS Language Standard Version 2.1}
 
-\author{Elizabeth Polgreen \and Mukund Raghothaman \and Andrew Reynolds \and Abhishek Udupa}
+\author{
+  Saswat Padhi \and
+  Elizabeth Polgreen \and
+  Mukund Raghothaman \and
+  Andrew Reynolds \and
+  Abhishek Udupa
+}
 
 \maketitle
 
@@ -133,7 +139,6 @@ We would like to thank the following people for their helpful
 suggestions and feedback regarding this document (listed alphabetically):
 Haniel Barbosa,
 Andres N\"otzli,
-Saswat Padhi,
 Sanjit A.~Seshia,
 Rishabh Singh,
 Cesare Tinelli.
@@ -293,6 +298,15 @@ v_m \ldotp \alpha \implies \varphi$.
 \item Oracle Functions are introduced. These are functional symbols whose interpretation is associated to an external oracle. The functions are treated as universally quantified uninterpreted functions, and calls to that external oracle place with concrete input values generate assumptions over the behaviour of the uninterpreted function. These assumptions are conjoined to the list of assumptions $\alpha$ in the synthesis conjecture.
 
 \item A set of new commands are introduced to enable easy specification of specific types of oracles, for instance input-output oracles. These oracles are based on the formalization by Jha and Seshia~\cite{oracles}.
+
+\item A new SyGuS logic, called \sygusinline|CHC_$X$|,
+has been introduced for specifying synthesis problems using constrained Horn clause systems
+over an SMT-LIB base logic $X$.
+
+\item A new command, $\constraintchckwd$, has been introduced for specifying constraints in the form of constrained Horn clauses.
+
+\item The $\synthinvkwd$ command, used within invariant synthesis (\sygusinline|Inv_$X$|) logic earlier, has been removed.
+Instead, all functions (including predicates) to be synthesized are now specified using $\synthfunkwd$.
 \end{enumerate}
 
 
@@ -312,7 +326,7 @@ We write $\lambda \vec{x} \ldotp t[\vec{x}]$ to denote a \emph{lambda term},
 that is, an anonymous function whose argument list is $\vec{x}$
 that returns the value of $t[\vec{s}]$ for all inputs $\vec{x} = \vec{s}$.
 Given an application of a lambda term to a concrete argument list $\vec{s}$,
-i.e. the term $(\lambda \vec{x} \ldotp t[\vec{x}])( \vec{s} )$,
+i.e. the term $(\lambda \vec{x} \ldotp t[\vec{x}( \vec{s} )$,
 then its \emph{beta-reduction} is the term $t[\vec{s}]$.
 %In this document, we consider only \emph{simple} lambda terms 
 %whose body itself contains no lambda terms.
@@ -399,8 +413,6 @@ interpreted as escape sequences are not handled specially,
 meaning this string is interpreted 
 as the one consisting of two characters, ${\tt \backslash}$ followed by ${\tt n}$.
 %\rem{TODO: double quotes within strings escape, no other escape}
-
-\ 
 
 \noindent
 Literals are commonly
@@ -545,9 +557,10 @@ A command $\cmd$ is given by the following syntax.
 \[
 \begin{array}{rcl}
 \cmd 
- & ::= & \paren{\checksynthkwd} \\
+ & ::= & \paren{\assumekwd\mbox{ }\term} \\
+ & | & \paren{\checksynthkwd} \\
+ & | & \paren{\constraintchckwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\kstar{\term}\mbox{ }\term} \\
  & | & \paren{\constraintkwd\mbox{ }\term} \\
-  & | & \paren{\assumekwd\mbox{ }\term} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
  & | & \paren{\setfeaturekwd\mbox{ }:\feature\mbox{ }\boolconst} \\
@@ -555,12 +568,32 @@ A command $\cmd$ is given by the following syntax.
 % & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
 % & | & \paren{\setlogicoutputkwd\mbox{ }\symbol} \\
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
- & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
+% & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \oraclecmd \\
  & | & \smtcmd \\[2ex]
  %\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
  % ajr: removed
  %\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
+ \oraclecmd 
+ & ::= & \paren{\assumeoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
+  \term} \\
+  & | & \paren{\constraintoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
+  \term} \\
+ & | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }} \\
+ & | &\paren{\iooracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ & | &\paren{\cexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ & | &\paren{\memoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ % & | &\paren{\dioracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ & | &\paren{\poswitnessoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ & | &\paren{\negwitnessoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ & | &\paren{\corroracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
+ & | &\paren{\corrcexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }}
+ % & | &\paren{\falsifyoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\[2ex]
+ \end{array}
+\]
+
+\[
+\begin{array}{rcl}  
 \smtcmd 
  & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdecl} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdecl}{n+1}}} \\
@@ -571,27 +604,10 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
  & | & \paren{\setinfokwd\mbox{ }:\symbol{ }\literal} \\
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
- & | & \paren{\setoptkwd\mbox{ }:\symbol\mbox{ }\literal} \\[2ex]
-
-\oraclecmd 
-& ::= & \paren{\assumeoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
- \term} \\
- & | & \paren{\constraintoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
- \term} \\
-& | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }} \\
-& | &\paren{\iooracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-& | &\paren{\cexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-& | &\paren{\memoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-% & | &\paren{\dioracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-& | &\paren{\poswitnessoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-& | &\paren{\negwitnessoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-& | &\paren{\corroracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
-& | &\paren{\corrcexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\[2ex]
-% & | &\paren{\falsifyoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\[2ex]
+ & | & \paren{\setoptkwd\mbox{ }:\symbol\mbox{ }\literal}\\[2ex]
 
 
-
- \sortdecl & ::= & \paren{\symbol\mbox{ }\intconst}\\
+ \sortdecl& ::= & \paren{\symbol\mbox{ }\intconst}\\
  %\sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\  %ajr: used above
  %\fundec & ::= & \paren{\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr}\\
  %\fundef & ::= & \symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term\\
@@ -908,10 +924,10 @@ and whose free variables are in $\vec{x} = (x_1, \ldots, x_n)$.
 %grammar for $(T,\sigma,\vec{x})$.
 \end{comment}
 
-\item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
+% \item $\paren{\synthinvkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\koption{G}}$
 
-This is syntax sugar for
-$\paren{\synthfunkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\boolkwd\mbox{ }\koption{G}}$.
+% This is syntax sugar for
+% $\paren{\synthfunkwd\mbox{ }S\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} }\mbox{ }\boolkwd\mbox{ }\koption{G}}$.
 \end{itemize}
 
 \subsection{Declaring Sorts}
@@ -1017,7 +1033,8 @@ a symbol in the current signature.
 
 \end{itemize}
 
-\subsection{Asserting Synthesis Constraints and Assumptions}
+\subsection{Asserting Synthesis Constraints and Assumptions}%
+\label{ssec:asserting}
 
 \begin{itemize}
 \item $\paren{\constraintkwd\mbox{ }t}$
@@ -1068,28 +1085,51 @@ whose definition is of the form $\lambda x_1, \ldots, x_n \ldotp \varphi_{post}$
 where $(x_1, \ldots, x_n)$ and $(y_1, \ldots, y_n)$
 are tuples of variables of sort $(\sigma_1, \ldots, \sigma_n)$ and
 $\varphi_{pre}$, $\varphi_{trans}$ and $\varphi_{post}$ are formulas.
-Given that this command is well-formed, given the above definitions,
+
+When this command is well-formed, given the above definitions,
 this command is syntax sugar for:
-\[
-\begin{array}{l}
-   \paren{\vardeclkwd\mbox{ }v_1\mbox{ }\sigma_1}\\
-   \paren{\vardeclkwd\mbox{ }v'_1\mbox{ }\sigma_1}\\
-   \ldots\\
-   \paren{\vardeclkwd\mbox{ }v_n\mbox{ }\sigma_n}\\
-   \paren{\vardeclkwd\mbox{ }v'_n\mbox{ }\sigma_n}\\
-   \paren{\constraintkwd\mbox{ }\paren{\texttt{=>}\mbox{ }
-   \paren{S_{pre}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
-   \paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}}}\\
-   \paren{\constraintkwd\mbox{ }\paren{\texttt{=>}\mbox{ }
-   \paren{\texttt{and}\mbox{ }\paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
-   \paren{S_{trans}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n\mbox{ }v'_1\mbox{ }\ldots\mbox{ }v'_n}}\mbox{ }
-   \paren{S\mbox{ }v'_1\mbox{ }\ldots\mbox{ }v'_n}}}\\
-   \paren{\constraintkwd\mbox{ }\paren{\texttt{=>}\mbox{ }
-   \paren{S\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}\mbox{ }
-   \paren{S_{post}\mbox{ }v_1\mbox{ }\ldots\mbox{ }v_n}}}\\
-\end{array}
-\]
+\begin{lstlisting}[language=SyGuS, numbers=none, basicstyle=\ttfamily\small]
+($\vardeclkwd$ $v_1$ $\sigma_1$)
+($\vardeclkwd$ $v'_1$ $\sigma_1$)
+$\ldots$
+($\vardeclkwd$ $v_n$ $\sigma_n$)
+($\vardeclkwd$ $v'_n$ $\sigma_n$)
+($\constraintkwd$ (=> ($S_{pre}$ $v_1$ $\ldots$ $v_n$) ($S$ $v_1$ $\ldots$ $v_n$)))
+($\constraintkwd$ (=> (and ($S$ $v_1$ $\ldots$ $v_n$) ($S_{trans}$ $v_1$ $\ldots$ $v_n$ $v'_1$ $\ldots$ $v'_n$)) ($S$ $v'_1$ $\ldots$ $v'_n$)))
+($\constraintkwd$ (=> ($S$ $v_1$ $\ldots$ $v_n$) ($S_{post}$ $v_1$ $\ldots$ $v_n$)))
+\end{lstlisting}
 where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
+
+\item \sygusinline|($\constraintchckwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) $t_{tail}$ $t_{head}$)|
+
+This command adds a universally quantified implication constraint to the current state
+in the form of a constrained Horn clause (CHC).
+Concretely, it adds $m$ fresh variables $(v_1, \ldots, v_m)$ of sorts $(\sigma_1, \ldots, \sigma_m)$ respectively
+to the list of universal variables,
+and a constraint
+$$
+  ((\lambda x_1,\ldots,x_m \ldotp t_{body})\ v_1\ \ldots\ v_m) \implies ((\lambda x_1,\ldots,x_m \ldotp t_{head})\ v_1\ \ldots\ v_m)
+$$
+to the current state.
+This is a generalization of the $\constraintinvkwd$ command,
+that allows for specifying problems with multiple, possibly interdependent,
+invariant predicates to be synthesized.
+
+A constraint of this form is well-formed if
+the \emph{body} of the CHC (i.e., $t_{tail}$) and the \emph{head} of the CHC (i.e., $t_{head}$)
+are both well-sorted terms of $\sbool$ sort.
+
+When this command is well-formed, given the above definitions,
+this command is syntax sugar for:
+\begin{lstlisting}[language=SyGuS, numbers=none, basicstyle=\ttfamily\small]
+($\vardeclkwd$ $v_1$ $\sigma_1$)
+$\ldots$
+($\vardeclkwd$ $v_m$ $\sigma_m$)
+($\fundefkwd$ $F_{body}$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) Bool $t_{body}$)
+($\fundefkwd$ $F_{head}$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) Bool $t_{head}$)
+($\constraintkwd$ (=> ($F_{body}$ $v_1$ $\ldots$ $v_m$) ($F_{head}$ $v_1$ $\ldots$ $v_m$)))
+\end{lstlisting}
+where $v_1, \ldots, v_m$, $F_{body}$, and $F_{head}$ are fresh symbols.
 
 \end{itemize}
 
@@ -1789,13 +1829,13 @@ if and only if each ${\tt constraint}$ command takes as argument a PBE equality.
 
 \paragraph{Single Invariant-to-Synthesize (Inv)}
 Given an SMT-LIB standard logic $X$,
-the base logic ${\tt Inv\_}X$ denotes the logic
+the base logic \sygusinline|Inv_$X$| denotes the logic
 where formulas are limited to the invariant synthesis
 problem for a single invariant-to-synthesize.
 Concretely,
 this means that formulas are limited to those that 
 are (syntactically) a conjunction of three implications, 
-for a single predicate symbol $I$:
+for a single predicate symbol $I$ to be synthesized:
 \begin{enumerate}
 \item The first is an implication whose antecedent (the pre-condition) 
 is an arbitrary formula
@@ -1818,21 +1858,74 @@ and whose conclusion (the post-condition) is an arbitrary formula in the logic $
 The variables $\vec x$ in each of these three formulas are not required to be the same.
 
 Like the previous section, 
-we use the logic string ${\tt Inv\_}X$ to refer to SyGuS logics as well.
+we use the logic string \sygusinline|Inv_$X$| to refer to SyGuS logics as well.
 Given an SMT-LIB standard logic $X$
 that does not contain the prefix ${\tt QF\_}$,
-logic ${\tt Inv\_}X$ denotes the SyGuS logic
-whose input logic is ${\tt Inv\_QF\_}X$,
-whose output logic is ${\tt QF\_}X$,
+logic \sygusinline|Inv_$X$| denotes the SyGuS logic
+whose input logic is \sygusinline|Inv_QF_$X$|,
+whose output logic is \sygusinline|QF_$X$|,
 and whose feature set is the default one.
 
-Note that if a SyGuS command sequence is such that
-(1) it contains one $\synthinvkwd$ command,
-(2) it contains one $\constraintinvkwd$ command whose arguments are predicates whose definitions belong to logic $X$,
-and (3) it contains no other commands that introduce constraints,
-then its constraints are guaranteed to meet the requirements of the input logic ${\tt Inv\_}X$.
+Note that if a SyGuS command sequence is such that it contains
+(1) exactly one $\synthfunkwd$ command with $\boolkwd$ return type,
+(2) exactly one $\constraintinvkwd$ command whose arguments are predicates with definition within logic $X$, and
+(3) no other commands that introduce constraints,
+then the command sequence is guaranteed to meet the requirements of the input logic \sygusinline|Inv_$X$|.
 
+\paragraph{Constrained Horn Clause Systems (CHC)}
+Given an SMT-LIB standard logic $X$,
+the base logic \sygusinline|CHC_$X$| denotes the logic
+where formulas are restricted to a system of constrained Horn clauses (CHCs),
+i.e., the formulas (syntactically) are a conjunction of CHCs
+over a, possibly empty, set of predicate symbols to be synthesized.
 
+To define a valid system of CHCs, we first define the notion of an \emph{atomic term}.
+For a given set $\mathbf{S}$ of symbols to be synthesized,
+a term $t$ is said to be $\mathbf{S}$-atomic if either:
+(a) $t$ does not contain any symbol that belongs to $\mathbf{S}$, or
+(b) $t$ is of the form \sygusinline|($S$ $u_1$ $\ldots$ $u_k$)|
+for some predicate symbol $S \in \mathbf{S}$ and $u_1, \ldots, u_k$ are variables.
+Given this definition, a set of constraints $\mathbf{C}$ on a given set $\mathbf{S}$ of symbols to be synthesized,
+is considered valid within this logic if they satisfies the following:
+\begin{enumerate}
+  \item Each constraint $C \in \mathbf{C}$ satisfies the following:
+  \begin{enumerate}
+  \item $C$ must be an implication of the form $B_C(\vec x) \implies H_C(\vec x)$,
+        where $B_C$ (called the \emph{body} of $C$) and $H_C$ (called the \emph{head} of $C$)
+        are defined predicates, and $\vec x$ is a tuple of unique variables.
+
+  \item The definition of $H_C$ must be an $\mathbf{S}$-atomic term.
+  
+  \item The definition of $B_C$ must either be an $\mathbf{S}$-atomic term,
+        or a conjunction of $\mathbf{S}$-atomic terms.
+  \end{enumerate}
+
+  \item Exactly one \emph{query}, i.e., a constraint $C \in \mathbf{C}$ with $H_C$ defined as $\falsekwd$.
+\end{enumerate}
+The variables $\vec x$ in each of the constraints are not required to be the same.
+
+As in the previous section, 
+we use the logic string \sygusinline|CHC_$X$| to refer to SyGuS logics as well.
+Given an SMT-LIB standard logic $X$
+that does not contain the prefix \sygusinline|QF_|,
+logic \sygusinline|CHC_$X$| denotes the SyGuS logic
+whose input logic is \sygusinline|CHC_QF_$X$|,
+whose output logic is \sygusinline|QF_$X$|,
+and whose feature set is the default one.
+
+A well-sorted SyGuS command sequence meets the requirements of the input logic \sygusinline|CHC_$X$|
+if it contains
+\begin{enumerate}
+  \item $\synthfunkwd$ commands with $\boolkwd$ return type only, that declare a set $\mathbf{S}$ of predicates to be synthesized,
+  \item one or more $\constraintchckwd$ command each of which is such that
+  \begin{enumerate}
+    \item its $t_{head}$ is an $\mathbf{S}$-atomic predicate with definition within logic $X$,
+    \item its $t_{body}$ is either an $\mathbf{S}$-atomic predicate, or a conjunction of $\mathbf{S}$-atomic predicates,
+          each with definitions within logic $X$,
+  \end{enumerate}
+  \item exactly one $\constraintchckwd$ command with $\falsekwd$ as $t_{head}$, and
+  \item no other commands that introduce constraints.
+\end{enumerate}
 
 \section{Formal Semantics}%
 \label{sec:logical-semantics}
@@ -2271,12 +2364,24 @@ A possible correct response from the synthesis solver in this example is:
 \end{example}
 
 \begin{example}[Single Invariant Synthesis (Inv) over Linear Integer Arithmetic]
-Consider the following example:
+Consider the following imperative program in a C-like language:
+\begin{lstlisting}[language=C-Like]
+int x, y;
+assume (5 <= x && x <= 9);
+assume (1 <= y && y <= 3);
+while (*) {
+  x += 2;
+  y += 1;
+}
+assert (y < x);
+\end{lstlisting}
+The problem of synthesizing an invariant to verify this program,
+can be expressed in SyGuS as follows:
 \begin{lstlisting}[language=SyGuS]
 (set-logic Inv_LIA)
-(synth-inv inv-f ((x Int) (y Int)))
+(synth-fun inv-f ((x Int) (y Int)) Bool)
 (define-fun pre-f ((x Int) (y Int)) Bool 
-  (and (>= x 5) (<= x 9) (>= y 1) (<= y 3)))
+  (and (<= 5 x) (<= x 9) (<= 1 y) (<= y 3)))
 (define-fun trans-f ((x Int) (y Int) (xp Int) (yp Int)) Bool 
   (and (= xp (+ x 2)) (= yp (+ y 1))))
 (define-fun post-f ((x Int) (y Int)) Bool (< y x))
@@ -2293,7 +2398,90 @@ and only introduces constraints via a single $\constraintinvkwd$ command,
 it meets the restrictions of the logic.
 A possible correct response from the synthesis solver in this example is:
 \begin{lstlisting}[language=SyGuS]
-(define-fun inv-f ((x Int) (y Int)) Bool (>= x y))
+(define-fun inv-f ((x Int) (y Int)) Bool (> x y))
+\end{lstlisting}
+\end{example}
+
+\begin{example}[Solving CHCs over Linear Integer Arithmetic with a Single Predicate to Synthesize]
+The verification problem from the previous example can also be expressed as a system of CHCs,
+which can be encoded in SyGuS as follows:
+\begin{lstlisting}[language=SyGuS]
+(set-logic CHC_LIA)
+(synth-fun inv-f ((x Int) (y Int)) Bool)
+(chc-constraint ((x Int) (y Int))
+  (and (<= 5 x) (<= x 9) (<= 1 y) (<= y 3))
+  (inv-f x y))
+(chc-constraint ((x Int) (y Int) (xp Int) (yp Int))
+  (and (inv-f x y) (= xp (+ x 2)) (= yp (+ y 1)))
+  (inv-f xp yp))
+(chc-constraint ((x Int) (y Int))
+  (and (inv-f x y) (not (< y x)))
+  false)
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set to the SyGuS-specific logic
+\sygusinline|CHC_LIA|, indicating linear integer arithmetic
+where constraints are limited to constrained Horn clauses.
+Since this example contains only linear integer arithmetic terms,
+only predicate symbols to be synthesized (i.e., $\texttt{inv-f}$),
+and only introduces constraints via $\constraintchckwd$ command,
+it meets the restrictions of the logic.
+As for the previous example, a possible correct response from the synthesis solver on this example is:
+\begin{lstlisting}[language=SyGuS]
+(define-fun inv-f ((x Int) (y Int)) Bool (> x y))
+\end{lstlisting}
+\end{example}
+
+\begin{example}[Solving CHCs over Linear Integer Arithmetic with Multiple Predicates to Synthesize]
+Consider the following imperative program in a C-like language:
+\begin{lstlisting}[language=C-Like]
+int x;
+int y = x, n = 0;
+while (*) {
+  x += 1;
+  n += 1;
+}
+x *= 2;
+while (n != 0) {
+  x -= 2;
+  n -= 1;
+}
+assert (x == 2 * y);
+\end{lstlisting}
+The verification problem for program is more naturally expressed as a system of CHCs
+using the \sygusinline|CHC| logic in SyGuS instead of the \sygusinline|Inv| logic:
+\begin{lstlisting}[language=SyGuS]
+(set-logic CHC_LIA)
+(synth-fun inv1 ((x Int) (y Int) (n Int)) Bool)
+(synth-fun inv2 ((x Int) (y Int) (n Int)) Bool)
+(chc-constraint ((x Int) (y Int) (n Int))
+  (and (= y x) (= n 0))
+  (inv1 x y n))
+(chc-constraint ((x Int) (y Int) (n Int) (xp Int) (np Int))
+  (and (inv1 x y n) (= xp (+ x 1)) (= np (+ n 1)))
+  (inv1 xp y np))
+(chc-constraint ((x Int) (y Int) (n Int) (xp Int))
+  (and (inv1 x y n) (= xp (* 2 x)))
+  (inv2 xp y n))
+(chc-constraint ((x Int) (y Int) (n Int) (xp Int) (np Int))
+  (and (inv2 x y n) (not (= n 0)) (= xp (- x 2)) (= np (- n 1)))
+  (inv2 xp y np))
+(chc-constraint ((x Int) (y Int) (n Int))
+  (and (= n 0) (inv2 x y n) (not (= x (* 2 y))))
+  false)
+(check-synth)
+\end{lstlisting}
+In this example, the logic is set to the SyGuS-specific logic
+\sygusinline|CHC_LIA|, indicating linear integer arithmetic
+where constraints are limited to constrained Horn clauses.
+Since this example contains only linear integer arithmetic terms,
+only predicate symbols to be synthesized (i.e., \texttt{inv1} and \texttt{inv2}),
+and only introduces constraints via $\constraintchckwd$ command,
+it meets the restrictions of the logic.
+As for the previous example, a possible correct response from the synthesis solver on this example is:
+\begin{lstlisting}[language=SyGuS]
+(define-fun inv1 ((x Int) (y Int) (n Int)) Bool (= x (+ y n)))
+(define-fun inv2 ((x Int) (y Int) (n Int)) Bool (= x (* 2 (+ y n))))
 \end{lstlisting}
 \end{example}
 
@@ -2311,16 +2499,14 @@ literals from \cref{ssec:literals},
 or any of the following keywords:
 $\checksynthkwd$,
 $\constantkwd$,
+$\constraintchckwd$,
 $\constraintkwd$,
+$\constraintinvkwd$,
 $\dtdeclkwd$,
 $\dtsdeclkwd$,
-$\sortdeclkwd$,
-$\vardeclkwd$,
-$\fundefkwd$,
-$\sortdefkwd$,
 $\existskwd$,
 $\forallkwd$,
-$\constraintinvkwd$,
+$\fundefkwd$,
 $\letkwd$,
 $\setfeaturekwd$,
 %$\setfeaturesetkwd$,
@@ -2329,8 +2515,11 @@ $\setlogickwd$,
 %$\setlogicinputkwd$,
 %$\setlogicoutputkwd$,
 $\setoptkwd$,
+$\sortdeclkwd$,
+$\sortdefkwd$,
 $\synthfunkwd$,
-$\synthinvkwd$, and
+%$\synthinvkwd$,
+$\vardeclkwd$, and
 $\varkwd$.
 
 
