@@ -299,13 +299,13 @@ v_m \ldotp \alpha \implies \varphi$.
 
 \item A set of new commands are introduced to enable easy specification of specific types of oracles, for instance input-output oracles. These oracles are based on the formalization by Jha and Seshia~\cite{oracles}.
 
-\item A new SyGuS logic, called \sygusinline|CHC_$X$|,
+\item A new SyGuS logic, called \code|CHC_$X$|,
 has been introduced for specifying synthesis problems using constrained Horn clause systems
 over an SMT-LIB base logic $X$.
 
 \item A new command, $\constraintchckwd$, has been introduced for specifying constraints in the form of constrained Horn clauses.
 
-\item The $\synthinvkwd$ command, used within invariant synthesis (\sygusinline|Inv_$X$|) logic earlier, has been removed.
+\item The $\synthinvkwd$ command, used within invariant synthesis (\code|Inv_$X$|) logic earlier, has been removed.
 Instead, all functions (including predicates) to be synthesized are now specified using $\synthfunkwd$.
 \end{enumerate}
 
@@ -570,7 +570,12 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\synthfunkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\koption{\grammardef}}\\
 % & | & \paren{\synthinvkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\koption{\grammardef}} \\
  & | & \oraclecmd \\
- & | & \smtcmd \\[2ex]
+ & | & \smtcmd
+\end{array}
+\]
+
+\[
+\begin{array}{rcl}  
  %\paren{\constdeclkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
  % ajr: removed
  %\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
@@ -587,14 +592,10 @@ A command $\cmd$ is given by the following syntax.
  & | &\paren{\poswitnessoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
  & | &\paren{\negwitnessoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
  & | &\paren{\corroracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
- & | &\paren{\corrcexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }}
+ & | &\paren{\corrcexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\[2ex]
  % & | &\paren{\falsifyoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\[2ex]
- \end{array}
-\]
 
-\[
-\begin{array}{rcl}  
-\smtcmd 
+ \smtcmd 
  & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdecl} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdecl}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
@@ -1100,7 +1101,7 @@ $\ldots$
 \end{lstlisting}
 where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
 
-\item \sygusinline|($\constraintchckwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) $t_{tail}$ $t_{head}$)|
+\item \code|($\constraintchckwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) $t_{tail}$ $t_{head}$)|
 
 This command adds a universally quantified implication constraint to the current state
 in the form of a constrained Horn clause (CHC).
@@ -1829,7 +1830,7 @@ if and only if each ${\tt constraint}$ command takes as argument a PBE equality.
 
 \paragraph{Single Invariant-to-Synthesize (Inv)}
 Given an SMT-LIB standard logic $X$,
-the base logic \sygusinline|Inv_$X$| denotes the logic
+the base logic \code|Inv_$X$| denotes the logic
 where formulas are limited to the invariant synthesis
 problem for a single invariant-to-synthesize.
 Concretely,
@@ -1858,71 +1859,79 @@ and whose conclusion (the post-condition) is an arbitrary formula in the logic $
 The variables $\vec x$ in each of these three formulas are not required to be the same.
 
 Like the previous section, 
-we use the logic string \sygusinline|Inv_$X$| to refer to SyGuS logics as well.
+we use the logic string \code|Inv_$X$| to refer to SyGuS logics as well.
 Given an SMT-LIB standard logic $X$
 that does not contain the prefix ${\tt QF\_}$,
-logic \sygusinline|Inv_$X$| denotes the SyGuS logic
-whose input logic is \sygusinline|Inv_QF_$X$|,
-whose output logic is \sygusinline|QF_$X$|,
+logic \code|Inv_$X$| denotes the SyGuS logic
+whose input logic is \code|Inv_QF_$X$|,
+whose output logic is \code|QF_$X$|,
 and whose feature set is the default one.
 
 Note that if a SyGuS command sequence is such that it contains
 (1) exactly one $\synthfunkwd$ command with $\boolkwd$ return type,
 (2) exactly one $\constraintinvkwd$ command whose arguments are predicates with definition within logic $X$, and
 (3) no other commands that introduce constraints,
-then the command sequence is guaranteed to meet the requirements of the input logic \sygusinline|Inv_$X$|.
+then the command sequence is guaranteed to meet the requirements of the input logic \code|Inv_$X$|.
 
 \paragraph{Constrained Horn Clause Systems (CHC)}
 Given an SMT-LIB standard logic $X$,
-the base logic \sygusinline|CHC_$X$| denotes the logic
-where formulas are restricted to a system of constrained Horn clauses (CHCs),
+the base logic \code|CHC_$X$| denotes the logic
+where formulas are restricted to a valid system of constrained Horn clauses (CHCs),
 i.e., the formulas (syntactically) are a conjunction of CHCs
 over a, possibly empty, set of predicate symbols to be synthesized.
-
 To define a valid system of CHCs, we first define the notion of an \emph{atomic term}.
-For a given set $\mathbf{S}$ of symbols to be synthesized,
-a term $t$ is said to be $\mathbf{S}$-atomic if either:
+
+\begin{definition}[Atomic Term]
+Given set $\mathbf{S}$ of symbols,
+a term $t$ is said to be an $\mathbf{S}$-atomic term if either:
 (a) $t$ does not contain any symbol that belongs to $\mathbf{S}$, or
-(b) $t$ is of the form \sygusinline|($S$ $u_1$ $\ldots$ $u_k$)|
+(b) $t$ is of the form \code|($S$ $u_1$ $\ldots$ $u_k$)|
 for some predicate symbol $S \in \mathbf{S}$ and $u_1, \ldots, u_k$ are variables.
-Given this definition, a set of constraints $\mathbf{C}$ on a given set $\mathbf{S}$ of symbols to be synthesized,
-is considered valid within this logic if they satisfies the following:
+\qed
+\end{definition}
+
+Given this definition, a set $\mathbf{C}$ of CHC constraints
+over a set $\mathbf{S}$ of symbols to be synthesized
+is considered a valid system of CHCs for logic \code|CHC_$X$|
+if $\mathbf{C}$ satisfies the following:
 \begin{enumerate}
   \item Each constraint $C \in \mathbf{C}$ satisfies the following:
-  \begin{enumerate}
-  \item $C$ must be an implication of the form $B_C(\vec x) \implies H_C(\vec x)$,
-        where $B_C$ (called the \emph{body} of $C$) and $H_C$ (called the \emph{head} of $C$)
-        are defined predicates, and $\vec x$ is a tuple of unique variables.
+        \begin{enumerate}
+        \item $C$ must be an implication of the form $B_C(\vec x) \implies H_C(\vec x)$,
+              where $B_C$ (called the \emph{body} of $C$) and $H_C$ (called the \emph{head} of $C$)
+              are defined predicates, and $\vec x$ is a tuple of unique variables.
 
-  \item The definition of $H_C$ must be an $\mathbf{S}$-atomic term.
-  
-  \item The definition of $B_C$ must either be an $\mathbf{S}$-atomic term,
-        or a conjunction of $\mathbf{S}$-atomic terms.
-  \end{enumerate}
+        \item The definition of $H_C$ must be an $\mathbf{S}$-atomic term.
+        
+        \item The definition of $B_C$ must either be an $\mathbf{S}$-atomic term,
+              or a conjunction of $\mathbf{S}$-atomic terms.
+        \end{enumerate}
+        Henceforth, we will call such a constraint an $\mathbf{S}$-valid CHC,
+        or simply a valid CHC when the set $\mathbf{S}$ is obvious from the context.
 
   \item Exactly one \emph{query}, i.e., a constraint $C \in \mathbf{C}$ with $H_C$ defined as $\falsekwd$.
 \end{enumerate}
 The variables $\vec x$ in each of the constraints are not required to be the same.
 
 As in the previous section, 
-we use the logic string \sygusinline|CHC_$X$| to refer to SyGuS logics as well.
+we use the logic string \code|CHC_$X$| to refer to SyGuS logics as well.
 Given an SMT-LIB standard logic $X$
-that does not contain the prefix \sygusinline|QF_|,
-logic \sygusinline|CHC_$X$| denotes the SyGuS logic
-whose input logic is \sygusinline|CHC_QF_$X$|,
-whose output logic is \sygusinline|QF_$X$|,
+that does not contain the prefix \code|QF_|,
+logic \code|CHC_$X$| denotes the SyGuS logic
+whose input logic is \code|CHC_QF_$X$|,
+whose output logic is \code|QF_$X$|,
 and whose feature set is the default one.
 
-A well-sorted SyGuS command sequence meets the requirements of the input logic \sygusinline|CHC_$X$|
+A well-sorted SyGuS command sequence meets the requirements of the input logic \code|CHC_$X$|
 if it contains
 \begin{enumerate}
   \item $\synthfunkwd$ commands with $\boolkwd$ return type only, that declare a set $\mathbf{S}$ of predicates to be synthesized,
   \item one or more $\constraintchckwd$ command each of which is such that
-  \begin{enumerate}
-    \item its $t_{head}$ is an $\mathbf{S}$-atomic predicate with definition within logic $X$,
-    \item its $t_{body}$ is either an $\mathbf{S}$-atomic predicate, or a conjunction of $\mathbf{S}$-atomic predicates,
-          each with definitions within logic $X$,
-  \end{enumerate}
+        \begin{enumerate}
+          \item its $t_{head}$ is an $\mathbf{S}$-atomic predicate with definition within logic $X$,
+          \item its $t_{body}$ is either an $\mathbf{S}$-atomic predicate, or a conjunction of $\mathbf{S}$-atomic predicates,
+                each with definitions within logic $X$,
+        \end{enumerate}
   \item exactly one $\constraintchckwd$ command with $\falsekwd$ as $t_{head}$, and
   \item no other commands that introduce constraints.
 \end{enumerate}
@@ -2156,7 +2165,7 @@ However,
 by the definition of our restrictions on grammars in \cref{ssec:logicr-grammars},
 this grammar \emph{is allowed},
 since all closed terms that the grammar generates are allowed by linear arithmetic.
-A possible correct solution to this synthesis conjecture is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
 \end{lstlisting}
@@ -2193,7 +2202,7 @@ Its grammar contains non-terminal symbols for integers, lists and Booleans,
 and includes applications of constructors ${\tt nil}$ and ${\tt cons}$,
 selectors ${\tt head}$ and ${\tt tail}$, and
 discriminators ${\tt (\_\ is\ nil)}$ and ${\tt (\_\ is\ cons)}$.
-A possible correct solution to this synthesis conjecture is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
 \end{lstlisting}
@@ -2237,7 +2246,7 @@ the operator ${\tt concat}$ concatenates its two arguments,
 and the indexed operator ${\tt (\_\ extract\ n\ m)}$
 returns a bit-vector containing bits $n$ through $m$ of its
 argument, where $n \geq m$.
-A possible correct solution for $f$ is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun f ((x (_ BitVec 32))) (_ BitVec 32) 
    (concat ((_ extract 15 0) x) #x0000))
@@ -2264,12 +2273,12 @@ Consider the following example:
 (check-synth)
 \end{lstlisting}
 This example sets the logic to strings with linear arithmetic (${\tt SLIA}$).
-A possible correct response from the synthesis solver in this example is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun f ((x String)) String (str.substr x 0 (- (str.len x) 1)))
 \end{lstlisting}
 In other words, the above definition returns 
-the substr (via the substring operator ${\tt str.substr}$ starting
+the \texttt{substr} (via the substring operator ${\tt str.substr}$ starting
 at position $0$ and containing (at most) ${\tt (-\ (str.len\ x)\ 1)}$ characters.
 Thus, when the argument of $f$ is non-empty, it returns
 the result of dropping its last character.
@@ -2316,7 +2325,7 @@ whose expanded form contains a previously declared function-to-synthesize $f$.
 This grammar is allowed since the feature $\ffwddeclskwd$ is enabled in this example.
 The grammar for $h$ contains a rule that contains an application of $h$ itself.
 This grammar is allowed since $\frecursionkwd$ is enabled in this example.
-A possible correct response from the synthesis solver in this example is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun f ((x Int)) Int x)
 (define-fun g ((x Int)) Int (fx_plus_one x))
@@ -2356,7 +2365,7 @@ ${\tt PBE\_SLIA}$, indicating strings with linear integer arithmetic
 where constraints are limited to a conjunction of PBE equalities.
 In this example, four constraints are given, each of which meet the
 restriction of being a PBE equality.
-A possible correct response from the synthesis solver in this example is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun f ((fname String) (lname String)) String
   (str.++ fname (str.++ " " lname)))
@@ -2396,13 +2405,13 @@ Since this example contains only linear integer arithmetic terms,
 a single predicate-to-synthesize ${\tt inv-f}$,
 and only introduces constraints via a single $\constraintinvkwd$ command,
 it meets the restrictions of the logic.
-A possible correct response from the synthesis solver in this example is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun inv-f ((x Int) (y Int)) Bool (> x y))
 \end{lstlisting}
 \end{example}
 
-\begin{example}[Solving CHCs over Linear Integer Arithmetic with a Single Predicate to Synthesize]
+\begin{example}[CHCs over Linear Integer Arithmetic with a Single Predicate to Synthesize]
 The verification problem from the previous example can also be expressed as a system of CHCs,
 which can be encoded in SyGuS as follows:
 \begin{lstlisting}[language=SyGuS]
@@ -2420,19 +2429,20 @@ which can be encoded in SyGuS as follows:
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set to the SyGuS-specific logic
-\sygusinline|CHC_LIA|, indicating linear integer arithmetic
+\code|CHC_LIA|, indicating linear integer arithmetic
 where constraints are limited to constrained Horn clauses.
 Since this example contains only linear integer arithmetic terms,
 only predicate symbols to be synthesized (i.e., $\texttt{inv-f}$),
-and only introduces constraints via $\constraintchckwd$ command,
+only introduces valid CHCs via $\constraintchckwd$ command, and
+only a single CHC query,
 it meets the restrictions of the logic.
-As for the previous example, a possible correct response from the synthesis solver on this example is:
+As for the previous example, a possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun inv-f ((x Int) (y Int)) Bool (> x y))
 \end{lstlisting}
 \end{example}
 
-\begin{example}[Solving CHCs over Linear Integer Arithmetic with Multiple Predicates to Synthesize]
+\begin{example}[CHCs over Linear Integer Arithmetic with Multiple Predicates to Synthesize]
 Consider the following imperative program in a C-like language:
 \begin{lstlisting}[language=C-Like]
 int x;
@@ -2448,8 +2458,8 @@ while (n != 0) {
 }
 assert (x == 2 * y);
 \end{lstlisting}
-The verification problem for program is more naturally expressed as a system of CHCs
-using the \sygusinline|CHC| logic in SyGuS instead of the \sygusinline|Inv| logic:
+The verification problem for this program is more naturally expressed as a system of CHCs
+using the \code|CHC| logic in SyGuS instead of the \code|Inv| logic:
 \begin{lstlisting}[language=SyGuS]
 (set-logic CHC_LIA)
 (synth-fun inv1 ((x Int) (y Int) (n Int)) Bool)
@@ -2472,13 +2482,14 @@ using the \sygusinline|CHC| logic in SyGuS instead of the \sygusinline|Inv| logi
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set to the SyGuS-specific logic
-\sygusinline|CHC_LIA|, indicating linear integer arithmetic
+\code|CHC_LIA|, indicating linear integer arithmetic
 where constraints are limited to constrained Horn clauses.
 Since this example contains only linear integer arithmetic terms,
 only predicate symbols to be synthesized (i.e., \texttt{inv1} and \texttt{inv2}),
-and only introduces constraints via $\constraintchckwd$ command,
+only introduces valid CHCs via $\constraintchckwd$ command, and
+only a single CHC query,
 it meets the restrictions of the logic.
-As for the previous example, a possible correct response from the synthesis solver on this example is:
+A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (define-fun inv1 ((x Int) (y Int) (n Int)) Bool (= x (+ y n)))
 (define-fun inv2 ((x Int) (y Int) (n Int)) Bool (= x (* 2 (+ y n))))
