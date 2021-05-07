@@ -307,6 +307,8 @@ over an SMT-LIB base logic $X$.
 
 \item The $\synthinvkwd$ command, used within invariant synthesis (\code|Inv_$X$|) logic earlier, has been removed.
 Instead, all functions (including predicates) to be synthesized are now specified using $\synthfunkwd$.
+
+\item The expected successful response for SyGuS solvers to a $\checksynthkwd$ command is now enclosed in parentheses.
 \end{enumerate}
 
 
@@ -1390,12 +1392,12 @@ A well-formed response to $\checksynthkwd$ is one of the following:
 
 \begin{enumerate}
 \item
-A list of commands of the form:
+A list of commands, enclosed in parentheses, of the form:
 \[
 \begin{array}{l}
-\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
+\paren{\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
 \ldots\\
-\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}
+\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}}
 \end{array}
 \]
 where functions $f_{1}, \ldots, f_{n}$
