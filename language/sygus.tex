@@ -1395,9 +1395,11 @@ A well-formed response to $\checksynthkwd$ is one of the following:
 A list of commands, enclosed in parentheses, of the form:
 \[
 \begin{array}{l}
-\paren{\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
+\paren{\\
+\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
 \ldots\\
-\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}}
+\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}\\
+}
 \end{array}
 \]
 where functions $f_{1}, \ldots, f_{n}$
@@ -2169,7 +2171,9 @@ this grammar \emph{is allowed},
 since all closed terms that the grammar generates are allowed by linear arithmetic.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
+)
 \end{lstlisting}
 \end{example}
 
@@ -2206,7 +2210,9 @@ selectors ${\tt head}$ and ${\tt tail}$, and
 discriminators ${\tt (\_\ is\ nil)}$ and ${\tt (\_\ is\ cons)}$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
+)
 \end{lstlisting}
 In other words, a possible solution for $f$ returns zero whenever its
 argument is the empty list ${\tt nil}$, 
@@ -2250,8 +2256,10 @@ returns a bit-vector containing bits $n$ through $m$ of its
 argument, where $n \geq m$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun f ((x (_ BitVec 32))) (_ BitVec 32) 
    (concat ((_ extract 15 0) x) #x0000))
+)
 \end{lstlisting}
 In other words, a possible solution for $f$ 
 returns the concatenation of bits $15$ to $0$ of its argument
@@ -2329,9 +2337,11 @@ The grammar for $h$ contains a rule that contains an application of $h$ itself.
 This grammar is allowed since $\frecursionkwd$ is enabled in this example.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun f ((x Int)) Int x)
 (define-fun g ((x Int)) Int (fx_plus_one x))
 (define-fun h ((x Int)) Int 1)
+)
 \end{lstlisting}
 Notice the above definitions for $f$, $g$, and $h$ are given 
 in the order in which they were introduced via $\synthfunkwd$ commands
@@ -2369,8 +2379,10 @@ In this example, four constraints are given, each of which meet the
 restriction of being a PBE equality.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun f ((fname String) (lname String)) String
   (str.++ fname (str.++ " " lname)))
+)
 \end{lstlisting}
 \end{example}
 
@@ -2409,7 +2421,9 @@ and only introduces constraints via a single $\constraintinvkwd$ command,
 it meets the restrictions of the logic.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun inv-f ((x Int) (y Int)) Bool (> x y))
+)
 \end{lstlisting}
 \end{example}
 
@@ -2440,7 +2454,9 @@ only a single CHC query,
 it meets the restrictions of the logic.
 As for the previous example, a possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun inv-f ((x Int) (y Int)) Bool (> x y))
+)
 \end{lstlisting}
 \end{example}
 
@@ -2493,8 +2509,10 @@ only a single CHC query,
 it meets the restrictions of the logic.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
+(
 (define-fun inv1 ((x Int) (y Int) (n Int)) Bool (= x (+ y n)))
 (define-fun inv2 ((x Int) (y Int) (n Int)) Bool (= x (* 2 (+ y n))))
+)
 \end{lstlisting}
 \end{example}
 
