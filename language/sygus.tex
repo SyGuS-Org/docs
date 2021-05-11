@@ -581,16 +581,16 @@ The attribute value for attributes over these keywords expects a integer numeral
 For example, $\paren{!\mbox{ }\texttt{t}\mbox{ }\kweight\mbox{ }5}$
 denotes a term annotated with weight $5$.
 
-\subsubsection{Weight of Synthesis Function}
+\subsubsection{Weight Symbols for Functions to Synthesize}
 
 For each function-to-synthesize $f$ and keyword $W$
 of the form mentioned in the previous section,
-the \emph{weight of $f$ with respect to $W$} is a nullary integer symbol
+the \emph{weight of $f$ with respect to $W$} is a (nullary) integer symbol
 whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the 
-suffix of keyword $W$ after its first character.
+suffix of keyword $W$ after its first character ($:$).
 For example, \weightsym{weight}{f}
 denote a symbolic integer constant corresponding to the weight of $f$
-with respect to the (default) weight keyword.
+with respect to the default weight keyword.
 
 We will use annotations on terms that appear in grammars to denote weighted production rules.
 The class of nullary integer symbols of the above form are
