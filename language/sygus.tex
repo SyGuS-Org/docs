@@ -571,6 +571,7 @@ Several attributes are standardized by the SMT-LIB standard, while
 others may be user-defined.
 
 \subsubsection{Weight Annotations}
+\label{sec:weight-annotations}
 Beyond the SMT-LIB standard, we standardize one class of attributes,
 namely that of \emph{term weights}.
 Term weights are used for mapping terms to (possibly multiple) integer values.
@@ -580,22 +581,6 @@ We consider the keyword \kweight, and the class of keywords of the form
 The attribute value for attributes over these keywords expects a integer numeral denoting the weight of the annotated term.
 For example, $\paren{!\mbox{ }\texttt{t}\mbox{ }\kweight\mbox{ }5}$
 denotes a term annotated with weight $5$.
-
-\subsubsection{Weight Symbols for Functions to Synthesize}
-
-For each function-to-synthesize $f$ and keyword $W$
-of the form mentioned in the previous section,
-the \emph{weight of $f$ with respect to $W$} is a (nullary) integer symbol
-whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the 
-suffix of keyword $W$ after its first character ($:$).
-For example, \weightsym{weight}{f}
-denote a symbolic integer constant corresponding to the weight of $f$
-with respect to the default weight keyword.
-
-We will use annotations on terms that appear in grammars to denote weighted production rules.
-The class of nullary integer symbols of the above form are
-interpreted as the sum of weights of terms used for generating the body of $f$.
-We will this describe in more detail in Section~\ref{sec:weight-semantics}.
 
 \subsection{Features}
 \label{ssec:syntax-features}
@@ -1755,7 +1740,8 @@ commands from $\oraclecmd$ are permitted.
 %\item $\fquantifierskwd$: if enabled,
 %arbitrary quantification is allowed in constraints.
 \item $\fweightskwd$: if enabled,
-terms of the form \weightsym{w}{f} are permitted.
+terms of the form \weightsym{w}{f} are permitted,
+as described below.
 \end{itemize}
 Formal definition of these features are given within the 
 \cref{ssec:logicr-constraints,ssec:logicr-grammars}.
@@ -1764,10 +1750,24 @@ which are not covered here.
 
 The feature set component of the default SyGuS logic is the set $\{ \fgrammarskwd \}$.
 In other words, grammars may be provided, but those involving
-forward declarations and recursion are not permitted by default.
+forward declarations and recursion are not permitted by default,
+nor are oracles or weight constraints.
 
-\subsection{Weights}
-\label{sec:weight-semantics}
+\paragraph{Weights}
+For each function-to-synthesize $f$ and keyword $W$
+of the form mentioned in Section~\ref{sec:weight-annotations},
+the \emph{weight of $f$ with respect to $W$} is a (nullary) integer symbol
+whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the
+suffix of keyword $W$ after its first character ($:$).
+For example, \weightsym{weight}{f}
+denote a symbolic integer constant corresponding to the weight of $f$
+with respect to the default weight keyword.
+
+We will use annotations on terms that appear in grammars to denote weighted production rules.
+The class of nullary integer symbols of the above form are
+interpreted as the sum of weights of terms used for generating the body of $f$.
+
+TODO: formal semantics
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
