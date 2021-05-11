@@ -444,6 +444,9 @@ Note this definition coincides with simple
 symbols in Section 3.1 of SMT-LIB version 2.6,
 apart from differences in their reserved words.
 
+Following SMT-LIB version 2.6,
+a keyword $\keyword$ is a symbol whose first character is $:$.
+
 \subsection{Identifiers}
 
 An identifier $\identifier$
@@ -461,6 +464,23 @@ that includes symbols that are indexed by integer constants or other symbols.
 \]
 Note this definition coincides with
 identifiers in Section 3.1 of SMT-LIB version 2.6.
+
+\subsection{Attributes}
+
+An attribute $\attribute$
+is a keyword and an (optional) associated value.
+\[
+\begin{array}{rcl}
+\attribute & ::= & \begin{array}{ccc}
+\keyword & | & \keyword \attributevalue
+\end{array}\\
+\end{array}
+\]
+The permitted values of attribute values $\attributevalue$ depend on the attribute
+they are associated with.
+Possible values of attributes include symbols, as well as (lists of) sorts and terms.
+The above definition of attribute coincides with
+attributes in Section 3.4 of SMT-LIB version 2.6.
 
 \subsection{Sorts}
 
@@ -537,6 +557,46 @@ Like sorts, the identifiers that comprise terms
 can either be defined by the user or by background theories.
 %Examples of the latter are given in \cref{ssec:smt-logic}.
 
+\subsubsection{Term Annotations}
+In SMT-LIB,
+terms $t$ may be annotated with \emph{attributes}.
+The purpose of an attribute is to mark a term with a set of special properties, 
+which may influence the expected result of later commands.
+Attributes are specified using the
+syntax $\paren{!\mbox{ }t\mbox{ }A_1\mbox{ }\ldots\mbox{ }A_n}$
+where $t$ is a term and $A_1, \ldots, A_n$ are attributes.
+An attribute can be any
+The term above is semantically equivalent to $t$ itself.
+Several attributes are standardized by the SMT-LIB standard, while
+others may be user-defined.
+
+\subsubsection{Weight Annotations}
+Beyond the SMT-LIB standard, we standardize one class of attributes,
+namely that of \emph{term weights}.
+Term weights are used for mapping terms to (possibly multiple) integer values.
+
+We consider the keyword \kweight, and the class of keywords of the form
+\kweights{X} for non-empty symbols $\texttt{X}$.
+The attribute value for attributes over these keywords expects a integer numeral denoting the weight of the annotated term.
+For example, $\paren{!\mbox{ }\texttt{t}\mbox{ }\kweight\mbox{ }5}$
+denotes a term annotated with weight $5$.
+
+\subsubsection{Weight of Synthesis Function}
+
+For each function-to-synthesize $f$ and keyword $W$
+of the form mentioned in the previous section,
+the \emph{weight of $f$ with respect to $W$} is a nullary integer symbol
+whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the 
+suffix of keyword $W$ after its first character.
+For example, \weightsym{weight}{f}
+denote a symbolic integer constant corresponding to the weight of $f$
+with respect to the (default) weight keyword.
+
+We will use annotations on terms that appear in grammars to denote weighted production rules.
+The class of nullary integer symbols of the above form are
+interpreted as the sum of weights of terms used for generating the body of $f$.
+We will this describe in more detail in Section~\ref{sec:weight-semantics}.
+
 \subsection{Features}
 \label{ssec:syntax-features}
 
@@ -545,7 +605,7 @@ on the kinds of SyGuS commands that are allowed in an input.
 It is an enumeration in the following syntax.
 \begin{alignat*}{1}
  & \begin{array}{rcl}
- \feature & ::= & \fgrammarskwd\mbox{ }|\mbox{ }\ffwddeclskwd\mbox{ }|\mbox{ }\frecursionkwd\mbox{ }|\mbox{ } \foracleskwd\mbox{ }
+ \feature & ::= & \fgrammarskwd\mbox{ }|\mbox{ }\ffwddeclskwd\mbox{ }|\mbox{ }\frecursionkwd\mbox{ }|\mbox{ } \foracleskwd\mbox{ }|\mbox{ } \fweightskwd\mbox{ }
  % ajr: not needed
  %|\mbox{ }\fquantifierskwd
 \end{array}
@@ -1694,6 +1754,8 @@ grammars of $\synthfunkwd$ can generate terms that correspond to recursive defin
 commands from $\oraclecmd$ are permitted.
 %\item $\fquantifierskwd$: if enabled,
 %arbitrary quantification is allowed in constraints.
+\item $\fweightskwd$: if enabled,
+terms of the form \weightsym{w}{f} are permitted.
 \end{itemize}
 Formal definition of these features are given within the 
 \cref{ssec:logicr-constraints,ssec:logicr-grammars}.
@@ -1703,6 +1765,9 @@ which are not covered here.
 The feature set component of the default SyGuS logic is the set $\{ \fgrammarskwd \}$.
 In other words, grammars may be provided, but those involving
 forward declarations and recursion are not permitted by default.
+
+\subsection{Weights}
+\label{sec:weight-semantics}
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -2960,20 +3025,6 @@ is equal to its body.
 
 %The semantics of recursive functions in SyGuS inputs
 %is planned to be incorporated in later revisions of this document.
-
-\paragraph{Attribute Annotations}
-In SMT-LIB,
-terms $t$ may be annotated with \emph{attributes}.
-The purpose of an attribute is to mark a term with a set of special properties, 
-which may influence the expected result of later commands.
-Attributes are specified using the
-syntax $\paren{!\mbox{ }t\mbox{ }\kstar{A}}$
-where $t$ is a term and $A$ is an attribute.
-The syntax for attributes (not given here) is similar to the one
-for specifying options and features in this document.
-The term above is semantically equivalent to $t$ itself.
-Several attributes are standardized by the SMT-LIB standard, while
-others may be user-defined.
 
 \paragraph{Additional Logics and Theories}
 Several standard logics and theories are omitted from discussion in this document.
