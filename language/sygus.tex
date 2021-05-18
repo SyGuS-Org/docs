@@ -313,7 +313,7 @@ Instead, all functions (including predicates) to be synthesized are now specifie
 \item A new command $\weightdeclkwd$, has been introduced for introducing user-defined weight attributes.
 
 \item A new feature $\fweightskwd$ has been added, which allows weight annotations on terms, 
-as well as the use of weight symbols within terms, as described in Section~\ref{sec:weight-semantics}.
+as well as the use of weight symbols within terms, as described in \cref{sec:weight-semantics}.
 \end{enumerate}
 
 
@@ -492,13 +492,13 @@ attributes in Section 3.4 of SMT-LIB version 2.6.
 \label{sec:weight-attributes}
 Beyond the SMT-LIB standard, we standardize one class of attributes, namely that of \emph{weights}.
 Some keywords we classify as \emph{weight keywords}.
-In particular, we assume that \kweight is the (builtin) weight keyword.
+In particular, we assume that \kweight\ is the (builtin) weight keyword.
 Additional weight keywords can be user-defined via the command $\weightdeclkwd$.
 
 A weight attribute consists of a weight keyword and an attribute value that is a integer numeral.
 For example, $\kweight\mbox{ }5$ denotes the attribute associating the builtin weight keyword to $5$.
-Terms can be annotated with weight attributes (see Section~\ref{ssec:term-annotations}),
-which will have a special semantics which we will describe in detail in Section~\ref{sec:weight-semantics}.
+Terms can be annotated with weight attributes (see \cref{ssec:term-annotations}),
+which will have a special semantics which we will describe in detail in \cref{sec:weight-semantics}.
 
 \subsection{Sorts}
 
@@ -1058,7 +1058,7 @@ a symbol in the current signature.
 
 \end{itemize}
 
-\subsection{Declaring Weight}
+\subsection{Declaring Weight Keywords}
 \label{ssec:declaring-weights}
 
 \begin{itemize}
@@ -1068,7 +1068,7 @@ This command declares the symbol $:S$ as a weight keyword.
 
 Terms can be subsequently annotated
 with this keyword, e.g. $\paren{!\mbox{ }t\mbox{ }:S\mbox{ }1}$,
-which are then given a special semantics as described in Section~\ref{sec:weight-semantics}.
+which are then given a special semantics as described in \cref{sec:weight-semantics}.
 
 \end{itemize}
 This command is only allowed when the $\fweightskwd$ feature is enabled.
@@ -1215,7 +1215,7 @@ This informs the solver of the existance of an external binary with name $N$
 which can be used as means of adding new constraints to the problem.
 This command is well-formed only if $N$
 \emph{implements} a function of sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \tau_{1} \times \ldots \times \tau_{m}$
-(for a definition of the expected implementation of an external binary, see Section~\ref{sec:oracleimplementations}),
+(for a definition of the expected implementation of an external binary, see \cref{sec:oracleimplementations}),
 and $t$ is a well-sorted term of sort $\sbool$ 
 whose free symbols may include those in the current signature, as well as any symbol in $x_1 \ldots x_{n}$ and $y_1 \ldots y_{m}$,
 and moreover is allowed based on the restrictions of the current logic.
@@ -1228,7 +1228,7 @@ and the binary generating a list of values
 $d_{1}, \ldots, d_{m}$ corresponding to the output $y_{1}, \ldots y_{m}$.
 The expected implementation for passing
 constant values as input and output 
-is described in Section~\ref{sec:oracleimplementations}.
+is described in \cref{sec:oracleimplementations}.
 For each such call,
 the formula $t[c_1 \ldots c_{n} d_1 \ldots d_m]$, i.e., 
 $t$ with all occurences of $x_1, \ldots, x_{n}, y_1, \ldots, y_m$ replaced with $c_1, \ldots, c_{n}, d_1, \ldots d_m$, 
@@ -1273,7 +1273,7 @@ Note that this command is syntactic sugar for:
 \end{array}
 \]
 \end{itemize}
-% The solver can call $S$ as many times as is necessary, and for every input on which $S$ has not been called, $S$ is treated as a universally quantified uninterpreted function. For more details see Section~\ref{sec:correctness-oracles}.
+% The solver can call $S$ as many times as is necessary, and for every input on which $S$ has not been called, $S$ is treated as a universally quantified uninterpreted function. For more details see \cref{sec:correctness-oracles}.
 
 
 \subsection{Pre-defined Oracle Types}
@@ -1428,10 +1428,10 @@ which when passed to this command is used to indicate the version of the SyGuS
 format used in the benchmark.
 A benchmark whose header contains the line
 \[
-\paren{\setinfokwd\mbox{ }:{\tt sygus\mbox{-}version\mbox{ }2.0}}
+\paren{\setinfokwd\mbox{ }:{\tt sygus\mbox{-}version\mbox{ }2.1}}
 \]
-will use the version 2.0 syntax as specified by this document,
-whereas a value of $1.0$ indicates that the benchmark will use the
+will use the version 2.1 syntax as specified by this document,
+whereas e.g. a value of $1.0$ indicates that the benchmark will use the
 syntax in the previous SyGuS format~\cite{sygusFormat,sygusSyntax2015,sygusSyntax2016}.
 \end{itemize}
 \subsection{Setting Solver Options}
@@ -1780,19 +1780,56 @@ nor are oracles or weight constraints.
 \subsubsection{Weights}
 \label{sec:weight-semantics}
 For each function-to-synthesize $f$ and weight keyword $W$
-as mentioned in Section~\ref{sec:weight-attributes},
-the \emph{weight of $f$ with respect to $W$} is a (nullary) integer symbol
+as mentioned in \cref{sec:weight-attributes},
+the \emph{weight symbol for $f$ with respect to $W$} is a (nullary) integer symbol
 whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the
-suffix of keyword $W$ after its first character ($:$).
+suffix of $W$ after its first character ($:$).
 For example, \weightsym{weight}{f}
-denote a symbolic integer constant corresponding to the weight of $f$
+denotes a symbolic integer constant corresponding to the weight of $f$
 with respect to the builtin weight keyword.
-
-We will use annotations on terms that appear in grammars to denote weighted production rules.
+We will use annotations on terms that appear in grammars
+to denote weighted production rules.
 The class of nullary integer symbols of the above form are
-interpreted as the sum of weights of terms used for generating the body of $f$.
+interpreted as the sum of weights of production rules used for generating the body of $f$.
 
-TODO: formal semantics
+Formally,
+let $G$ be a grammar provided for function-to-synthesize $f$, and let $W$ be a weight keyword.
+Let $y$ be a non-terminal symbol of $G$ and let $t$ be a term appearing
+in the grouped rule listing for $y$, as described in the syntax for grammar
+definitions in \cref{ssec:dec-synth-fun}.
+We consider the \emph{base term} of $t$, defined such that
+the base term of unannotated term is itself, and
+the base term of $t$ is $t_0$ if $t$ is of the form 
+$\paren{!\mbox{ }t_0\mbox{ }A_1\mbox{ }\ldots\mbox{ }A_n}$.
+Notice that nested annotations on $t_0$ are not considered in this defintion.
+Assume that the base term of $t$ is $t_0$ and that
+$t$ has been annotated with the (possibly empty) list of attributes $A_1, \ldots, A_n$.
+In this case, we say that $G$ contains
+the production rule $y \mapsto t_0$ whose \emph{weight with respect to $W$} is:
+\[
+\begin{cases}
+k & \text{if exactly one } A_i \text{ is of the form } \texttt{W} k \text{ for some numeral } k \\
+k_{def} & \text{otherwise, where } k_{def} \text{ is the default weight value for } \texttt{W}
+\end{cases}
+\]
+Unless stated otherwise, the default weight value for all weight keywords is $0$.
+
+Let $y \mapsto_{W,k} t_0$ denote a production rule
+whose weight with respect to $W$ is $k$.
+When the body of function-to-synthesize $f$ is interpreted as term $r$,
+the symbol \weightsymnf{$w$}{$f$} can be interpreted as the value 
+$k_1 + \ldots + k_n$ if it is possible to construct a sequence of terms
+$s_1, \ldots, s_n$
+with $s_1$ is the starting symbol of $G$ and $s_n = r$
+where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
+replacing an occurrence of some $y_i$ by $t_i$
+where $y_i \mapsto_{W,k_i} t_i$ is a rule in $G$.
+
+Notice that there may be \emph{multiple} sequences of terms that
+generate the same term $r$ above.
+Thus, weight symbols may have multiple valid
+interpretations for a given interpretation for the body of a function-to-synthesize.
+The solver is free to pick any such interpretation.
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -2476,6 +2513,67 @@ A possible correct response for this example from a synthesis solver is:
 \end{lstlisting}
 \end{example}
 
+\begin{example}[Weights]
+Consider the following example:
+\begin{lstlisting}[language=SyGuS]
+(set-logic NIA)
+(set-feature :weights true)
+(declare-weight numX)
+(synth-fun f ((x Int)) Int
+   ((I Int))
+   ((I Int (0 1 (! x :numX 1) (+ I I) (! (* x x) :numX 2)))))
+(constraint (= (_ numX f) 3))
+(check-synth)
+\end{lstlisting}
+In this example, a weight keyword $\texttt{numX}$ has been declared.
+A function-to-synthesize $f$ has been declared, whose production
+rules include annotations that count the number occurrences of $x$.
+A constraint is given that states that the weight of $f$ with respect to
+the weight keyword $\texttt{numX}$ must be $3$.
+A possible correct response for this example from a synthesis solver is:
+\begin{lstlisting}[language=SyGuS]
+(
+(define-fun f ((x Int)) Int (+ x (* x x)))
+)
+\end{lstlisting}
+\end{example}
+
+\begin{example}[Weight with Multiple Interpretations]
+Consider the following example:
+\begin{lstlisting}[language=SyGuS]
+(set-logic LIA)
+(set-feature :weights true)
+(declare-weight numI)
+(define-fun numRulesForF () Int (+ (_ numI f) 1))
+(synth-fun f ((x Int)) Int
+   ((I Int))
+   ((I Int (0 1 x (+ x 1) (! (- I) :numI 1) (! (+ I I) :numI 2)))))
+(declare-var x Int)
+(constraint (and (> (f x) x) (< numRulesForF 3)))
+(check-synth)
+\end{lstlisting}
+In this example, a weight keyword $\texttt{numI}$ has been declared,
+which counts the number of occurrences of the non-terminal \texttt{I} that
+were used in applications of the production rules that generated the body of $f$.
+The function $\texttt{numRulesForF}$ is defined to be the weight of $f$ with
+respect to this keyword plus one, or in other words, the number of
+rules used for generating the body of $f$.
+A possible correct response for this example from a synthesis solver is:
+\begin{lstlisting}[language=SyGuS]
+(
+(define-fun f ((x Int)) Int (+ x 1))
+)
+\end{lstlisting}
+In this example,
+the body \texttt{(+ x 1)} given for $f$ can be generated in multiple ways from the given grammar.
+In particular, it could be generated directly from the start symbol,
+or e.g. via the sequence \texttt{I}, \texttt{(+ I I)}, \texttt{(+ x I)}, \texttt{(+ x 1)}.
+Thus, when the body of $f$ is interpreted as \texttt{(+ x 1)},
+the interpretation of \texttt{(\_ numI f)} may either be $0$ or $2$.
+The constraint \texttt{(< numRulesForF 3)} is satisfied in the former interpretation,
+and hence the solution for $f$ satisfies all input constraints.
+\end{example}
+
 \begin{example}[Single Invariant Synthesis (Inv) over Linear Integer Arithmetic]
 Consider the following imperative program in a C-like language:
 \begin{lstlisting}[language=C-Like]
@@ -2618,17 +2716,33 @@ A possible correct response for this example from a synthesis solver is:
 A \emph{reserved word} is any of the 
 literals from \cref{ssec:literals},
 or any of the following keywords:
+$!$,
+$\_$,
 $\checksynthkwd$,
 $\constantkwd$,
 $\constraintchckwd$,
 $\constraintkwd$,
-$\constraintinvkwd$,
 $\dtdeclkwd$,
 $\dtsdeclkwd$,
+$\corroracledeckwd$,
+$\corrcexoracledeckwd$,
+$\oracledeckwd$,
+$\sortdeclkwd$,
+$\vardeclkwd$,
+$\weightdeclkwd$,
+$\fundefkwd$,
+$\sortdefkwd$,
 $\existskwd$,
 $\forallkwd$,
-$\fundefkwd$,
+$\constraintinvkwd$,
 $\letkwd$,
+$\assumeoraclekwd$,
+$\constraintoraclekwd$,
+$\cexoracledeckwd$,
+$\iooracledeckwd$,
+$\memoracledeckwd$,
+$\negwitnessoracledeckwd$,
+$\poswitnessoracledeckwd$,
 $\setfeaturekwd$,
 %$\setfeaturesetkwd$,
 $\setinfokwd$,
@@ -2636,11 +2750,8 @@ $\setlogickwd$,
 %$\setlogicinputkwd$,
 %$\setlogicoutputkwd$,
 $\setoptkwd$,
-$\sortdeclkwd$,
-$\sortdefkwd$,
-$\synthfunkwd$,
-%$\synthinvkwd$,
-$\vardeclkwd$, and
+$\synthfunkwd$, and
+%$\synthinvkwd$,and
 $\varkwd$.
 
 
