@@ -309,6 +309,11 @@ over an SMT-LIB base logic $X$.
 Instead, all functions (including predicates) to be synthesized are now specified using $\synthfunkwd$.
 
 \item The expected successful response for SyGuS solvers to a $\checksynthkwd$ command is now enclosed in parentheses.
+
+\item A new command $\weightdeclkwd$, has been introduced for introducing user-defined weight attributes.
+
+\item A new feature $\fweightskwd$ has been added, which allows weight annotations on terms, 
+as well as the use of weight symbols within terms, as described in Section~\ref{sec:weight-semantics}.
 \end{enumerate}
 
 
@@ -444,6 +449,10 @@ Note this definition coincides with simple
 symbols in Section 3.1 of SMT-LIB version 2.6,
 apart from differences in their reserved words.
 
+\paragraph{Keywords ($\keyword$)}
+Following SMT-LIB version 2.6,
+a keyword $\keyword$ is a symbol whose first character is $:$.
+
 \subsection{Identifiers}
 
 An identifier $\identifier$
@@ -461,6 +470,35 @@ that includes symbols that are indexed by integer constants or other symbols.
 \]
 Note this definition coincides with
 identifiers in Section 3.1 of SMT-LIB version 2.6.
+
+\subsection{Attributes}
+
+An attribute $\attribute$
+is a keyword and an (optional) associated value.
+\[
+\begin{array}{rcl}
+\attribute & ::= & \begin{array}{ccc}
+\keyword & | & \keyword \attributevalue
+\end{array}\\
+\end{array}
+\]
+The permitted values of attribute values $\attributevalue$ depend on the attribute
+they are associated with.
+Possible values of attributes include symbols, as well as (lists of) sorts and terms.
+The above definition of attribute coincides with
+attributes in Section 3.4 of SMT-LIB version 2.6.
+
+\subsubsection{Weight Attributes}
+\label{sec:weight-attributes}
+Beyond the SMT-LIB standard, we standardize one class of attributes, namely that of \emph{weights}.
+Some keywords we classify as \emph{weight keywords}.
+In particular, we assume that \kweight is the (builtin) weight keyword.
+Additional weight keywords can be user-defined via the command $\weightdeclkwd$.
+
+A weight attribute consists of a weight keyword and an attribute value that is a integer numeral.
+For example, $\kweight\mbox{ }5$ denotes the attribute associating the builtin weight keyword to $5$.
+Terms can be annotated with weight attributes (see Section~\ref{ssec:term-annotations}),
+which will have a special semantics which we will describe in detail in Section~\ref{sec:weight-semantics}.
 
 \subsection{Sorts}
 
@@ -520,12 +558,14 @@ Examples of the latter are given in \cref{ssec:smt-logic}.
 \term & ::= & \identifier\\
  & | & \literal\\
  & | & \paren{\identifier\mbox{ }\kplus{\term}}\\
+ & | & \paren{!\mbox{ }\term\mbox{ }\kplus{\attribute}}\\
  & | & \paren{\existskwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
  & | & \paren{\forallkwd\mbox{ }\paren{\kplus{\sortedvar}}\mbox{ }\term}\\
  & | & \paren{\letkwd\mbox{ }\paren{\kplus{\varbinding}}\mbox{ }\term}\\[2ex]
  \bfterm & ::= & \identifier\\
  & | & \literal\\
- & | & \paren{\identifier\mbox{ }\kplus{\bfterm}}\\[2ex]
+ & | & \paren{\identifier\mbox{ }\kplus{\bfterm}}\\
+ & | & \paren{!\mbox{ }\bfterm\mbox{ }\kplus{\attribute}}\\[2ex]
  \sortedvar & ::= & \paren{\symbol\mbox{ }\sortexpr}\\
  \varbinding & ::= & \paren{\symbol\mbox{ }\term}\\
 \end{array}
@@ -537,15 +577,29 @@ Like sorts, the identifiers that comprise terms
 can either be defined by the user or by background theories.
 %Examples of the latter are given in \cref{ssec:smt-logic}.
 
+\subsubsection{Term Annotations}
+\label{ssec:term-annotations}
+In SMT-LIB,
+terms $t$ may be annotated with \emph{attributes}.
+The purpose of an attribute is to mark a term with a set of special properties, 
+which may influence the expected result of later commands.
+Attributes are specified using the
+syntax $\paren{!\mbox{ }t\mbox{ }A_1\mbox{ }\ldots\mbox{ }A_n}$
+where $t$ is a term and $A_1, \ldots, A_n$ are attributes.
+An attribute can be any
+The term above is semantically equivalent to $t$ itself.
+Several attributes are standardized by the SMT-LIB standard, while
+others may be user-defined.
+
 \subsection{Features}
 \label{ssec:syntax-features}
 
-A feature $\feature$ denotes a restriction or extension
+A feature $\feature$ is a keyword denoting a restriction or extension
 on the kinds of SyGuS commands that are allowed in an input.
 It is an enumeration in the following syntax.
 \begin{alignat*}{1}
  & \begin{array}{rcl}
- \feature & ::= & \fgrammarskwd\mbox{ }|\mbox{ }\ffwddeclskwd\mbox{ }|\mbox{ }\frecursionkwd\mbox{ }|\mbox{ } \foracleskwd\mbox{ }
+ \feature & ::= & :\fgrammarskwd\mbox{ }|\mbox{ }:\ffwddeclskwd\mbox{ }|\mbox{ }:\frecursionkwd\mbox{ }|\mbox{ } :\foracleskwd\mbox{ }|\mbox{ } :\fweightskwd\mbox{ }
  % ajr: not needed
  %|\mbox{ }\fquantifierskwd
 \end{array}
@@ -561,11 +615,11 @@ A command $\cmd$ is given by the following syntax.
 \cmd 
  & ::= & \paren{\assumekwd\mbox{ }\term} \\
  & | & \paren{\checksynthkwd} \\
- & | & \paren{\constraintchckwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\kstar{\term}\mbox{ }\term} \\
+ & | & \paren{\constraintchckwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\term\mbox{ }\term} \\
  & | & \paren{\constraintkwd\mbox{ }\term} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
- & | & \paren{\setfeaturekwd\mbox{ }:\feature\mbox{ }\boolconst} \\
+ & | & \paren{\setfeaturekwd\mbox{ }\feature\mbox{ }\boolconst} \\
 % & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
 % & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
 % & | & \paren{\setlogicoutputkwd\mbox{ }\symbol} \\
@@ -601,13 +655,14 @@ A command $\cmd$ is given by the following syntax.
  & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdecl} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdecl}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
+ & | & \paren{\weightdeclkwd\mbox{ }\symbol} \\
  & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
  %& | & \paren{\recfundefkwd\mbox{ }\fundef} \\
  %& | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
  & | & \paren{\sortdefkwd\mbox{ }\symbol\mbox{ }\sortexpr} \\
- & | & \paren{\setinfokwd\mbox{ }:\symbol{ }\literal} \\
+ & | & \paren{\setinfokwd\mbox{ }\keyword{ }\literal} \\
  & | & \paren{\setlogickwd\mbox{ }\symbol} \\
- & | & \paren{\setoptkwd\mbox{ }:\symbol\mbox{ }\literal}\\[2ex]
+ & | & \paren{\setoptkwd\mbox{ }\keyword\mbox{ }\literal}\\[2ex]
 
 
  \sortdecl& ::= & \paren{\symbol\mbox{ }\intconst}\\
@@ -1003,6 +1058,20 @@ a symbol in the current signature.
 
 \end{itemize}
 
+\subsection{Declaring Weight}
+\label{ssec:declaring-weights}
+
+\begin{itemize}
+\item $\paren{\weightdeclkwd\mbox{ }S}$
+
+This command declares the symbol $:S$ as a weight keyword.
+
+Terms can be subsequently annotated
+with this keyword, e.g. $\paren{!\mbox{ }t\mbox{ }:S\mbox{ }1}$,
+which are then given a special semantics as described in Section~\ref{sec:weight-semantics}.
+
+\end{itemize}
+This command is only allowed when the $\fweightskwd$ feature is enabled.
 
 \subsection{Defining Macros}
 
@@ -1694,6 +1763,9 @@ grammars of $\synthfunkwd$ can generate terms that correspond to recursive defin
 commands from $\oraclecmd$ are permitted.
 %\item $\fquantifierskwd$: if enabled,
 %arbitrary quantification is allowed in constraints.
+\item $\fweightskwd$: if enabled,
+terms of the form \weightsym{w}{f} are permitted,
+as described below.
 \end{itemize}
 Formal definition of these features are given within the 
 \cref{ssec:logicr-constraints,ssec:logicr-grammars}.
@@ -1702,7 +1774,25 @@ which are not covered here.
 
 The feature set component of the default SyGuS logic is the set $\{ \fgrammarskwd \}$.
 In other words, grammars may be provided, but those involving
-forward declarations and recursion are not permitted by default.
+forward declarations and recursion are not permitted by default,
+nor are oracles or weight constraints.
+
+\subsubsection{Weights}
+\label{sec:weight-semantics}
+For each function-to-synthesize $f$ and weight keyword $W$
+as mentioned in Section~\ref{sec:weight-attributes},
+the \emph{weight of $f$ with respect to $W$} is a (nullary) integer symbol
+whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the
+suffix of keyword $W$ after its first character ($:$).
+For example, \weightsym{weight}{f}
+denote a symbolic integer constant corresponding to the weight of $f$
+with respect to the builtin weight keyword.
+
+We will use annotations on terms that appear in grammars to denote weighted production rules.
+The class of nullary integer symbols of the above form are
+interpreted as the sum of weights of terms used for generating the body of $f$.
+
+TODO: formal semantics
 
 \subsection{SyGuS Logic Restrictions on Constraints}
 \label{ssec:logicr-constraints}
@@ -2960,20 +3050,6 @@ is equal to its body.
 
 %The semantics of recursive functions in SyGuS inputs
 %is planned to be incorporated in later revisions of this document.
-
-\paragraph{Attribute Annotations}
-In SMT-LIB,
-terms $t$ may be annotated with \emph{attributes}.
-The purpose of an attribute is to mark a term with a set of special properties, 
-which may influence the expected result of later commands.
-Attributes are specified using the
-syntax $\paren{!\mbox{ }t\mbox{ }\kstar{A}}$
-where $t$ is a term and $A$ is an attribute.
-The syntax for attributes (not given here) is similar to the one
-for specifying options and features in this document.
-The term above is semantically equivalent to $t$ itself.
-Several attributes are standardized by the SMT-LIB standard, while
-others may be user-defined.
 
 \paragraph{Additional Logics and Theories}
 Several standard logics and theories are omitted from discussion in this document.

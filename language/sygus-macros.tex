@@ -45,8 +45,12 @@
 \global\long\def\symbol{\left\langle Symbol\right\rangle }
 
 \global\long\def\identifier{\left\langle Identifier\right\rangle }
+\global\long\def\keyword{\left\langle Keyword\right\rangle }
 \global\long\def\identifierindex{\left\langle Index\right\rangle }
 \global\long\def\qualidentifier{\left\langle QualIdentifier\right\rangle }
+\global\long\def\attribute{\left\langle Attribute\right\rangle }
+\global\long\def\attributevalue{\left\langle AttributeValue\right\rangle }
+
 
 
 \global\long\def\quotedliteral{\left\langle QuotedLiteral\right\rangle }
@@ -118,7 +122,6 @@
 
 \global\long\def\fundef{\left\langle FunDef\right\rangle }
 
-\global\long\def\attribute{\left\langle Attr\right\rangle }
 
 %\global\long\def\constdeclkwd{\texttt{declare-const}}
 
@@ -169,6 +172,8 @@
 \global\long\def\corrcexoracledeckwd{\texttt{declare-correctness-cex-oracle}}
 \global\long\def\poswitnessoracledeckwd{\texttt{oracle-constraint-poswitness}}
 \global\long\def\negwitnessoracledeckwd{\texttt{oracle-constraint-negwitness}}
+
+\global\long\def\weightdeclkwd{\texttt{declare-weight}}
 
 
 % \global\long\def\falsifyoracledeckwd{\texttt{declare-oracle-falsify}}
@@ -244,9 +249,15 @@
 \global\long\def\ffwddeclskwd{\texttt{fwd-decls}}
 \global\long\def\frecursionkwd{\texttt{recursion}}
 \global\long\def\foracleskwd{\texttt{oracles}}
+\global\long\def\fweightskwd{\texttt{weights}}
 
 % the Boolean sort (not syntax)
 \global\long\def\sbool{\mathsf{Bool}}
 
 
 \global\long\def\slogic{\mathcal{L}}
+
+\global\long\def\kweight{\texttt{:weight}}
+\global\long\def\kweights#1{\texttt{:weight.#1}}
+\global\long\def\weightsymnf#1#2{\texttt{(\_\ }#1\ #2\texttt{)}}
+\global\long\def\weightsym#1#2{\texttt{(\_\ #1\ #2)}}
