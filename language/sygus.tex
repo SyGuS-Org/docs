@@ -313,7 +313,7 @@ Instead, all functions (including predicates) to be synthesized are now specifie
 \item A new command $\weightdeclkwd$, has been introduced for introducing user-defined weight attributes.
 
 \item A new feature $\fweightskwd$ has been added, which allows weight annotations on terms, 
-as well as the use of weight symbols within terms, as described in Section~\ref{sec:weight-semantics}.
+as well as the use of weight symbols within terms, as described in \cref{sec:weight-semantics}.
 \end{enumerate}
 
 
@@ -497,8 +497,8 @@ Additional weight keywords can be user-defined via the command $\weightdeclkwd$.
 
 A weight attribute consists of a weight keyword and an attribute value that is a integer numeral.
 For example, $\kweight\mbox{ }5$ denotes the attribute associating the builtin weight keyword to $5$.
-Terms can be annotated with weight attributes (see Section~\ref{ssec:term-annotations}),
-which will have a special semantics which we will describe in detail in Section~\ref{sec:weight-semantics}.
+Terms can be annotated with weight attributes (see \cref{ssec:term-annotations}),
+which will have a special semantics which we will describe in detail in \cref{sec:weight-semantics}.
 
 \subsection{Sorts}
 
@@ -1068,7 +1068,7 @@ This command declares the symbol $:S$ as a weight keyword.
 
 Terms can be subsequently annotated
 with this keyword, e.g. $\paren{!\mbox{ }t\mbox{ }:S\mbox{ }1}$,
-which are then given a special semantics as described in Section~\ref{sec:weight-semantics}.
+which are then given a special semantics as described in \cref{sec:weight-semantics}.
 
 \end{itemize}
 This command is only allowed when the $\fweightskwd$ feature is enabled.
@@ -1215,7 +1215,7 @@ This informs the solver of the existance of an external binary with name $N$
 which can be used as means of adding new constraints to the problem.
 This command is well-formed only if $N$
 \emph{implements} a function of sort $\sigma_1 \times \ldots \times \sigma_n \rightarrow \tau_{1} \times \ldots \times \tau_{m}$
-(for a definition of the expected implementation of an external binary, see Section~\ref{sec:oracleimplementations}),
+(for a definition of the expected implementation of an external binary, see \cref{sec:oracleimplementations}),
 and $t$ is a well-sorted term of sort $\sbool$ 
 whose free symbols may include those in the current signature, as well as any symbol in $x_1 \ldots x_{n}$ and $y_1 \ldots y_{m}$,
 and moreover is allowed based on the restrictions of the current logic.
@@ -1228,7 +1228,7 @@ and the binary generating a list of values
 $d_{1}, \ldots, d_{m}$ corresponding to the output $y_{1}, \ldots y_{m}$.
 The expected implementation for passing
 constant values as input and output 
-is described in Section~\ref{sec:oracleimplementations}.
+is described in \cref{sec:oracleimplementations}.
 For each such call,
 the formula $t[c_1 \ldots c_{n} d_1 \ldots d_m]$, i.e., 
 $t$ with all occurences of $x_1, \ldots, x_{n}, y_1, \ldots, y_m$ replaced with $c_1, \ldots, c_{n}, d_1, \ldots d_m$, 
@@ -1273,7 +1273,7 @@ Note that this command is syntactic sugar for:
 \end{array}
 \]
 \end{itemize}
-% The solver can call $S$ as many times as is necessary, and for every input on which $S$ has not been called, $S$ is treated as a universally quantified uninterpreted function. For more details see Section~\ref{sec:correctness-oracles}.
+% The solver can call $S$ as many times as is necessary, and for every input on which $S$ has not been called, $S$ is treated as a universally quantified uninterpreted function. For more details see \cref{sec:correctness-oracles}.
 
 
 \subsection{Pre-defined Oracle Types}
@@ -1430,7 +1430,7 @@ A benchmark whose header contains the line
 \[
 \paren{\setinfokwd\mbox{ }:{\tt sygus\mbox{-}version\mbox{ }2.1}}
 \]
-will use the version 2.0 syntax as specified by this document,
+will use the version 2.1 syntax as specified by this document,
 whereas e.g. a value of $1.0$ indicates that the benchmark will use the
 syntax in the previous SyGuS format~\cite{sygusFormat,sygusSyntax2015,sygusSyntax2016}.
 \end{itemize}
@@ -1780,7 +1780,7 @@ nor are oracles or weight constraints.
 \subsubsection{Weights}
 \label{sec:weight-semantics}
 For each function-to-synthesize $f$ and weight keyword $W$
-as mentioned in Section~\ref{sec:weight-attributes},
+as mentioned in \cref{sec:weight-attributes},
 the \emph{weight symbol for $f$ with respect to $W$} is a (nullary) integer symbol
 whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the
 suffix of $W$ after its first character ($:$).
@@ -1796,7 +1796,7 @@ Formally,
 let $G$ be a grammar provided for function-to-synthesize $f$, and let $W$ be a weight keyword.
 Let $y$ be a non-terminal symbol of $G$ and let $t$ be a term appearing
 in the grouped rule listing for $y$, as described in the syntax for grammar
-definitions in Section~\ref{ssec:dec-synth-fun}.
+definitions in \cref{ssec:dec-synth-fun}.
 We consider the \emph{base term} of $t$, defined such that
 the base term of unannotated term is itself, and
 the base term of $t$ is $t_0$ if $t$ is of the form 
@@ -1825,8 +1825,8 @@ where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
 replacing an occurrence of some $y_i$ by $t_i$
 where $y_i \mapsto_{W,k_i} t_i$ is a rule in $G$.
 
-Notice that since there may be \emph{multiple} sequences of terms that
-generates the same term $r$ above.
+Notice that there may be \emph{multiple} sequences of terms that
+generate the same term $r$ above.
 Thus, weight symbols may have multiple valid
 interpretations for a given interpretation for the body of a function-to-synthesize.
 The solver is free to pick any such interpretation.
@@ -2544,16 +2544,20 @@ Consider the following example:
 (set-logic LIA)
 (set-feature :weights true)
 (declare-weight numI)
+(define-fun numRulesForF () Int (+ (_ numI f) 1))
 (synth-fun f ((x Int)) Int
    ((I Int))
    ((I Int (0 1 x (+ x 1) (! (- I) :numI 1) (! (+ I I) :numI 2)))))
 (declare-var x Int)
-(constraint (and (> (f x) x) (<= (_ numI f) 1)))
+(constraint (and (> (f x) x) (< numRulesForF 3)))
 (check-synth)
 \end{lstlisting}
-In this example, a weight keyword $\texttt{numRec}$ has been declared,
+In this example, a weight keyword $\texttt{numI}$ has been declared,
 which counts the number of occurrences of the non-terminal \texttt{I} that
 were used in applications of the production rules that generated the body of $f$.
+The function $\texttt{numRulesForF}$ is defined to be the weight of $f$ with
+respect to this keyword plus one, or in other words, the number of
+rules used for generating the body of $f$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
@@ -2566,7 +2570,7 @@ In particular, it could be generated directly from the start symbol,
 or e.g. via the sequence \texttt{I}, \texttt{(+ I I)}, \texttt{(+ x I)}, \texttt{(+ x 1)}.
 Thus, when the body of $f$ is interpreted as \texttt{(+ x 1)},
 the interpretation of \texttt{(\_ numI f)} may either be $0$ or $2$.
-The constraint \texttt{(<= (\_ numI f) 1)} is satisfied in the former interpretation,
+The constraint \texttt{(< numRulesForF 3)} is satisfied in the former interpretation,
 and hence the solution for $f$ satisfies all input constraints.
 \end{example}
 
