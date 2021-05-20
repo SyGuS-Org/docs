@@ -2158,12 +2158,22 @@ for background theories $T$ from the SMT-LIB standard.
 The notion of satisfying semantic restrictions for background theories
 that are not standardized in the SMT-LIB standard are not covered by this document.
 
+Before stating the formal definition for satisfying semantic specifications,
+we require the following definitions.
 Consider a synthesis conjecture $\exists f_1, \ldots, f_n \ldotp\Psi$
 in background theory $T$, and let
 $\alpha = ( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
 be an assignment for functions-to-synthesize $( f_1, \ldots, f_n )$
 whose grammars are $G_1, \ldots, G_n$.
-We say that substitution $\sigma$ is \emph{consistent with $\alpha$} if
+Let $\Psi_{\alpha}$ be the formula:
+\[
+\bigwedge_{i=1}^{n} \forall X_i f( X_i ) \teq t_i
+\]
+In other words, $\Psi_{\alpha}$ contains quantified formulas
+that constrain the behavior of the functions to the synthesize
+based on their definition in $\alpha$.
+To reason about weight symbols in the definition below,
+we say that substitution $\sigma$ is \emph{consistent with $\alpha$} if
 it is of the form:
 \[
 \{ \wsym{f_i}{W} \mapsto k \mid \wgenerates{W}{k}{t_i} \in G_i \}
@@ -2171,14 +2181,13 @@ it is of the form:
 In other words, $\sigma$ is consistent with $\alpha$ if it replaces
 weight symbols for functions to synthesize $f_i$
 with only valid interpretations based on their bodies $t_i$ in $\alpha$.
-Let $\Psi_{f}$ be the formula:
-\[
-\bigwedge_{i=1}^{n} \forall X_i f( X_i ) \teq t_i
-\]
+
+We now state the formal definition for satisfying semantic specifications
+based on the above definitions.
 We say that $\alpha$
 satisfies the semantic restrictions for conjecture
 $\exists f_1, \ldots, f_n \ldotp\Psi$
-if $(\Psi_{f} \wedge \Psi) \cdot \sigma$ is $T$-valid formula
+if $(\Psi_{\alpha} \wedge \Psi) \cdot \sigma$ is $T$-valid formula
 for some substitution $\sigma$ that is consistent with $\alpha$.
 %where $\psi$ is the formula
 %$\varphi \{ f_1 \mapsto \lambda X_1 \ldotp t_1, \ldots, f_n \mapsto \lambda X_n \ldotp t_n \}$
@@ -2186,11 +2195,10 @@ for some substitution $\sigma$ that is consistent with $\alpha$.
 The formal definition for $T$-valid here
 corresponds to the definition given by SMT-LIB,
 for details see Section 5 of~\cite{BarFT-RR-17}.
-
-Notice that the above definition covers cases where $f_1, \ldots, f_n$
+This definition covers cases where $f_1, \ldots, f_n$
 have recursive definitions or references to forward declarations,
 which is why their definitions are explicitly given in the definition of
-$\Psi_{f}$.
+$\Psi_{\alpha}$.
 
 \section{Calling Oracles}%
 \label{sec:oracleimplementations}
