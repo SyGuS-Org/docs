@@ -314,6 +314,10 @@ Instead, all functions (including predicates) to be synthesized are now specifie
 
 \item A new feature $\fweightskwd$ has been added, which allows weight annotations on terms, 
 as well as the use of weight symbols within terms, as described in \cref{sec:weight-semantics}.
+
+\item
+The signature, syntax and semantics for the theory of strings
+is now the one given in the official version 2.6 release of the theory of Unicode strings~\cite{BarFT-RR-17}.
 \end{enumerate}
 
 
@@ -1664,7 +1668,7 @@ The functions in this signature include various operations on bit-vectors,
 including bit-wise, arithmetic, and shifting operations.
 
 \paragraph{Strings}
-The theory of (unbounded) unicode strings and regular expressions
+The theory of (unbounded) Unicode strings and regular expressions
 is included in some logics specified with ${\tt S}$ as a prefix,
 such as ${\tt S}$ (strings) or ${\tt SLIA}$ (strings
 with linear integer arithmetic).
@@ -2508,13 +2512,13 @@ Consider the following example:
                        (str.++ ntString ntString)
                        (str.replace ntString ntString ntString)
                        (str.at ntString ntInt)
-                       (str.from-int ntInt)
+                       (str.from_int ntInt)
                        (str.substr ntString ntInt ntInt)))
      (ntInt Int (0 1 2
                  (+ ntInt ntInt)
                  (- ntInt ntInt)
                  (str.len ntString)
-                 (str.to-int ntString)
+                 (str.to_int ntString)
                  (str.indexof ntString ntString ntInt)))))
 (constraint (= (f "Nancy" "FreeHafer") "Nancy FreeHafer"))
 (constraint (= (f "Andrew" "Cencici") "Andrew Cencici"))
@@ -3009,16 +3013,17 @@ or the binary format $\binaryconst$.
 
 \subsection{Strings}
 
-Notice that there is no
-officially adopted SMT-LIB standard for strings at the time
-this document was written.
-Thus, we adopt (a subset of) the proposed standard~\cite{smtlibStrings}
-as of the time of the 2019 edition of the SyGuS competition.
-Here, we omit discussion of regular expressions and characters.
+%Notice that there is no
+%officially adopted SMT-LIB standard for strings at the time
+%this document was written.
+%Thus, we adopt (a subset of) the proposed standard~\cite{smtlibStrings}
+%as of the time of the 2019 edition of the SyGuS competition.
+The syntax below reflects the official version 2.6 release of the theory
+of Unicode strings and regular expressions.
 \begin{lstlisting}[language=SyGuS]
 (set-logic S)
-(synth-fun f ((xs String) (xi Int)) String
-   ((y_term_str String) (y_term_int Int) (y_pred Bool))
+(synth-fun f ((xs String) (xr RegLan) (xi Int)) String
+   ((y_term_str String) (y_term_rl RegLan) (y_term_int Int) (y_pred Bool))
    ((y_term_str String (
         (Constant String)
         (Variable String)
@@ -3027,18 +3032,35 @@ Here, we omit discussion of regular expressions and characters.
         (str.substr y_term_str y_term_int y_term_int)
         (str.indexof y_term_str y_term_str y_term_int)
         (str.replace y_term_str y_term_str y_term_str)
-        (str.from-int y_term_int)
+        (str.from_int y_term_int)
+        (str.from_code y_term_int)
         (ite y_pred y_term_str y_term_str))
     )
+    (y_term_rl RegLan ((Constant String)
+                       (Variable String)
+                       re.none
+                       re.all
+                       re.allchar
+                       (str.to_re y_term_str)
+                       (re.++ y_term_rl y_term_rl)
+                       (re.union y_term_rl y_term_rl)
+                       (re.inter y_term_rl y_term_rl)
+                       (re.* y_term_rl)
+                       (re.+ y_term_rl)
+                       (re.opt y_term_rl)
+                       (re.range y_term_str y_term_str))
     (y_term_int Int ((Variable Int)
                      (str.len y_term_str)
-                     (str.to-int y_term_str)
+                     (str.to_int y_term_str)
+                     (str.to_code y_term_str)
                      (ite y_pred y_term_int y_term_int)))
-    (y_pred Bool ((str.contains y_term_str y_term_str)
+    (y_pred Bool ((str.in_re y_term_str y_term_rl)
+                  (str.contains y_term_str y_term_str)
                   (str.prefixof y_term_str y_term_str)
                   (str.suffixof y_term_str y_term_str)
                   (str.< y_term_str y_term_str)
-                  (str.<= y_term_str y_term_str)))))
+                  (str.<= y_term_str y_term_str)
+                  (str.is_digit y_term_str)))))
 \end{lstlisting}
 % ===== RE
 %str.to-re
@@ -3063,6 +3085,8 @@ Here, we omit discussion of regular expressions and characters.
 %char.from-int
 String constants may be specified by text delimited by double quotes
 based on the syntax $\stringconst$ described in \cref{ssec:literals}.
+The sort ${\tt RegLan}$ denotes the regular expression sort.
+Its values are all ground (i.e. variable free) regular expressions.
 
 Notice that since the logic specified above is ${\tt S}$.
 The signature of this logic includes 
@@ -3075,8 +3099,6 @@ does not include the theory of integer arithmetic.
 Thus in pratice, 
 the string theory is frequently combined with the theory of integers
 in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
-
-
 
 
 \section{Language Features of SMT-LIB not Covered}%
