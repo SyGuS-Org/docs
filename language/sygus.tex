@@ -335,6 +335,7 @@ that returns the value of $t[\vec{s}]$ for all inputs $\vec{x} = \vec{s}$.
 Given an application of a lambda term to a concrete argument list $\vec{s}$,
 i.e. the term $(\lambda \vec{x} \ldotp t[\vec{x}( \vec{s} )$,
 then its \emph{beta-reduction} is the term $t[\vec{s}]$.
+We use $\teq$ to denote the binary (infix) equality predicate.
 %In this document, we consider only \emph{simple} lambda terms 
 %whose body itself contains no lambda terms.
 
@@ -1781,8 +1782,8 @@ nor are oracles or weight constraints.
 \label{sec:weight-semantics}
 For each function-to-synthesize $f$ and weight keyword $W$
 as mentioned in \cref{sec:weight-attributes},
-the \emph{weight symbol for $f$ with respect to $W$} is a (nullary) integer symbol
-whose syntax is \weightsymnf{$w$}{$f$} where $w$ is the
+the \emph{weight symbol for $f$ with respect to $W$} is a (nullary) integer symbol $\wsym{f}{W}$
+whose concrete syntax is \weightsymnf{$w$}{$f$} where $w$ is the
 suffix of $W$ after its first character ($:$).
 For example, \weightsym{weight}{f}
 denotes a symbolic integer constant corresponding to the weight of $f$
@@ -1808,7 +1809,7 @@ In this case, we say that $G$ contains
 the production rule $y \mapsto t_0$ whose \emph{weight with respect to $W$} is:
 \[
 \begin{cases}
-k & \text{if exactly one } A_i \text{ is of the form } \texttt{W} k \text{ for some numeral } k \\
+k & \text{if exactly one } A_i \text{ is of the form } \texttt{W}\ k \text{ for some numeral } k \\
 k_{def} & \text{otherwise, where } k_{def} \text{ is the default weight value for } \texttt{W}
 \end{cases}
 \]
@@ -1816,14 +1817,16 @@ Unless stated otherwise, the default weight value for all weight keywords is $0$
 
 Let $y \mapsto_{W,k} t_0$ denote a production rule
 whose weight with respect to $W$ is $k$.
-When the body of function-to-synthesize $f$ is interpreted as term $r$,
-the symbol \weightsymnf{$w$}{$f$} can be interpreted as the value 
-$k_1 + \ldots + k_n$ if it is possible to construct a sequence of terms
+We write $\wgenerates{G}{W}{k}{r}$ if it is possible to construct a sequence of terms
 $s_1, \ldots, s_n$
 with $s_1$ is the starting symbol of $G$ and $s_n = r$
 where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
 replacing an occurrence of some $y_i$ by $t_i$
-where $y_i \mapsto_{W,k_i} t_i$ is a rule in $G$.
+where $y_i \mapsto_{W,k_i} t_i$ is a rule in $G$,
+and $k_1 + \ldots k_n = k$.
+When the body of function-to-synthesize $f$ is interpreted as term $r$,
+the symbol $\wsym{f}{W}$ can be interpreted as $k$ if and only if
+$\wgenerates{G}{W}{k}{r}$.
 
 Notice that there may be \emph{multiple} sequences of terms that
 generate the same term $r$ above.
@@ -2155,27 +2158,47 @@ for background theories $T$ from the SMT-LIB standard.
 The notion of satisfying semantic restrictions for background theories
 that are not standardized in the SMT-LIB standard are not covered by this document.
 
-A tuple of functions 
-$( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
-satisfies the semantic restrictions
-for functions-to-synthesize $( f_1, \ldots, f_n )$
-in conjecture $\exists f_1, \ldots, f_n \ldotp\Psi$ in background theory $T$
-if $\Psi$ is $T$-valid formula
-when $f_1, \ldots, f_n$ are defined to be terms
-whose semantics are given by the functions
-$\lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n$.
+Before stating the formal definition for satisfying semantic specifications,
+we require the following definitions.
+Consider a synthesis conjecture $\exists f_1, \ldots, f_n \ldotp\Psi$
+in background theory $T$, and let
+$\alpha = ( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
+be an assignment for functions-to-synthesize $( f_1, \ldots, f_n )$
+whose grammars are $G_1, \ldots, G_n$.
+Let $\Psi_{\alpha}$ be the formula:
+\[
+\bigwedge_{i=1}^{n} \forall X_i f( X_i ) \teq t_i
+\]
+In other words, $\Psi_{\alpha}$ contains quantified formulas
+that constrain the behavior of the functions to the synthesize
+based on their definition in $\alpha$.
+To reason about weight symbols in the definition below,
+we say that substitution $\sigma$ is \emph{consistent with $\alpha$} if
+it is of the form:
+\[
+\{ \wsym{f_i}{W} \mapsto k \mid \wgenerates{G_i}{W}{k}{t_i} \}
+\]
+In other words, $\sigma$ is consistent with $\alpha$ if it replaces
+weight symbols for functions to synthesize $f_i$
+with only valid interpretations based on their bodies $t_i$ in $\alpha$.
+
+We now state the formal definition for satisfying semantic specifications
+based on the above definitions.
+We say that $\alpha$
+satisfies the semantic restrictions for conjecture
+$\exists f_1, \ldots, f_n \ldotp\Psi$
+if $(\Psi_{\alpha} \wedge \Psi) \cdot \sigma$ is $T$-valid formula
+for some substitution $\sigma$ that is consistent with $\alpha$.
 %where $\psi$ is the formula
 %$\varphi \{ f_1 \mapsto \lambda X_1 \ldotp t_1, \ldots, f_n \mapsto \lambda X_n \ldotp t_n \}$
 %after beta-reduction.
 The formal definition for $T$-valid here
 corresponds to the definition given by SMT-LIB,
 for details see Section 5 of~\cite{BarFT-RR-17}.
-
-The above definition covers cases where $f_1, \ldots, f_n$
-have recursive definitions or references to forward declarations.
-The formal definition of $T$-valid formulas that contain these kinds of
-function definitions assumes the semantics for SMT-LIB input formulas that 
-involve (defined) macros and recursive functions.
+This definition covers cases where $f_1, \ldots, f_n$
+have recursive definitions or references to forward declarations,
+which is why their definitions are explicitly given in the definition of
+$\Psi_{\alpha}$.
 
 \section{Calling Oracles}%
 \label{sec:oracleimplementations}
@@ -2544,10 +2567,10 @@ Consider the following example:
 (set-logic LIA)
 (set-feature :weights true)
 (declare-weight numI)
-(define-fun numRulesForF () Int (+ (_ numI f) 1))
 (synth-fun f ((x Int)) Int
    ((I Int))
    ((I Int (0 1 x (+ x 1) (! (- I) :numI 1) (! (+ I I) :numI 2)))))
+(define-fun numRulesForF () Int (+ (_ numI f) 1))
 (declare-var x Int)
 (constraint (and (> (f x) x) (< numRulesForF 3)))
 (check-synth)
@@ -2569,7 +2592,7 @@ the body \texttt{(+ x 1)} given for $f$ can be generated in multiple ways from t
 In particular, it could be generated directly from the start symbol,
 or e.g. via the sequence \texttt{I}, \texttt{(+ I I)}, \texttt{(+ x I)}, \texttt{(+ x 1)}.
 Thus, when the body of $f$ is interpreted as \texttt{(+ x 1)},
-the interpretation of \texttt{(\_ numI f)} may either be $0$ or $2$.
+the interpretation of \texttt{(+ (\_ numI f) 1)} may either be $1$ or $3$.
 The constraint \texttt{(< numRulesForF 3)} is satisfied in the former interpretation,
 and hence the solution for $f$ satisfies all input constraints.
 \end{example}
