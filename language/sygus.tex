@@ -1741,8 +1741,33 @@ are possible beyond those supported in the SMT-LIB standard.
 In this section, we mention theories that are of interest to synthesis applications
 that are not included in the SMT-LIB standard.
 
-\paragraph{Tables}
-TODO
+\paragraph{Bags and Tables}
+An SMT-LIB compliant theory of tables is proposed in~\cite{theoryOfTables}.
+We give the salient details of this theory here.
+
+The theory of tables is implemented as an extension of a theory of bags (multisets).
+The signature of this theory includes all sorts of the form
+$\texttt{(Bag\ T)}$
+for all sorts $\texttt{T}$. 
+This sort denotes bags (i.e. multisets) of elements of sort $\texttt{T}$.
+The theory of bags includes a multitude of operators for e.g.
+taking unions, intersections and differences of bags,
+as well as higher-order operators like 
+$\texttt{map}$, $\texttt{fold}$ and $\texttt{partition}$.
+A \emph{table} is a bag whose element sort $T$ is a tuple,
+where a tuple is a parametric sort taking $n$ types corresponding to the
+types of the elements that comprise the tuple.
+For example, $\texttt{(Tuple\ Int\ Int)}$ denotes tuples
+of arity two.
+The sort $\texttt{(Table\ Int\ Int)}$ is syntax sugar for
+$\texttt{(Bag\ (Tuple\ Int\ Int))}$ and is used to denote tables with two integer
+columns.
+A table value is a multiset union of tuple values.
+The number of rows in a table value is equal to its cardinality.
+Notice that ordering of rows is not semantically captured,
+and thus not modelled in this theory.
+For further details on the complete signature and semantics of this
+theory is available in~\cite{theoryOfTables}.
 
 \subsection{Features and Feature Sets}
 \label{ssec:feature-sets}
