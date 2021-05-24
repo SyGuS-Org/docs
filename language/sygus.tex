@@ -3019,7 +3019,9 @@ or the binary format $\binaryconst$.
 %Thus, we adopt (a subset of) the proposed standard~\cite{smtlibStrings}
 %as of the time of the 2019 edition of the SyGuS competition.
 The syntax below reflects the official version 2.6 release of the theory
-of Unicode strings and regular expressions.
+of Unicode strings and regular expressions~\cite{BarFT-RR-17}.
+Some operators (e.g. indexed regular expression operators)
+have been omitted from the grammar below for simplicity.
 \begin{lstlisting}[language=SyGuS]
 (set-logic S)
 (synth-fun f ((xs String) (xr RegLan) (xi Int)) String
@@ -3062,27 +3064,6 @@ of Unicode strings and regular expressions.
                   (str.<= y_term_str y_term_str)
                   (str.is_digit y_term_str)))))
 \end{lstlisting}
-% ===== RE
-%str.to-re
-%str.from-re
-%re.none
-%re.all
-%re.allchar
-%re.++
-%re.union
-%re.inter
-%re.*
-%str.<=
-%re.+
-%re.opt
-%re.range
-%re.^
-%re.loop
-% ===== characters
-%str.char
-%str.is-digit
-%char.code
-%char.from-int
 String constants may be specified by text delimited by double quotes
 based on the syntax $\stringconst$ described in \cref{ssec:literals}.
 The sort ${\tt RegLan}$ denotes the regular expression sort.
@@ -3099,7 +3080,6 @@ does not include the theory of integer arithmetic.
 Thus in pratice, 
 the string theory is frequently combined with the theory of integers
 in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
-
 
 \section{Language Features of SMT-LIB not Covered}%
 \label{apx:not-covered}
