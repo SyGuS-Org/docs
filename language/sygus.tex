@@ -1809,7 +1809,7 @@ In this case, we say that $G$ contains
 the production rule $y \mapsto t_0$ whose \emph{weight with respect to $W$} is:
 \[
 \begin{cases}
-k & \text{if exactly one } A_i \text{ is of the form } \texttt{W} k \text{ for some numeral } k \\
+k & \text{if exactly one } A_i \text{ is of the form } \texttt{W}\ k \text{ for some numeral } k \\
 k_{def} & \text{otherwise, where } k_{def} \text{ is the default weight value for } \texttt{W}
 \end{cases}
 \]
@@ -1817,7 +1817,7 @@ Unless stated otherwise, the default weight value for all weight keywords is $0$
 
 Let $y \mapsto_{W,k} t_0$ denote a production rule
 whose weight with respect to $W$ is $k$.
-We write $\wgenerates{W}{k}{r} \in G$ if it is possible to construct a sequence of terms
+We write $\wgenerates{G}{W}{k}{r}$ if it is possible to construct a sequence of terms
 $s_1, \ldots, s_n$
 with $s_1$ is the starting symbol of $G$ and $s_n = r$
 where for each $1 \leq i \leq n$, term $s_i$ is obtained from $s_{i-1}$ by
@@ -1826,7 +1826,7 @@ where $y_i \mapsto_{W,k_i} t_i$ is a rule in $G$,
 and $k_1 + \ldots k_n = k$.
 When the body of function-to-synthesize $f$ is interpreted as term $r$,
 the symbol $\wsym{f}{W}$ can be interpreted as $k$ if and only if
-$\wgenerates{W}{k}{r} \in G$.
+$\wgenerates{G}{W}{k}{r}$.
 
 Notice that there may be \emph{multiple} sequences of terms that
 generate the same term $r$ above.
@@ -2176,7 +2176,7 @@ To reason about weight symbols in the definition below,
 we say that substitution $\sigma$ is \emph{consistent with $\alpha$} if
 it is of the form:
 \[
-\{ \wsym{f_i}{W} \mapsto k \mid \wgenerates{W}{k}{t_i} \in G_i \}
+\{ \wsym{f_i}{W} \mapsto k \mid \wgenerates{G_i}{W}{k}{t_i} \}
 \]
 In other words, $\sigma$ is consistent with $\alpha$ if it replaces
 weight symbols for functions to synthesize $f_i$
