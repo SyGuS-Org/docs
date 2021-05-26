@@ -2305,13 +2305,13 @@ corresponding to a solution for functions-to-synthesize $f_1, \ldots, f_n$.
 Let $\exists f_1, \ldots, f_n. \ldotp\Psi$ be the synthesis conjecture
 for the current state, and let $\Psi_{o}$ be the formula:
 \[
-\Psi \wedge \bigwedge_{i=1}^{j} t_j \teq c_j
+\bigwedge_{i=1}^{j} t_j \teq c_j
 \]
 A solution of the above form for an optimization query
 satisfies semantic specifications if only if 
 $( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
 satisfies the semantic specifications
-for the synthesis conjecture $\exists f_1, \ldots, f_n. \Psi_{o}$.
+for the synthesis conjecture $\exists f_1, \ldots, f_n. \Psi \wedge \Psi_{o}$.
 
 \section{Calling Oracles}%
 \label{sec:oracleimplementations}
