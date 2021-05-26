@@ -1434,6 +1434,10 @@ specified by the list of terms $t_1, \ldots, t_j$ and attributes $A_1, \ldots, A
 Objectives can be specified both using annotations on terms $t_1, \ldots, t_j$
 as well as the use of attributes $A_1, \ldots, A_k$ to specify orderings on tuples.
 Details on objectives in given in Section~\ref{sec:objectives}.
+
+To be well formed, $t_1, \ldots, t_n$ cannot contain any occurrence
+of universal variables in the current state,
+and must be permitted by the background logic.
 \end{itemize}
 
 The expected output
