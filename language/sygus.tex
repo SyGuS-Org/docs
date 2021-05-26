@@ -623,7 +623,9 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\constraintchckwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\term\mbox{ }\term} \\
  & | & \paren{\constraintkwd\mbox{ }\term} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
+ & | & \paren{\weightdeclkwd\mbox{ }\symbol\mbox{ }\kstar{\attribute}} \\
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
+ & | & \paren{\optsynthkwd\mbox{ }\paren{\kstar{\term}}\mbox{ }\kstar{\attribute}} \\
  & | & \paren{\setfeaturekwd\mbox{ }\feature\mbox{ }\boolconst} \\
 % & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
 % & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
@@ -660,7 +662,6 @@ A command $\cmd$ is given by the following syntax.
  & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdecl} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdecl}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
- & | & \paren{\weightdeclkwd\mbox{ }\symbol} \\
  & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
  %& | & \paren{\recfundefkwd\mbox{ }\fundef} \\
  %& | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
@@ -683,8 +684,9 @@ A command $\cmd$ is given by the following syntax.
 \end{array}
 \]
 For convenience,
-we distinguish between two kinds of commands above.
-The commands listed under $\cmd$ and $\oraclecmd$ are specific to the SyGuS 2.0 format.
+we distinguish between three kinds of commands above.
+The commands listed under $\cmd$ and $\oraclecmd$ are specific to the SyGuS format,
+with the latter pertaining to oracles.
 The remaining commands listed under $\smtcmd$
 are borrowed from SMT-LIB 2.6.
 The semantics of these commands are detailed in \cref{sec:semantics}.
@@ -1067,9 +1069,10 @@ a symbol in the current signature.
 \label{ssec:declaring-weights}
 
 \begin{itemize}
-\item $\paren{\weightdeclkwd\mbox{ }S}$
+\item $\paren{\weightdeclkwd\mbox{ }S\mbox{ }A_1 \ldots A_n}$
 
 This command declares the symbol $:S$ as a weight keyword.
+The attributes $A_1 \ldots A_n$ can be used to indicate properties of this weight.
 
 Terms can be subsequently annotated
 with this keyword, e.g. $\paren{!\mbox{ }t\mbox{ }:S\mbox{ }1}$,
@@ -1414,9 +1417,20 @@ $
 This asks the synthesis solver to find a solution for the synthesis conjecture
 corresponding to the current list of functions-to-synthesize,
 universal variables and constraints.
-The expected output
-from the synthesis solver is covered in \cref{sec:output}.
+
+\item $\paren{\optsynthkwd\mbox{ }\paren{t_1 \ldots t_j}\mbox{ } A_1 \ldots A_k}$
+
+Like the command above,
+this asks the synthesis solver to find a solution for the synthesis conjecture
+corresponding to the current list of functions-to-synthesize,
+universal variables and constraints.
+Moreover, that solution should be optimal with respect to the objective
+specified by the list of terms $t_1, \ldots, t_j$ and attributes $A_1, \ldots, A_k$.
+Details on objectives in given in Section~\ref{sec:objectives}.
 \end{itemize}
+
+The expected output
+from the synthesis solver for these commands is covered in \cref{sec:output}.
 
 \subsection{Setting Benchmark Information}
 
@@ -1462,7 +1476,7 @@ only.
 
 \begin{itemize}
 \item
-A well-formed response to $\checksynthkwd$ is one of the following:
+A response to $\checksynthkwd$ is one of the following:
 
 \begin{enumerate}
 \item
@@ -1491,7 +1505,7 @@ provided in the order in which they were declared.\footnote{
 This is to ensure that the definition of $f_i$, which may depend on a definition
 of $f_j$ for $j<i$, is given in the correct order.
 }
-To be a well-formed output, 
+To be a well-formed response, 
 for each $j=1, \ldots, n$, it must be the case that
 $t_{j}$ is a term of $\sigma_{j}$,
 and $X_{j}$ is identical to the sorted variable list
@@ -1524,6 +1538,35 @@ The response ${\tt fail}$ indicates that the solver
 was unable to find a solution, which does not necessarily imply that
 the conjecture is infeasible.
 
+\item
+A (successful) well-formed response to $\paren{\optsynthkwd\mbox{ }\paren{t_1 \ldots t_j}\mbox{ } A_1 \ldots A_k}$
+is a tuple of terms followed list of commands, enclosed in parentheses, of the form:
+\[
+\begin{array}{l}
+\paren{\\
+\paren{c_1 \ldots c_j}\\
+\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
+\ldots\\
+\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}\\
+}
+\end{array}
+\]
+To be a well-formed response, 
+$c_1, \ldots, c_j$ must be values of the same type as $t_1, \ldots, t_j$,
+and the remaining commands must be a well-formed response based on the criteria
+for $\checksynthkwd$ above.
+A response of the above form is correct if
+it satisfies the semantic and syntactic restrictions given by
+the current state, as well as specifying values $c_1, \ldots, c_j$ that
+are consistent interpretations of $t_1, \ldots, t_j$.
+
+Additionally, analogous to $\checksynthkwd$, 
+a solver may respond
+with ${\tt infeasible}$ or ${\tt fail}$ to indicate
+the conjecture has no solutions, or to indicate a failure.
+
+%We assume that solution of the above form are ordered based on the objective
+%specified by $A_1, \ldots, A_k$.
 \end{itemize}
 
 %\section{
@@ -2196,7 +2239,7 @@ be an assignment for functions-to-synthesize $( f_1, \ldots, f_n )$
 whose grammars are $G_1, \ldots, G_n$.
 Let $\Psi_{\alpha}$ be the formula:
 \[
-\bigwedge_{i=1}^{n} \forall X_i f( X_i ) \teq t_i
+\bigwedge_{i=1}^{n} \forall X_i. f( X_i ) \teq t_i
 \]
 In other words, $\Psi_{\alpha}$ contains quantified formulas
 that constrain the behavior of the functions to the synthesize
@@ -2228,6 +2271,30 @@ This definition covers cases where $f_1, \ldots, f_n$
 have recursive definitions or references to forward declarations,
 which is why their definitions are explicitly given in the definition of
 $\Psi_{\alpha}$.
+
+\subsubsection{Satisfying Semantic Specifications for Optimization Queries}
+We extend the notion of semantic correctness to responses to optimization
+queries of the form:
+\[
+\paren{\optsynthkwd\mbox{ }\paren{t_1 \ldots t_j}\mbox{ } A_1 \ldots A_k}
+\]
+Recall from \cref{sec:output} that a successful response to this command
+contains:
+\begin{enumerate}
+\item A tuple of terms $(c_1, \ldots, c_j)$ corresponding to the valuation of terms $(t_1, \ldots, t_j)$, and
+\item A tuple of functions $( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
+corresponding to a solution for functions-to-synthesize $f_1, \ldots, f_n$.
+\end{enumerate}
+Let $\exists f_1, \ldots, f_n. \ldotp\Psi$ be the synthesis conjecture
+for the current state, and let $\Psi_{o}$ be the formula:
+\[
+\Psi \wedge \bigwedge_{i=1}^{j} t_j \teq c_j
+\]
+A solution of the above form for an optimization query
+satisfies semantic specifications only if 
+$( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
+satisfies the semantic specifications for
+for $\exists f_1, \ldots, f_n. \Psi_{o}$.
 
 \section{Calling Oracles}%
 \label{sec:oracleimplementations}
@@ -2312,6 +2379,12 @@ The oracle will return a list of values $\paren{w_{1} \ldots w_{m}}$, correspond
 %
 The solver calls the oracle with the command ${\tt N \,\,textfile.oracle}$, where ${\tt N}$ is the name of the oracle implememtation as specified in the oracle constraint declaration.
 
+\section{Objectives}%
+\label{sec:objectives}
+
+In this section, we standardize several common use cases of the $\optsynthkwd$ command.
+
+TODO
 
 \section{Examples}%
 \label{sec:examples}
