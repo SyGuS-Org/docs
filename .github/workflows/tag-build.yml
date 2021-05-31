@@ -2,7 +2,6 @@ name: Build LaTeX (Tag)
 
 on:
   push:
-    branches: master
     tags:
       - v*
 
