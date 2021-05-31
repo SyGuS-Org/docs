@@ -25,6 +25,7 @@ jobs:
         with:
           files: language/sygus.pdf
           draft: true
+          tag_name: none
           name: "SyGuS Language (Draft)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
