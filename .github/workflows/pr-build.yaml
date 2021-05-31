@@ -1,4 +1,4 @@
-name: Build LaTeX document
+name: Build LaTeX (PR)
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ jobs:
           working_directory: language
           root_file: sygus.tex
           pre_compile: "tlmgr update --self && tlmgr update --all"
-      - name: add artifact links to pull request and related issues step
+      - name: Comment Artifact Links on PR
         uses: tonyhallett/artifacts-url-comments@v1.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,5 +24,5 @@ jobs:
           prefix: PDF compilation was successful.
           suffix: (link to a compiled PDF with proposed changes)
           format: name
-          addTo: pullandissues
+          addTo: pull
           includes: language/sygus.pdf
