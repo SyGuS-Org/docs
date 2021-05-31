@@ -1,0 +1,28 @@
+name: Build LaTeX document
+
+on:
+  pull_request:
+    branches: master
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: language
+          root_file: sygus.tex
+          pre_compile: "tlmgr update --self && tlmgr update --all"
+      - name: add artifact links to pull request and related issues step
+        uses: tonyhallett/artifacts-url-comments@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prefix: PDF compilation was successful.
+          suffix: (link to a compiled PDF with proposed changes)
+          format: name
+          addTo: pullandissues
+          includes: language/sygus.pdf
