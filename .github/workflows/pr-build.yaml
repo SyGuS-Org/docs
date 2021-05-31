@@ -8,21 +8,16 @@ jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Git repository
+      - name: Set up Git Repository
         uses: actions/checkout@v2
-      - name: Compile LaTeX document
+      - name: Compile LaTeX Document
         uses: xu-cheng/latex-action@v2
         with:
           working_directory: language
           root_file: sygus.tex
           pre_compile: "tlmgr update --self && tlmgr update --all"
-      - name: Comment Artifact Links on PR
-        uses: tonyhallett/artifacts-url-comments@v1.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Compiled PDF
+        uses: actions/upload-artifact@v2
         with:
-          prefix: PDF compilation was successful.
-          suffix: (link to a compiled PDF with proposed changes)
-          format: name
-          addTo: pull
-          includes: language/sygus.pdf
+          name: sygus.pdf
+          path: language/sygus.pdf
