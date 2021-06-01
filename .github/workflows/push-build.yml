@@ -1,0 +1,31 @@
+name: Build LaTeX (Push)
+
+on:
+  push:
+    branches: master
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git Repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX Document
+        uses: xu-cheng/latex-action@v2
+        with:
+          working_directory: language
+          root_file: sygus.tex
+          pre_compile: "tlmgr update --self && tlmgr update --all"
+      - name: Delete Old Drafts
+        uses: hugo19941994/delete-draft-releases@v0.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create a Draft Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: language/sygus.pdf
+          draft: true
+          tag_name: none
+          name: "SyGuS Language (Draft)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

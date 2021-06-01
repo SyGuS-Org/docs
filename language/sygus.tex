@@ -180,7 +180,7 @@ for details.
 %\rem{Mention Start symbol change if applicable.}
 
 \item 
-The keyword ${\tt Start}$, which 
+The keyword \code|Start|, which 
 denoted the starting (non-terminal) symbol of
 grammars in the previous standard, has been removed.
 Instead, the first symbol listed in the grammar is assumed
@@ -214,17 +214,17 @@ with respect to the previous SyGuS format that come as a result of this change.
 First,
 negative integer and real constants must be written with
 unary negation, that is, the integer constant negative one
-must be written ${\tt (-\ 1)}$, whereas previously it could
-be written ${\tt -1}$.
+must be written \code|(- 1)|, whereas previously it could
+be written \code|-1|.
 Second,
-the syntax for bit-vectors sorts ${\tt (BitVec\ n)}$
-is now written  ${\tt (\_\ BitVec\ n)}$.
+the syntax for bit-vectors sorts \code|(BitVec n)|
+is now written  \code|(_ BitVec n)|.
 Third,
 all let-bindings do \emph{not} annotate the type of the variable being bound.
-Previously, a let-term was written ${\tt (let\ ((x\ T\ t)) ...)}$
-where ${\tt T}$ indicates the type of ${\tt t}$.
+Previously, a let-term was written \code|(let ((x T t)) ...)|
+where \code|T| indicates the type of \code|t|.
 Now, it must be written in the SMT-LIB compliant
-way ${\tt (let\ ((x\ t)) ...)}$.
+way \code|(let ((x t)) ...)|.
 
 \item
 The signature, syntax and semantics for the theory of strings
@@ -278,18 +278,17 @@ the constraints, grammars and commands that may appear in an input.
 
 \item The expected output for fail responses from a solver has changed.
 In particular,
-the response ${\tt (fail)}$ from the previous language standard
-should now be provided as ${\tt fail}$, that is, without parentheses.
-Additionally, a solver may answer ${\tt infeasible}$, indicating
-that it has determined there are no solutions to the given conjecture.
+the response \code|(fail)| from the previous language standard
+should now be provided as \code|fail|, that is, without parentheses.
+Additionally, a solver may answer \code|infeasible|,
+indicating that it has determined there are no solutions to the given conjecture.
 
 \end{enumerate}
 \subsubsection{Changes from SyGuS 2.0 to SyGuS 2.1}
 \begin{enumerate}
 \item We introduce the command $\assumekwd$, which introduces a list of assumptions $\alpha$, and the 
 synthesis conjecture is now 
-$\exists f_1, \ldots, f_n \ldotp \forall v_1, \ldots,
-v_m \ldotp \alpha \implies \varphi$. 
+$\exists f_1, \ldots, f_n \ldotp \forall v_1, \ldots, v_m \ldotp \alpha \implies \varphi$. 
 
 \item Oracle constraints are introduced. Oracle constraints are constraints that are generated when an external oracle is called with a concrete set of input values. The constraints are conjoined to the list of constraints $\varphi$ in the synthesis conjecture.
 
@@ -422,17 +421,17 @@ are interpreted as denoting characters of the string in a one-to-one corresponde
 with one exception:
 two consecutive double quotes within a string
 denote a single double quotes character.
-In other words, $\texttt{"}{\tt a}\texttt{"}\texttt{"}{\tt b}\texttt{"}$ denotes the string
-whose characters in order are ${\tt a}$, $\texttt{"}$ and ${\tt b}$.
-Strings such as $\texttt{"}{\tt \backslash n}\texttt{"}$ whose characters are commonly
+In other words, \code|"a""b"| denotes the string
+whose characters in order are \code|a|, \code|"| and \code|b|.
+Strings such as \code|"\n"| whose characters are commonly
 interpreted as escape sequences are not handled specially,
 meaning this string is interpreted 
-as the one consisting of two characters, ${\tt \backslash}$ followed by ${\tt n}$.
+as the one consisting of two characters, \code|\| followed by \code|n|.
 %\rem{TODO: double quotes within strings escape, no other escape}
 
 \noindent
 Literals are commonly
-used for denoting 0-ary symbols of a theory.
+used for denoting $0$-ary symbols of a theory.
 For example, 
 the theory of integer arithmetic 
 uses numerals to denote non-negative integer values.
@@ -451,16 +450,16 @@ and certain special characters (listed below), with the restriction that it may 
 begin with a digit and is not a reserved word (see \cref{apx:reserved} 
 for a full list of reserved words).
 A special character is any of the following:
-\[
-{\tt \_}\mbox{ }{\tt +}\mbox{ }{\tt -}\mbox{ }{\tt *}\mbox{ }{\tt \&}\mbox{ }{\tt |}\mbox{ }{\tt !}\mbox{ }{\tt \sim}\mbox{ }{\tt <}\mbox{ }{\tt >}\mbox{ }{\tt =}\mbox{ }{\tt /}\mbox{ }{\tt \%}\mbox{ }{\tt ?}\mbox{ }{\tt .}\mbox{ }{\tt \$}\mbox{ }{\tt \mathcircumflex}
-\]
+\begin{center}
+  \texttt{\_ + - * \& | ! \string~ < > = / \% ? . \$ \string^}
+\end{center}
 Note this definition coincides with simple
 symbols in Section 3.1 of SMT-LIB version 2.6,
 apart from differences in their reserved words.
 
 \paragraph{Keywords ($\keyword$)}
 Following SMT-LIB version 2.6,
-a keyword $\keyword$ is a symbol whose first character is $:$.
+a keyword $\keyword$ is a symbol whose first character is \code|:|.
 
 \subsection{Identifiers}
 
@@ -778,46 +777,42 @@ a block of zero or more \texttt{set-feature}
 and \texttt{set-option} commands in any order, 
 followed by zero or more instances of the other SyGuS commands.
 
-\subsection{Setting the Logic}
+\subsection{Setting the Logic}%
 \label{ssec:set-logic}
+
 The logic of a SyGuS specification consists of three parts ---
 an \emph{input logic}, an \emph{output logic} and a \emph{feature set}.
 Roughly, 
-the input logic determines what terms
-can appear in constraints and
-the output logic determines
-what terms can appear in grammars and solutions.
-The feature set places additional restrictions or extensions 
+the input logic determines what terms can appear in constraints,
+and the output logic determines what terms can appear in grammars and solutions.
+The feature set places additional restrictions or extensions
 on the constraints, grammars as well as the commands that are allowed in an input.
 These are described in detail in \cref{sec:sygus-logic}.
 
 \begin{itemize}
-\item $\paren{\setlogickwd\mbox{ }S}$
+\item $\paren{\setlogickwd\mbox{ }L}$
 
-This sets the SyGuS background logic
-to the one that $S$ refers to.
-The logic string $S$ can be a standard one defined in the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}
+This sets the SyGuS background logic to the one that $L$ refers to.
+The logic string $L$ can be a standard one defined in the SMT-LIB 2.6 standard~\cite{BarFT-RR-17}
 or may be solver-specific.
-If $S$ is an SMT-LIB standard logic,
-then it must 
-contain quantifiers or this command is not well-formed,
-that is, logics with the prefix ``${\tt QF\_}$'' are not allowed.\footnote{
+If $L$ is an SMT-LIB standard logic,
+then it must contain quantifiers or this command is not well-formed,
+that is, logics with the prefix \code|QF_| are not allowed.\footnote{
 By convention quantifiers are always included in the logic. This is because
 the overall synthesis conjecture specified by the
 state may involve universal quantification.
 }
-If this command is well-formed and $S$ is an SMT-LIB standard logic,
+If this command is well-formed and $L$ is an SMT-LIB standard logic,
 then this command sets the SyGuS logic to the one whose
-input and output logics are ${\tt QF\_}S$ and whose feature
+input and output logics are \code|QF_$L$| and whose feature
 set is the default one defined in this document (\cref{ssec:feature-sets}).
-In other words, when this command has $S$ as an argument
-and $S$ is an SMT-LIB standard logic, this
-indicates that that terms in the logic of $S$ are 
-allowed in constraints, grammars and solutions, but they are
-are restricted to be quantifier-free.
-As a consequence, 
-the overall synthesis conjectures 
-allowed by default when $S$ is a standard SMT-LIB logic
+In other words, when this command has $L$ as an argument
+and $L$ is an SMT-LIB standard logic,
+this indicates that that terms in the logic of $L$ are
+allowed in constraints, grammars and solutions,
+but they are are restricted to be quantifier-free.
+As a consequence,  the overall synthesis conjectures 
+allowed by default when $L$ is a standard SMT-LIB logic
 %by symbols $S$ that correspond to SMT-LIB standard logics
 have at most two levels of quantifier alternation.
 %For examples of common SMT logics, 
@@ -1187,7 +1182,7 @@ $\ldots$
 \end{lstlisting}
 where $v_1, v'_1, \ldots, v_n, v'_n$ are fresh symbols.
 
-\item \code|($\constraintchckwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) $t_{tail}$ $t_{head}$)|
+\item \code|($\constraintchckwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_m$ $\sigma_m$)) $t_{body}$ $t_{head}$)|
 
 This command adds a universally quantified implication constraint to the current state
 in the form of a constrained Horn clause (CHC).
@@ -1203,7 +1198,7 @@ that allows for specifying problems with multiple, possibly interdependent,
 invariant predicates to be synthesized.
 
 A constraint of this form is well-formed if
-the \emph{body} of the CHC (i.e., $t_{tail}$) and the \emph{head} of the CHC (i.e., $t_{head}$)
+the \emph{body} of the CHC (i.e., $t_{body}$) and the \emph{head} of the CHC (i.e., $t_{head}$)
 are both well-sorted terms of $\sbool$ sort.
 
 When this command is well-formed, given the above definitions,
@@ -2421,11 +2416,11 @@ Consider the following example:
 \begin{lstlisting}[language=SyGuS]
 (set-logic LIA)
 (synth-fun f ((x Int) (y Int)) Int
-   ((I Int) (Ic Int))
-   ((I Int (0 1 x y
-            (+ I I)
-            (* Ic I)))
-    (Ic Int (0 1 2 (- 1) (- 2)))))
+  ((I Int) (Ic Int))
+  ((I Int (0 1 x y
+           (+ I I)
+           (* Ic I)))
+   (Ic Int (0 1 2 (- 1) (- 2)))))
 (declare-var x Int)
 (declare-var y Int)
 (constraint (= (f x y) (* 2 (+ x y))))
@@ -2449,7 +2444,7 @@ since all closed terms that the grammar generates are allowed by linear arithmet
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
+  (define-fun f ((x Int) (y Int)) Int (+ (* 2 x) (* 2 y)))
 )
 \end{lstlisting}
 \end{example}
@@ -2458,18 +2453,23 @@ A possible correct response for this example from a synthesis solver is:
 Consider the following example:
 \begin{lstlisting}[language=SyGuS]
 (set-logic DTLIA)
-(declare-datatypes ((List 0)) (((nil) (cons (head Int) (tail List)))))
+(declare-datatype List
+  ((nil)
+   (cons (head Int) (tail List))))
 (synth-fun f ((x List)) Int
-   ((I Int) (L List) (B Bool))
-   ((I Int (0 1 
-            (head L) 
-            (+ I I)
-            (ite B I I)))
-    (L List (nil x (cons I L) (tail L)))
-    (B Bool (((_ is nil) L) 
-             ((_ is cons) L)
-             (= I I)
-             (>= I I)))))
+  ((I Int) (L List) (B Bool))
+  ((I Int (0 1 
+           (head L)
+           (+ I I)
+           (ite B I I)))
+   (L List (nil
+            x
+            (cons I L)
+            (tail L)))
+   (B Bool (((_ is nil) L)
+            ((_ is cons) L)
+            (= I I)
+            (>= I I)))))
 (constraint (= (f (cons 4 nil)) 5))
 (constraint (= (f (cons 0 nil)) 1))
 (constraint (= (f nil) 0))
@@ -2488,7 +2488,7 @@ discriminators ${\tt (\_\ is\ nil)}$ and ${\tt (\_\ is\ cons)}$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
+  (define-fun f ((x List)) Int (ite ((_ is nil) x) 0 (+ 1 (head x))))
 )
 \end{lstlisting}
 In other words, a possible solution for $f$ returns zero whenever its
@@ -2501,20 +2501,20 @@ Consider the following example:
 \begin{lstlisting}[language=SyGuS]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
-   ((BV32 (_ BitVec 32)) (BV16 (_ BitVec 16)))
-   ((BV32 (_ BitVec 32) (#x00000000 #x00000001 #xFFFFFFFF
-                         x
-                         (bvand BV32 BV32)
-                         (bvor BV32 BV32)
-                         (bvnot BV32)
-                         (concat BV16 BV16)
-                         ))
-    (BV16 (_ BitVec 16) (#x0000 #x0001 #xFFFF
-                         (bvand BV16 BV16)
-                         (bvor BV16 BV16)
-                         (bvnot BV16)
-                         ((_ extract 31 16) BV32)
-                         ((_ extract 15 0) BV32)))))
+  ((BV32 (_ BitVec 32)) (BV16 (_ BitVec 16)))
+  ((BV32 (_ BitVec 32) (#x00000000 #x00000001 #xFFFFFFFF
+                        x
+                        (bvand BV32 BV32)
+                        (bvor BV32 BV32)
+                        (bvnot BV32)
+                        (concat BV16 BV16)
+                        ))
+   (BV16 (_ BitVec 16) (#x0000 #x0001 #xFFFF
+                        (bvand BV16 BV16)
+                        (bvor BV16 BV16)
+                        (bvnot BV16)
+                        ((_ extract 31 16) BV32)
+                        ((_ extract 15 0) BV32)))))
 (constraint (= (f #x0782ECAD) #xECAD0000))
 (constraint (= (f #xFFFF008E) #x008E0000))
 (constraint (= (f #x00000000) #x00000000))
@@ -2534,8 +2534,8 @@ argument, where $n \geq m$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((x (_ BitVec 32))) (_ BitVec 32) 
-   (concat ((_ extract 15 0) x) #x0000))
+  (define-fun f ((x (_ BitVec 32))) (_ BitVec 32)
+     (concat ((_ extract 15 0) x) #x0000))
 )
 \end{lstlisting}
 In other words, a possible solution for $f$ 
@@ -2588,16 +2588,16 @@ Consider the following example:
 (set-feature :recursion true)
 (define-fun x_plus_one ((x Int)) Int (+ x 1))
 (synth-fun f ((x Int)) Int
-   ((I Int))
-   ((I Int (0 1 x (x_plus_one I)))))
+  ((I Int))
+  ((I Int (0 1 x (x_plus_one I)))))
 (define-fun fx_plus_one ((x Int)) Int (+ (f x) 1))
 (synth-fun g ((x Int)) Int
-   ((I Int))
-   ((I Int (0 1 x (fx_plus_one I)))))
+  ((I Int))
+  ((I Int (0 1 x (fx_plus_one I)))))
 (synth-fun h ((x Int)) Int
-   ((I Int) (B Bool))
-   ((I Int (0 1 x (- I 1) (+ I I) (h I) (ite B I I)))
-    (B Bool ((= I I) (> I I)))))
+  ((I Int) (B Bool))
+  ((I Int (0 1 x (- I 1) (+ I I) (h I) (ite B I I)))
+   (B Bool ((= I I) (> I I)))))
 (declare-var y Int)
 (constraint (= (h y) (- (g y) (f y))))
 (check-synth)
@@ -2615,9 +2615,9 @@ This grammar is allowed since $\frecursionkwd$ is enabled in this example.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((x Int)) Int x)
-(define-fun g ((x Int)) Int (fx_plus_one x))
-(define-fun h ((x Int)) Int 1)
+  (define-fun f ((x Int)) Int x)
+  (define-fun g ((x Int)) Int (fx_plus_one x))
+  (define-fun h ((x Int)) Int 1)
 )
 \end{lstlisting}
 Notice the above definitions for $f$, $g$, and $h$ are given 
@@ -2630,19 +2630,19 @@ Consider the following example:
 \begin{lstlisting}[language=SyGuS]
 (set-logic PBE_SLIA)
 (synth-fun f ((fname String) (lname String)) String
-    ((ntString String) (ntInt Int))
-    ((ntString String (fname lname " "
-                       (str.++ ntString ntString)
-                       (str.replace ntString ntString ntString)
-                       (str.at ntString ntInt)
-                       (str.from_int ntInt)
-                       (str.substr ntString ntInt ntInt)))
-     (ntInt Int (0 1 2
-                 (+ ntInt ntInt)
-                 (- ntInt ntInt)
-                 (str.len ntString)
-                 (str.to_int ntString)
-                 (str.indexof ntString ntString ntInt)))))
+  ((y_str String) (y_int Int))
+  ((y_str String (" " fname lname
+                  (str.++ y_str y_str)
+                  (str.replace y_str y_str y_str)
+                  (str.at y_str y_int)
+                  (str.from_int y_int)
+                  (str.substr y_str y_int y_int)))
+     (y_int Int (0 1 2
+                 (+ y_int y_int)
+                 (- y_int y_int)
+                 (str.len y_str)
+                 (str.to_int y_str)
+                 (str.indexof y_str y_str y_int)))))
 (constraint (= (f "Nancy" "FreeHafer") "Nancy FreeHafer"))
 (constraint (= (f "Andrew" "Cencici") "Andrew Cencici"))
 (constraint (= (f "Jan" "Kotas") "Jan Kotas"))
@@ -2657,8 +2657,8 @@ restriction of being a PBE equality.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((fname String) (lname String)) String
-  (str.++ fname (str.++ " " lname)))
+  (define-fun f ((fname String) (lname String)) String
+    (str.++ fname (str.++ " " lname)))
 )
 \end{lstlisting}
 \end{example}
@@ -2670,8 +2670,11 @@ Consider the following example:
 (set-feature :weights true)
 (declare-weight numX)
 (synth-fun f ((x Int)) Int
-   ((I Int))
-   ((I Int (0 1 (! x :numX 1) (+ I I) (! (* x x) :numX 2)))))
+  ((I Int))
+  ((I Int (0 1
+           (! x :numX 1)
+           (+ I I)
+           (! (* x x) :numX 2)))))
 (constraint (= (_ numX f) 3))
 (check-synth)
 \end{lstlisting}
@@ -2683,7 +2686,7 @@ the weight keyword $\texttt{numX}$ must be $3$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((x Int)) Int (+ x (* x x)))
+  (define-fun f ((x Int)) Int (+ x (* x x)))
 )
 \end{lstlisting}
 \end{example}
@@ -2695,8 +2698,11 @@ Consider the following example:
 (set-feature :weights true)
 (declare-weight numI)
 (synth-fun f ((x Int)) Int
-   ((I Int))
-   ((I Int (0 1 x (+ x 1) (! (- I) :numI 1) (! (+ I I) :numI 2)))))
+  ((I Int))
+  ((I Int (0 1 x
+           (+ x 1)
+           (! (- I) :numI 1)
+           (! (+ I I) :numI 2)))))
 (define-fun numRulesForF () Int (+ (_ numI f) 1))
 (declare-var x Int)
 (constraint (and (> (f x) x) (< numRulesForF 3)))
@@ -2711,7 +2717,7 @@ rules used for generating the body of $f$.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun f ((x Int)) Int (+ x 1))
+  (define-fun f ((x Int)) Int (+ x 1))
 )
 \end{lstlisting}
 In this example,
@@ -2834,17 +2840,17 @@ can be expressed in SyGuS as follows:
 (check-synth)
 \end{lstlisting}
 In this example, the logic is set to the SyGuS-specific logic
-${\tt Inv\_LIA}$, indicating linear integer arithmetic
+\code|Inv_LIA|, indicating linear integer arithmetic
 where constraints are limited to the invariant synthesis problem for
 a single invariant-to-synthesize.
 Since this example contains only linear integer arithmetic terms,
-a single predicate-to-synthesize ${\tt inv-f}$,
+a single predicate-to-synthesize \code|inv-f|,
 and only introduces constraints via a single $\constraintinvkwd$ command,
 it meets the restrictions of the logic.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun inv-f ((x Int) (y Int)) Bool (> x y))
+  (define-fun inv-f ((x Int) (y Int)) Bool (> x y))
 )
 \end{lstlisting}
 \end{example}
@@ -2870,14 +2876,14 @@ In this example, the logic is set to the SyGuS-specific logic
 \code|CHC_LIA|, indicating linear integer arithmetic
 where constraints are limited to constrained Horn clauses.
 Since this example contains only linear integer arithmetic terms,
-only predicate symbols to be synthesized (i.e., $\texttt{inv-f}$),
+only predicate symbols to be synthesized (i.e., \code|inv-f|,
 only introduces valid CHCs via $\constraintchckwd$ command, and
 only a single CHC query,
 it meets the restrictions of the logic.
 As for the previous example, a possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun inv-f ((x Int) (y Int)) Bool (> x y))
+  (define-fun inv-f ((x Int) (y Int)) Bool (> x y))
 )
 \end{lstlisting}
 \end{example}
@@ -2932,8 +2938,8 @@ it meets the restrictions of the logic.
 A possible correct response for this example from a synthesis solver is:
 \begin{lstlisting}[language=SyGuS]
 (
-(define-fun inv1 ((x Int) (y Int) (n Int)) Bool (= x (+ y n)))
-(define-fun inv2 ((x Int) (y Int) (n Int)) Bool (= x (* 2 (+ y n))))
+  (define-fun inv1 ((x Int) (y Int) (n Int)) Bool (= x (+ y n)))
+  (define-fun inv2 ((x Int) (y Int) (n Int)) Bool (= x (* 2 (+ y n))))
 )
 \end{lstlisting}
 \end{example}
@@ -2949,17 +2955,17 @@ A possible correct response for this example from a synthesis solver is:
 
 A \emph{reserved word} is any of the 
 literals from \cref{ssec:literals},
-or any of the following keywords:
-$!$,
-$\_$,
+or any of the following keywords:\\
+\code|!|,
+\code|_|,
 $\checksynthkwd$,
 $\constantkwd$,
 $\constraintchckwd$,
 $\constraintkwd$,
+$\corrcexoracledeckwd$,
+$\corroracledeckwd$,
 $\dtdeclkwd$,
 $\dtsdeclkwd$,
-$\corroracledeckwd$,
-$\corrcexoracledeckwd$,
 $\oracledeckwd$,
 $\sortdeclkwd$,
 $\vardeclkwd$,
@@ -3024,28 +3030,27 @@ linear integer arithmetic (LIA) with one free integer variable ${\tt x}$.
 \begin{lstlisting}[language=SyGuS]
 (set-logic LIA)
 (synth-fun f ((x Int)) Int
-   ((y_term Int) (y_cons Int) (y_pred Bool))
-   ((y_term Int  (y_cons
-                  (Variable Int)
-                  (- y_term)
-                  (+ y_term y_term)
-                  (- y_term y_term)
-                  (* y_cons y_term)
-                  (* y_term y_cons)
-                  (div y_term y_cons)
-                  (mod y_term y_cons)
-                  (abs y_term)
-                  (ite y_pred y_term y_term)))
-    (y_cons Int  ((Constant Int)))
-    (y_pred Bool ((= y_term y_term)
-                  (> y_term y_term)
-                  (>= y_term y_term)
-                  (< y_term y_term)
-                  (<= y_term y_term)))))
+  ((y_int Int) (y_const_int Int) (y_bool Bool))
+  ((y_int Int (y_const_int
+               (Variable Int)
+               (- y_int)
+               (+ y_int y_int)
+               (- y_int y_int)
+               (* y_const_int y_int)
+               (* y_int y_const_int)
+               (div y_int y_const_int)
+               (mod y_int y_const_int)
+               (abs y_int)
+               (ite y_bool y_int y_int)))
+   (y_const_int Int ((Constant Int)))
+   (y_bool Bool ((= y_int y_int)
+                 (> y_int y_int)
+                 (>= y_int y_int)
+                 (< y_int y_int)
+                 (<= y_int y_int)))))
 \end{lstlisting}
-Above, ${\tt div}$
-denotes integer division,
-${\tt mod}$ denotes integer modulus and ${\tt abs}$ denotes
+Above, \code|div| denotes integer division,
+\code|mod| denotes integer modulus and \code|abs| denotes
 the absolute value function.
 Positive integer constants and zero are written using the syntax
 for numerals $\intconst$. Negative integer constants
@@ -3053,26 +3058,26 @@ are written as the unary negation of a positive integer constant.
 
 The following grammar for $g$ generates exactly the integer-typed terms in the logic of
 non-linear integer arithmetic (NIA)
-with one free integer variable ${\tt x}$.
+with one free integer variable $x$.
 \begin{lstlisting}[language=SyGuS]
 (set-logic NIA)
 (synth-fun g ((x Int)) Int
-   ((y_term Int) (y_pred Bool))
-   ((y_term Int  ((Constant Int) 
-                  (Variable Int)
-                  (- y_term)
-                  (+ y_term y_term)
-                  (- y_term y_term)
-                  (* y_term y_term)
-                  (div y_term y_term)
-                  (mod y_term y_term)
-                  (abs y_term)
-                  (ite y_pred y_term y_term)))
-    (y_pred Bool ((= y_term y_term)
-                  (> y_term y_term)
-                  (>= y_term y_term)
-                  (< y_term y_term)
-                  (<= y_term y_term)))))
+  ((y_int Int) (y_bool Bool))
+  ((y_int Int ((Constant Int)
+               (Variable Int)
+               (- y_int)
+               (+ y_int y_int)
+               (- y_int y_int)
+               (* y_int y_int)
+               (div y_int y_int)
+               (mod y_int y_int)
+               (abs y_int)
+               (ite y_bool y_int y_int)))
+   (y_bool Bool ((= y_int y_int)
+                 (> y_int y_int)
+                 (>= y_int y_int)
+                 (< y_int y_int)
+                 (<= y_int y_int)))))
 \end{lstlisting}
 
 \subsection{Real Arithmetic}
@@ -3080,77 +3085,77 @@ with one free integer variable ${\tt x}$.
 The following grammar for $f$
 generates exactly the real-typed terms in the logic of
 linear real arithmetic (LRA)
-with one free real variable ${\tt x}$.
+with one free real variable $x$.
 \begin{lstlisting}[language=SyGuS]
 (set-logic LRA)
 (synth-fun f ((x Real)) Real
-   ((y_term Real) (y_cons Real) (y_pred Bool))
-   ((y_term Real (y_cons 
-                  (Variable Real) 
-                  (- y_term)
-                  (+ y_term y_term)
-                  (- y_term y_term)
-                  (* y_cons y_term)
-                  (* y_term y_cons)
-                  (ite y_pred y_term y_term)))
-    (y_cons Real ((Constant Real)))
-    (y_pred Bool ((= y_term y_term)
-                  (> y_term y_term)
-                  (>= y_term y_term)
-                  (< y_term y_term)
-                  (<= y_term y_term)))))
+  ((y_real Real) (y_const_real Real) (y_bool Bool))
+  ((y_real Real (y_const_real 
+                 (Variable Real) 
+                 (- y_real)
+                 (+ y_real y_real)
+                 (- y_real y_real)
+                 (* y_const_real y_real)
+                 (* y_real y_const_real)
+                 (/ y_real y_const_real)
+                 (ite y_bool y_real y_real)))
+   (y_const_real Real ((Constant Real)))
+   (y_bool Bool ((= y_real y_real)
+                 (> y_real y_real)
+                 (>= y_real y_real)
+                 (< y_real y_real)
+                 (<= y_real y_real)))))
 \end{lstlisting}
 Notice that positive real constants and zero can either be written 
 as decimal values using the syntax $\realconst$
 or as rationals, e.g. the division of two numerals
-${\tt (/\ m\ n)}$ where $n$ is not zero.
+\code|(/ m n)| where $n$ is not zero.
 Negative reals are written either as the unary negation of decimal value 
-or a rational of the form ${\tt (/\ (-\ m)\ n)}$ for numerals $m$ and $n$
+or a rational of the form \code|(/ (- m) n)| for numerals $m$ and $n$
 where $n$ is not zero.
 
-The grammar for $g$
+The following grammar for $g$
 generates exactly the real-typed terms in the logic of
 non-linear real arithmetic (NRA)
-with one free real variable ${\tt x}$.
+with one free real variable $x$.
 \begin{lstlisting}[language=SyGuS]
 (set-logic NRA)
 (synth-fun g ((x Real)) Real
-   ((y_term Real) (y_pred Bool))
-   ((y_term Real ((Constant Real) 
-                  (Variable Real)
-                  (- y_term)
-                  (+ y_term y_term)
-                  (- y_term y_term)
-                  (* y_term y_term)
-                  (/ y_term y_term)
-                  (ite y_pred y_term y_term)))
-    (y_pred Bool ((= y_term y_term)
-                  (> y_term y_term)
-                  (>= y_term y_term)
-                  (< y_term y_term)
-                  (<= y_term y_term)))))
+  ((y_real Real) (y_bool Bool))
+  ((y_real Real ((Constant Real) 
+                 (Variable Real)
+                 (- y_real)
+                 (+ y_real y_real)
+                 (- y_real y_real)
+                 (* y_real y_real)
+                 (/ y_real y_real)
+                 (ite y_bool y_real y_real)))
+   (y_bool Bool ((= y_real y_real)
+                 (> y_real y_real)
+                 (>= y_real y_real)
+                 (< y_real y_real)
+                 (<= y_real y_real)))))
 \end{lstlisting}
 
 \subsection{Fixed-Width Bit-Vectors}
 
-The signature of bit-vectors includes an indexed sort
-${\tt BitVec}$, which is indexed by an integer constant that denotes
-its bit-width. We show a grammar below for one particular
-choice of this bit-width, $32$.
+The signature of bit-vectors includes an indexed sort \code|BitVec|,
+which is indexed by an integer constant that denotes its bit-width.
+We show a grammar below for one particular choice of this bit-width, $32$.
 We omit indexed bit-vector operators
-such as extraction function ${\tt (\_\ extract\ n\ m)}$, 
-the concatenation function ${\tt concat}$,
+such as extraction function \code|(_ extract m n)|,
+the concatenation function \code|concat|,
 since these operators are polymorphic.
 For brevity,
 we also omit the \emph{extended} operators of this theory
 as denoted by SMT-LIB,
 which includes functions like
-bit-vector subtraction ${\tt bvsub}$,
-xor ${\tt bvxor}$,
-signed division ${\tt bvsdiv}$,
+bit-vector subtraction \code|bvsub|,
+exclusive or \code|bvxor|,
+signed division \code|bvsdiv|,
 and predicates like
-unsigned-greater-than-or-equal ${\tt bvuge}$
-and signed-less-than ${\tt bvslt}$.
+unsigned-greater-than-or-equal \code|bvuge|
+and signed-less-than \code|bvslt|.
 These extended operators can be seen as syntactic sugar for the
 operators in the grammar below.
 Example inputs that involve 
@@ -3161,58 +3166,58 @@ some of the omitted operators are given in \cref{sec:examples}.
 \begin{lstlisting}[language=SyGuS]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
-   ((y_term (_ BitVec 32)) (y_pred Bool))
-   ((y_term (_ BitVec 32) ((Constant (_ BitVec 32))
+  ((y_bv (_ BitVec 32)) (y_bool Bool))
+  ((y_bv (_ BitVec 32) ((Constant (_ BitVec 32))
                            (Variable (_ BitVec 32))
-                           (bvnot y_term)
-                           (bvand y_term y_term)
-                           (bvor y_term y_term)
-                           (bvneg y_term)
-                           (bvadd y_term y_term)
-                           (bvmul y_term y_term)
-                           (bvudiv y_term y_term)
-                           (bvurem y_term y_term)
-                           (bvshl y_term y_term)
-                           (bvlshr y_term y_term)
-                           (bvnand y_term y_term)
-                           (bvnor y_term y_term)
-                           (bvxor y_term y_term)
-                           (bvxnor y_term y_term)
-                           (bvsub y_term y_term)
-                           (bvsdiv y_term y_term)
-                           (bvsrem y_term y_term)
-                           (bvsmod y_term y_term)
-                           (bvashr y_term y_term)
-                           (ite y_pred y_term y_term)))
-    (y_pred Bool (...
-                  (bvult y_term y_term)
-                  (bvule y_term y_term)
-                  (bvugt y_term y_term)
-                  (bvuge y_term y_term)
-                  (bvslt y_term y_term)
-                  (bvsle y_term y_term)
-                  (bvsgt y_term y_term)
-                  (bvsge y_term y_term))))))
+                           (bvnot y_bv)
+                           (bvand y_bv y_bv)
+                           (bvor y_bv y_bv)
+                           (bvneg y_bv)
+                           (bvadd y_bv y_bv)
+                           (bvmul y_bv y_bv)
+                           (bvudiv y_bv y_bv)
+                           (bvurem y_bv y_bv)
+                           (bvshl y_bv y_bv)
+                           (bvlshr y_bv y_bv)
+                           (bvnand y_bv y_bv)
+                           (bvnor y_bv y_bv)
+                           (bvxor y_bv y_bv)
+                           (bvxnor y_bv y_bv)
+                           (bvsub y_bv y_bv)
+                           (bvsdiv y_bv y_bv)
+                           (bvsrem y_bv y_bv)
+                           (bvsmod y_bv y_bv)
+                           (bvashr y_bv y_bv)
+                           (ite y_bool y_bv y_bv)))
+    (y_bool Bool (...
+                  (bvult y_bv y_bv)
+                  (bvule y_bv y_bv)
+                  (bvugt y_bv y_bv)
+                  (bvuge y_bv y_bv)
+                  (bvslt y_bv y_bv)
+                  (bvsle y_bv y_bv)
+                  (bvsgt y_bv y_bv)
+                  (bvsge y_bv y_bv))))))
 \end{lstlisting}
 \end{comment}
 \begin{lstlisting}[language=SyGuS]
 (set-logic BV)
 (synth-fun f ((x (_ BitVec 32))) (_ BitVec 32)
-   ((y_term (_ BitVec 32)) (y_pred Bool))
-   ((y_term (_ BitVec 32) ((Constant (_ BitVec 32))
-                           (Variable (_ BitVec 32))
-                           (bvnot y_term)
-                           (bvand y_term y_term)
-                           (bvor y_term y_term)
-                           (bvneg y_term)
-                           (bvadd y_term y_term)
-                           (bvmul y_term y_term)
-                           (bvudiv y_term y_term)
-                           (bvurem y_term y_term)
-                           (bvshl y_term y_term)
-                           (bvlshr y_term y_term)
-                           (ite y_pred y_term y_term)))
-    (y_pred Bool ((bvult y_term y_term))))))
+  ((y_bv (_ BitVec 32)) (y_bool Bool))
+  ((y_bv (_ BitVec 32) ((Constant (_ BitVec 32))
+                        (Variable (_ BitVec 32))
+                        (bvnot y_bv)
+                        (bvand y_bv y_bv)
+                        (bvor y_bv y_bv)
+                        (bvneg y_bv)
+                        (bvadd y_bv y_bv)
+                        (bvmul y_bv y_bv)
+                        (bvudiv y_bv y_bv)
+                        (bvurem y_bv y_bv)
+                        (bvshl y_bv y_bv)
+                        (bvlshr y_bv y_bv)
+                        (ite y_bool y_bv y_bv)))
+   (y_bool Bool ((bvult y_bv y_bv)))))
 \end{lstlisting}
 Bit-vector constants may be specified
 using either the hexadecimal format $\hexconst$
@@ -3233,61 +3238,61 @@ have been omitted from the grammar below for the sake of brevity.
 \begin{lstlisting}[language=SyGuS]
 (set-logic S)
 (synth-fun f ((xs String) (xr RegLan) (xi Int)) String
-   ((y_term_str String) (y_term_rl RegLan) (y_term_int Int) (y_pred Bool))
-   ((y_term_str String (
-        (Constant String)
-        (Variable String)
-        (str.++ y_term_str y_term_str)
-        (str.at y_term_str y_term_str)
-        (str.substr y_term_str y_term_int y_term_int)
-        (str.indexof y_term_str y_term_str y_term_int)
-        (str.replace y_term_str y_term_str y_term_str)
-        (str.from_int y_term_int)
-        (str.from_code y_term_int)
-        (ite y_pred y_term_str y_term_str))
-    )
-    (y_term_rl RegLan ((Constant String)
-                       (Variable String)
-                       re.none
-                       re.all
-                       re.allchar
-                       (str.to_re y_term_str)
-                       (re.++ y_term_rl y_term_rl)
-                       (re.union y_term_rl y_term_rl)
-                       (re.inter y_term_rl y_term_rl)
-                       (re.* y_term_rl)
-                       (re.+ y_term_rl)
-                       (re.opt y_term_rl)
-                       (re.range y_term_str y_term_str))
-    (y_term_int Int ((Variable Int)
-                     (str.len y_term_str)
-                     (str.to_int y_term_str)
-                     (str.to_code y_term_str)
-                     (ite y_pred y_term_int y_term_int)))
-    (y_pred Bool ((str.in_re y_term_str y_term_rl)
-                  (str.contains y_term_str y_term_str)
-                  (str.prefixof y_term_str y_term_str)
-                  (str.suffixof y_term_str y_term_str)
-                  (str.< y_term_str y_term_str)
-                  (str.<= y_term_str y_term_str)
-                  (str.is_digit y_term_str)))))
+  ((y_str String) (y_rl RegLan) (y_int Int) (y_bool Bool))
+  ((y_str String ((Constant String)
+                  (Variable String)
+                  (str.++ y_str y_str)
+                  (str.at y_str y_str)
+                  (str.substr y_str y_int y_int)
+                  (str.indexof y_str y_str y_int)
+                  (str.replace y_str y_str y_str)
+                  (str.from_int y_int)
+                  (str.from_code y_int)
+                  (ite y_bool y_str y_str)))
+    (y_rl RegLan ((Constant RegLan)
+                  (Variable RegLan)
+                  re.none
+                  re.all
+                  re.allchar
+                  (str.to_re y_str)
+                  (re.++ y_rl y_rl)
+                  (re.union y_rl y_rl)
+                  (re.inter y_rl y_rl)
+                  (re.* y_rl)
+                  (re.+ y_rl)
+                  (re.opt y_rl)
+                  (re.range y_str y_str)
+    (y_int Int ((Constant Int)
+                (Variable Int)
+                (str.len y_str)
+                (str.to_int y_str)
+                (str.to_code y_str)
+                (ite y_bool y_int y_int)))
+    (y_bool Bool ((Constant Bool)
+                  (Variable Bool)
+                  (str.in_re y_str y_rl)
+                  (str.contains y_str y_str)
+                  (str.prefixof y_str y_str)
+                  (str.suffixof y_str y_str)
+                  (str.< y_str y_str)
+                  (str.<= y_str y_str)
+                  (str.is_digit y_str)))))
 \end{lstlisting}
 String constants may be specified by text delimited by double quotes
 based on the syntax $\stringconst$ described in \cref{ssec:literals}.
-The sort ${\tt RegLan}$ denotes the regular expression sort.
+The sort \code|RegLan| denotes the regular expression sort.
 Its values are all ground (i.e. variable free) regular expressions.
 
-Notice that since the logic specified above is ${\tt S}$.
+Notice that since the logic specified above is \code|S|.
 The signature of this logic includes 
-some functions involving the integer sort like
-${\tt str.len}$.
+some functions involving the integer sort like \code|str.len|.
 However, the above logic does not permit inputs containing
 integer constants or the standard symbols of arithmetic like 
-${\tt +}, {\tt -}$, ${\tt >=}$ and so on, since the logic ${\tt S}$
+\code|+|, \code|-|, \code|>=| and so on, since the logic \code|S|
 does not include the theory of integer arithmetic.
 Thus in pratice, 
 the string theory is frequently combined with the theory of integers
-in the logic ${\tt SLIA}$, i.e. strings with linear integer arithmetic.
+in the logic \code|SLIA|, i.e. strings with linear integer arithmetic.
 
 \section{Language Features of SMT-LIB not Covered}%
 \label{apx:not-covered}

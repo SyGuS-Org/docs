@@ -1,5 +1,5 @@
 \lstset{
-    basicstyle=\ttfamily\color{black!80!white},
+    basicstyle=\ttfamily\small\color{black!80!white},
     captionpos=b,
     extendedchars=true,
     tabsize=2,
@@ -8,51 +8,70 @@
     showstringspaces=false,
     breaklines=true,
     commentstyle=\color{gray!90!white},
-    keywordstyle=[1]\color{blue!75!black},
-    keywordstyle=[2]\color{orange!75!black},
-    keywordstyle=[3]\color{teal!90!black},
-    keywordstyle=[4]\color{red!65!black},
-    keywordstyle=[5]\color{green!45!black},
-    keywordstyle=[6]\color{purple!95!black},
-    keywordstyle=[7]\color{black},
+    keywordstyle=\color{blue!75!black},
     sensitive=true,
     numbers=left,
     numberblanklines=false,
     numbersep=8pt,
-    numberstyle=\ttfamily\fontsize{8pt}{8.5}\selectfont\color{gray!60!white},
+    numberstyle=\ttfamily\scriptsize\color{gray!60!white},
     xleftmargin=2em,
 }
 
 \lstdefinelanguage{C-Like}[]{C}{
+    keywordstyle=[3]\color{teal!90!black},
     keywords=[3]{assume, assert}
 }
 
 \lstdefinelanguage{SyGuS}{
-    alsoletter={\_,-,+,*,=,>,<,:},
+    alsoletter={\_,-,+,*,=,>,<,:,!},
     mathescape=true,
+    emptylines=0,
     texcl=true,
     morecomment=[l]{;},
-    morestring=[b]",
-    keywords=[1]{check-synth, %
-                 set-feature, set-logic, set-option},
-    keywords=[2]{BV, CHC, CHC_, CHC_QF_, CHC_LIA, DTLIA, DTNIA, %
-                 Inv, Inv_, Inv_QF_, Inv\_LIA, LIA, LRA, NIA, %
-                 PBE, PBE_, PBE\_SLIA, QF_, S, SLIA},
-    keywords=[3]{declare-var, %
-                 declare-datatype, declare-datatypes, %
-                 declare-sort, %
-                 define-fun, define-sort},
-    keywords=[4]{assume, %
-                 chc-constraint, constraint, inv-constraint},
-    keywords=[5]{synth-fun},
-    keywords=[6]{oracle-assume, oracle-constraint, %
-                 declare-weight, declare-oracle-fun, %
-                 declare-correctness-oracle, declare-correctness-cex-oracle, %
-                 oracle-constraint-cex, oracle-constraint-io, %
-                 oracle-constraint-membership, %
-                 oracle-constraint-poswitness, oracle-constraint-negwitness}
-    keywords=[7]{:fwd-decls, :grammars, :oracles, :recursion}
-    keywords=[10]{optimize-synth}
+    morestring=[d][]{\"},
+    % commands
+    keywordstyle=[10]\color{blue!75!black},
+    keywords=[10]{check-synth, %
+                  optimize-synth, %
+                  set-feature, set-logic, set-option},
+    % background logics, sorts etc.
+    keywordstyle=[20]\color{purple},
+    keywords=[20]{BV, CHC, CHC_, CHC_QF_, CHC_LIA, DTLIA, DTNIA, %
+                  Inv, Inv_, Inv_QF_, Inv\_LIA, LIA, LRA, NIA, %
+                  PBE, PBE_, PBE\_SLIA, QF_, S, SLIA},
+    %
+    keywordstyle=[21]\color{purple!80!black},
+    keywords=[21]{BitVec, Bool, Int, List, Real, RegLan, String},
+    % symbols declarations and definitions
+    keywordstyle=[30]\color{teal!90!black},
+    keywords=[30]{declare-var, %
+                  declare-datatype, declare-datatypes, %
+                  declare-weight, declare-sort, %
+                  define-fun, define-sort},
+    % builtins
+    keywordstyle=[40]\color{cyan!45!black},
+    keywords=[40]{!, \_, Constant, Variable},
+    % constraints
+    keywordstyle=[50]\color{red!70!darkgray},
+    keywords=[50]{assume, %
+                  chc-constraint, constraint, inv-constraint},
+    % synthesis targets
+    keywordstyle=[60]\color{green!45!black},
+    keywords=[60]{synth-fun},
+    % oracle specific
+    keywordstyle=[70]\color{yellow},
+    keywords=[70]{oracle-assume, oracle-constraint, %
+                  declare-oracle-fun, %
+                  declare-correctness-oracle, declare-correctness-cex-oracle, %
+                  oracle-constraint-cex, oracle-constraint-io, %
+                  oracle-constraint-membership, %
+                  oracle-constraint-poswitness, oracle-constraint-negwitness},
+    % features
+    keywordstyle=[80]\color{black},
+    keywords=[80]{:fwd-decls, :grammars, :oracles, :recursion, :weights},
+    % features
+    keywordstyle=[90]\color{orange!70!black},
+    keywords=[90]{fail, infeasible}
 }
 
-\global\long\def\code{\lstinline[language=SyGuS]}
+\global\long\def\code{\lstinline[language=SyGuS, basicstyle=\ttfamily\color{black!80!white}]}
