@@ -2316,6 +2316,9 @@ $( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
 satisfies the semantic specifications
 for the synthesis conjecture $\exists f_1, \ldots, f_n. \Psi \wedge \Psi_{o}$.
 
+Notice that the attributes $A_1, \ldots, A_k$ specify an ordering on the
+solution, but do not impact its correctness.
+
 \section{Calling Oracles}%
 \label{sec:oracleimplementations}
 
@@ -2794,7 +2797,11 @@ Consider the following example:
 This example also contains an optimization query.
 The objective of the query is to optimize the values
 of terms $\texttt{(f 0)}$ and $\texttt{(f 100)}$.
-Moreover, the ordering on tuples of these terms is lexicographic.
+Moreover, the ordering on tuples of these terms is lexicographic
+with respect to the orderings specified for each term position.
+In particular, this means that the best solution for this
+example is one that first maximizes $\texttt{(f 0)}$ and then
+maximizes $\texttt{(f 100)}$.
 A possible correct response for this example is:
 \begin{lstlisting}[language=SyGuS]
 (
