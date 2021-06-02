@@ -650,7 +650,7 @@ A command $\cmd$ is given by the following syntax.
   \term} \\
   & | & \paren{\constraintoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
   \term} \\
- & | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }} \\
+ & | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr\mbox{ }} \\
  & | &\paren{\iooracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
  & | &\paren{\cexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
  & | &\paren{\memoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
@@ -1264,7 +1264,7 @@ is added to the set of assumptions instead of the set of constraints.
 \subsection{Declaring Oracle Functional Symbols}
 
 \begin{itemize}
-\item $\paren{\oracledeckwd\mbox{ }S\mbox{ } N\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }\sigma}$
+\item $\paren{\oracledeckwd\mbox{ }S\mbox{ } N\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
 
 This adds to the current signature a symbol $S$ of function sort 
 $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
@@ -1368,11 +1368,10 @@ with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct.
 
 This oracle is mandatory to call in order to determine correctness of the synthesis function and so it is syntactic sugar for:
 
-$\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{\paren{
-x_1\mbox{ }
+$\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{
 \paren{
-\funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}}
-\sbool}\\
+\funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}
+\mbox{ }\sbool}\\
 %
 \paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
 $
@@ -1393,11 +1392,10 @@ $
 $
 
 $
-\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{\paren{
-x_1\mbox{ }
+\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{
 \paren{
-\funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}}
-\sbool}\\
+\funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}
+\mbox{ }\sbool}\\
 %
 \paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
 $
