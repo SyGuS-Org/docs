@@ -298,6 +298,8 @@ $\exists f_1, \ldots, f_n \ldotp \forall v_1, \ldots, v_m \ldotp \alpha \implies
 
 \item A set of new commands are introduced to enable easy specification of specific types of oracles, for instance input-output oracles. These oracles are based on the formalization by Jha and Seshia~\cite{oracles}.
 
+\item A new theory of tables is referenced as a possible underlying theory in \cref{ssec:smt-logic}.
+
 \item A new SyGuS logic, called \code|CHC_$X$|,
 has been introduced for specifying synthesis problems using constrained Horn clause systems
 over an SMT-LIB base logic $X$.
@@ -313,6 +315,8 @@ Instead, all functions (including predicates) to be synthesized are now specifie
 
 \item A new feature $\fweightskwd$ has been added, which allows weight annotations on terms, 
 as well as the use of weight symbols within terms, as described in \cref{sec:weight-semantics}.
+
+\item A new command $\optsynthkwd$ has been added for specifying optimization queries.
 
 \item
 The signature, syntax and semantics for the theory of strings
@@ -622,7 +626,9 @@ A command $\cmd$ is given by the following syntax.
  & | & \paren{\constraintchckwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\term\mbox{ }\term} \\
  & | & \paren{\constraintkwd\mbox{ }\term} \\
  & | & \paren{\vardeclkwd\mbox{ }\symbol\mbox{ }\sortexpr}\\ 
+ & | & \paren{\weightdeclkwd\mbox{ }\symbol\mbox{ }\kstar{\attribute}} \\
  & | & \paren{\constraintinvkwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\symbol} \\
+ & | & \paren{\optsynthkwd\mbox{ }\paren{\kstar{\term}}\mbox{ }\kstar{\attribute}} \\
  & | & \paren{\setfeaturekwd\mbox{ }\feature\mbox{ }\boolconst} \\
 % & | & \paren{\setfeaturesetkwd\mbox{ }\symbol} \\
 % & | & \paren{\setlogicinputkwd\mbox{ }\symbol} \\
@@ -659,7 +665,6 @@ A command $\cmd$ is given by the following syntax.
  & ::= &\paren{\dtdeclkwd\mbox{ }\symbol\mbox{ }\dtdecl} \\
  & | & \paren{\dtsdeclkwd\mbox{ }\paren{\kstarn{\sortdecl}{n+1} }\mbox{ }\paren{\kstarn{\dtdecl}{n+1}}} \\
  & | & \paren{\sortdeclkwd\mbox{ }\symbol\mbox{ }\intconst} \\
- & | & \paren{\weightdeclkwd\mbox{ }\symbol} \\
  & | & \paren{\fundefkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\sortexpr\mbox{ }\term} \\  %\fundef
  %& | & \paren{\recfundefkwd\mbox{ }\fundef} \\
  %& | & \paren{\recfunsdefkwd\mbox{ }\paren{\kstarn{\fundec}{n+1}}\mbox{ }\paren{\kstarn{\term}{n+1}}} \\
@@ -682,8 +687,9 @@ A command $\cmd$ is given by the following syntax.
 \end{array}
 \]
 For convenience,
-we distinguish between two kinds of commands above.
-The commands listed under $\cmd$ and $\oraclecmd$ are specific to the SyGuS 2.0 format.
+we distinguish between three kinds of commands above.
+The commands listed under $\cmd$ and $\oraclecmd$ are specific to the SyGuS format,
+with the latter pertaining to oracles.
 The remaining commands listed under $\smtcmd$
 are borrowed from SMT-LIB 2.6.
 The semantics of these commands are detailed in \cref{sec:semantics}.
@@ -1062,9 +1068,13 @@ a symbol in the current signature.
 \label{ssec:declaring-weights}
 
 \begin{itemize}
-\item $\paren{\weightdeclkwd\mbox{ }S}$
+\item $\paren{\weightdeclkwd\mbox{ }S\mbox{ }A_1 \ldots A_n}$
 
 This command declares the symbol $:S$ as a weight keyword.
+The attributes $A_1 \ldots A_n$ can be used to indicate properties of the weight,
+such as its default value.
+
+TODO
 
 Terms can be subsequently annotated
 with this keyword, e.g. $\paren{!\mbox{ }t\mbox{ }:S\mbox{ }1}$,
@@ -1409,9 +1419,26 @@ $
 This asks the synthesis solver to find a solution for the synthesis conjecture
 corresponding to the current list of functions-to-synthesize,
 universal variables and constraints.
-The expected output
-from the synthesis solver is covered in \cref{sec:output}.
+
+\item $\paren{\optsynthkwd\mbox{ }\paren{s_1 \ldots s_j}\mbox{ } A_1 \ldots A_k}$
+
+Like the command above,
+this asks the synthesis solver to find a solution for the synthesis conjecture
+corresponding to the current list of functions-to-synthesize,
+universal variables and constraints.
+Moreover, that solution should be optimal with respect to the objective
+specified by the list of terms $s_1, \ldots, s_j$ and attributes $A_1, \ldots, A_k$.
+Objectives can be specified both using annotations on terms $s_1, \ldots, s_j$
+as well as the use of attributes $A_1, \ldots, A_k$ to specify orderings on tuples.
+Details on objectives in given in \cref{sec:objectives}.
+
+To be well formed, $s_1, \ldots, s_j$ cannot contain any occurrence
+of universal variables in the current state,
+and must be permitted by the background logic.
 \end{itemize}
+
+The expected output
+from the synthesis solver for these commands is covered in \cref{sec:output}.
 
 \subsection{Setting Benchmark Information}
 
@@ -1457,7 +1484,7 @@ only.
 
 \begin{itemize}
 \item
-A well-formed response to $\checksynthkwd$ is one of the following:
+A response to $\checksynthkwd$ is one of the following:
 
 \begin{enumerate}
 \item
@@ -1486,7 +1513,7 @@ provided in the order in which they were declared.\footnote{
 This is to ensure that the definition of $f_i$, which may depend on a definition
 of $f_j$ for $j<i$, is given in the correct order.
 }
-To be a well-formed output, 
+To be a well-formed response, 
 for each $j=1, \ldots, n$, it must be the case that
 $t_{j}$ is a term of $\sigma_{j}$,
 and $X_{j}$ is identical to the sorted variable list
@@ -1519,6 +1546,47 @@ The response ${\tt fail}$ indicates that the solver
 was unable to find a solution, which does not necessarily imply that
 the conjecture is infeasible.
 
+\item
+A (successful) well-formed response to $\paren{\optsynthkwd\mbox{ }\paren{s_1 \ldots s_j}\mbox{ } A_1 \ldots A_k}$
+is a tuple of terms followed list of commands, enclosed in parentheses, of the form:
+\[
+\begin{array}{l}
+\paren{\\
+\paren{c_1 \ldots c_j}\\
+\paren{\fundefcmdkwd\mbox{ }f_{1}\mbox{ }X_{1}\mbox{ }\sigma_{1}\mbox{ }t_{1}}\\
+\ldots\\
+\paren{\fundefcmdkwd\mbox{ }f_{n}\mbox{ }X_{n}\mbox{ }\sigma_{n}\mbox{ }t_{n}}\\
+}
+\end{array}
+\]
+To be a well-formed response, 
+$c_1, \ldots, c_j$ must be values of the same type as $s_1, \ldots, s_j$,
+and the remaining commands must be a well-formed response based on the criteria
+for $\checksynthkwd$ above.
+A response of the above form is correct if
+the specified functions satisfy the syntactic restrictions given by
+the current state.
+Additionally, the solution must satisfy
+the semantic specification for optimization queries, which
+implies that both the semantic specification is satisfied
+and that the values $c_1, \ldots, c_j$
+are consistent valuations of terms $s_1, \ldots, s_j$
+under the current solution for functions to synthesize $f_1, \ldots, f_n$.
+For details, see \cref{sec:logical-semantics}.
+
+Additionally, analogous to $\checksynthkwd$, 
+a solver may respond
+with ${\tt infeasible}$ or ${\tt fail}$ to indicate
+the conjecture has no solutions, or to indicate a failure.
+
+The role of $A_1 \ldots A_k$ is to provide an ordering on solutions
+generated in response to this command, where a solver is expected to generate
+a solution that is optimal with respect to this ordering.
+For details, see \cref{sec:objectives}.
+These attributes do not impact what consistutes a correct solution.
+
+%We assume that solution of the above form are ordered based on the objective
+%specified by $A_1, \ldots, A_k$.
 \end{itemize}
 
 %\section{
@@ -2191,7 +2259,7 @@ be an assignment for functions-to-synthesize $( f_1, \ldots, f_n )$
 whose grammars are $G_1, \ldots, G_n$.
 Let $\Psi_{\alpha}$ be the formula:
 \[
-\bigwedge_{i=1}^{n} \forall X_i f( X_i ) \teq t_i
+\bigwedge_{i=1}^{n} \forall X_i\ldotp f( X_i ) \teq t_i
 \]
 In other words, $\Psi_{\alpha}$ contains quantified formulas
 that constrain the behavior of the functions to the synthesize
@@ -2223,6 +2291,33 @@ This definition covers cases where $f_1, \ldots, f_n$
 have recursive definitions or references to forward declarations,
 which is why their definitions are explicitly given in the definition of
 $\Psi_{\alpha}$.
+
+\subsubsection{Satisfying Semantic Specifications for Optimization Queries}
+We extend the notion of semantic correctness to responses to optimization
+queries of the form:
+\[
+\paren{\optsynthkwd\mbox{ }\paren{s_1 \ldots s_j}\mbox{ } A_1 \ldots A_k}
+\]
+Recall from \cref{sec:output} that a successful response to this command
+contains:
+\begin{enumerate}
+\item A tuple of terms $(c_1, \ldots, c_j)$ corresponding to the valuation of terms $(s_1, \ldots, s_j)$, and
+\item A tuple of functions $( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
+corresponding to a solution for functions-to-synthesize $f_1, \ldots, f_n$.
+\end{enumerate}
+Let $\exists f_1, \ldots, f_n \ldotp\Psi$ be the synthesis conjecture
+for the current state, and let $\Psi_{o}$ be the formula:
+\[
+\bigwedge_{i=1}^{j} s_j \teq c_j
+\]
+A solution of the above form for an optimization query
+satisfies semantic specifications if only if 
+$( \lambda X_1 \ldotp t_1, \ldots, \lambda X_n \ldotp t_n)$
+satisfies the semantic specifications
+for the synthesis conjecture $\exists f_1, \ldots, f_n. \Psi \wedge \Psi_{o}$.
+
+Notice that the attributes $A_1, \ldots, A_k$ specify an ordering on the
+solution, but do not impact its correctness.
 
 \section{Calling Oracles}%
 \label{sec:oracleimplementations}
@@ -2307,6 +2402,12 @@ The oracle will return a list of values $\paren{w_{1} \ldots w_{m}}$, correspond
 %
 The solver calls the oracle with the command ${\tt N \,\,textfile.oracle}$, where ${\tt N}$ is the name of the oracle implememtation as specified in the oracle constraint declaration.
 
+\section{Objectives}%
+\label{sec:objectives}
+
+In this section, we standardize several common use cases of the $\optsynthkwd$ command.
+
+TODO
 
 \section{Examples}%
 \label{sec:examples}
@@ -2632,6 +2733,94 @@ The constraint \texttt{(< numRulesForF 3)} is satisfied in the former interpreta
 and hence the solution for $f$ satisfies all input constraints.
 \end{example}
 
+
+\begin{example}[Optimization with Weights]
+Consider the following example:
+\begin{lstlisting}[language=SyGuS]
+(set-logic LIA)
+(set-feature :weights true)
+(declare-weight branches)
+(synth-fun f ((x Int)) Int
+   ((I Int) (B Bool))
+   ((I Int (0 1 x (+ I I) (! (ite B I I) :branches 1)))
+    (B Bool ((>= I I) (= I I)))))
+(declare-var x Int)
+(constraint (= (f x) (ite (= x 0) 0 x)))
+(optimize-synth ((! (_ branches f) :min)))
+\end{lstlisting}
+In this example, a weight keyword $\texttt{branches}$ has been declared.
+The grammar of function $\texttt{f}$ has been annotated such that
+$\texttt{branches}$ corresponds to the number of $\texttt{ite}$ terms in its body.
+An optimization query is made, where
+the objective is to minimize the number of branches in $\texttt{f}$.
+This is specified by a term annotation on $\texttt{(\_ branches f)}$.
+A possible correct response for this example is:
+\begin{lstlisting}[language=SyGuS]
+(
+(1)
+(define-fun f ((x Int)) Int (ite (= x 0) 0 x))
+)
+\end{lstlisting}
+Another possible response for this example is:
+\begin{lstlisting}[language=SyGuS]
+(
+(0)
+(define-fun f ((x Int)) Int x)
+)
+\end{lstlisting}
+In both cases, the value of term $\texttt{(\_ branches f)}$ was given
+in the solution that was consistent with the number of
+$\texttt{ite}$ terms in the body of $\texttt{f}$.
+Hence, both responses are correct.
+The latter solution gives a smaller value for this term,
+and hence it is preferred based on the specified objective.
+
+Notice that in this example,
+no attribute is provided for the $\texttt{optimize-synth}$ command,
+meaning that no ordering is specified on the tuple passes as argument
+to this command.
+For details on the default semantics for objectives, see \cref{sec:objectives}.
+In the next example, we show how ordering on tuples can be specified.
+\end{example}
+
+\begin{example}[Lexicographic Optimization]
+Consider the following example:
+\begin{lstlisting}[language=SyGuS]
+(set-logic LIA)
+(synth-fun f ((x Int)) Int
+   ((I Int) (B Bool))
+   ((I Int (0 1 x (+ I I) (ite B I I)))))
+(declare-var x Int)
+(constraint (or (= (f x) 1) (= (f x) x)))
+(optimize-synth ((! (f 0) :max) (! (f 100) :max)) :lexicographic)
+\end{lstlisting}
+This example also contains an optimization query.
+The objective of the query is to optimize the values
+of terms $\texttt{(f 0)}$ and $\texttt{(f 100)}$.
+Moreover, the ordering on tuples of these terms is lexicographic
+with respect to the orderings specified for each term position.
+In particular, this means that the best solution for this
+example is one that first maximizes $\texttt{(f 0)}$ and then
+maximizes $\texttt{(f 100)}$.
+A possible correct response for this example is:
+\begin{lstlisting}[language=SyGuS]
+(
+(1 1)
+(define-fun f ((x Int)) Int 1)
+)
+\end{lstlisting}
+Another possible response for this example is:
+\begin{lstlisting}[language=SyGuS]
+(
+(0 100)
+(define-fun f ((x Int)) Int x)
+)
+\end{lstlisting}
+The first example is preferred, since the first value in the first
+solution is greater than the first value in the second,
+since the command specified that solutions are ordered lexicographically.
+\end{example}
+
 \begin{example}[Single Invariant Synthesis (Inv) over Linear Integer Arithmetic]
 Consider the following imperative program in a C-like language:
 \begin{lstlisting}[language=C-Like]
@@ -2794,6 +2983,7 @@ $\existskwd$,
 $\forallkwd$,
 $\constraintinvkwd$,
 $\letkwd$,
+$\optsynthkwd$,
 $\assumeoraclekwd$,
 $\constraintoraclekwd$,
 $\cexoracledeckwd$,
