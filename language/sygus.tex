@@ -646,11 +646,11 @@ A command $\cmd$ is given by the following syntax.
  % ajr: removed
  %\paren{\fundeclkwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr} \\
  \oraclecmd 
- & ::= & \paren{\assumeoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
-  \term} \\
-  & | & \paren{\constraintoraclekwd\mbox{ }\symbol\mbox{ } \paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
-  \term} \\
- & | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr\mbox{ }} \\
+ & ::= & \paren{\assumeoraclekwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
+  \term \mbox{ } \symbol\mbox{ }} \\
+  & | & \paren{\constraintoraclekwd\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }\paren{\kstar{\sortedvar}}\mbox{ }
+  \term\mbox{ } \symbol\mbox{ }} \\
+ & | & \paren{\oracledeckwd\mbox{ }\symbol\mbox{ }\paren{\kstar{\sortexpr}}\mbox{ }\sortexpr\mbox{ }\symbol\mbox{ }} \\
  & | &\paren{\iooracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
  & | &\paren{\cexoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
  & | &\paren{\memoracledeckwd\mbox{ }\symbol\mbox{ } \symbol\mbox{ }} \\
@@ -1217,9 +1217,9 @@ where $v_1, \ldots, v_m$, $F_{body}$, and $F_{head}$ are fresh symbols.
 
 \subsection{Asserting Oracle Constraints and Assumptions}
 \begin{itemize}
-\item $\paren{\constraintoraclekwd\mbox{ } N \mbox{ } 
+\item $\paren{\constraintoraclekwd\mbox{ }  
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
-\paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t}$
+\paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t \mbox{ } N }$
 
 This informs the solver of the existance of an external binary with name $N$
 which can be used as means of adding new constraints to the problem.
@@ -1251,9 +1251,9 @@ Note that it is possible that the synthesis solver may call the binary with
 the same input more than once.
 
 \item 
-$\paren{\assumeoraclekwd\mbox{ } N \mbox{ } 
+$\paren{\assumeoraclekwd\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
-\paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t}$
+\paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t \mbox{ } N }$
 
 This command is identical to $\constraintoraclekwd$,
 but the term $t[c_1 \ldots c_{n} d_1 \ldots d_m]$ obtained from a call to the external binary
@@ -1264,7 +1264,7 @@ is added to the set of assumptions instead of the set of constraints.
 \subsection{Declaring Oracle Functional Symbols}
 
 \begin{itemize}
-\item $\paren{\oracledeckwd\mbox{ }S\mbox{ } N\mbox{ }\paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma}$
+\item $\paren{\oracledeckwd\mbox{ }S\mbox{ } \paren{\sigma_1 \ldots \sigma_n}\mbox{ }\sigma \mbox{ } N}$
 
 This adds to the current signature a symbol $S$ of function sort 
 $\sigma_1 \times \ldots \times \sigma_n \rightarrow \sigma$
@@ -1275,10 +1275,10 @@ Note that this command is syntactic sugar for:
 \[
 \begin{array}{l}
 \paren{\vardeclkwd\mbox{ }S \mbox{ }\paren{\funsortkwd\mbox{ }  \sigma_1\mbox{ } \ldots\mbox{ } \sigma_n\mbox{ } \mbox{ }\sigma}}\\
-\paren{\assumeoraclekwd\mbox{ } N \mbox{ } 
+\paren{\assumeoraclekwd\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
 \paren{\paren{x \mbox{ }\sigma}}  \mbox{ } 
-\paren{{\tt=}\mbox{ } \paren{S \mbox{ } x_1 \mbox{ } \ldots \mbox{ } x_n}\mbox{ } x}
+\paren{{\tt=}\mbox{ } \paren{S \mbox{ } x_1 \mbox{ } \ldots \mbox{ } x_n}\mbox{ } x }\mbox{ } N 
 }
 \end{array}
 \]
@@ -1293,31 +1293,31 @@ with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, each of the following 
 is used to declare an external oracle with name $N$, which generate specific types of oracle constraints and assumptions over the behaviour of $F$. 
 
 \begin{itemize}
-\item $\paren{\iooracledeckwd\mbox{ }N\mbox{ } F}$
+\item $\paren{\iooracledeckwd\mbox{ }F\mbox{ } N}$
 
 This declares an input-output oracle for function $F$. 
 It is syntactic sugar for:
 
 
-$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }\paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
+$\paren{\constraintoraclekwd\mbox{ } \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
 \paren{\paren{x \mbox{ }\sigma}}
-\paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}
+\paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}\mbox{ }N
 }
 $
 
 
-\item$\paren{\poswitnessoracledeckwd\mbox{ }N\mbox{ } F} $
+\item$\paren{\poswitnessoracledeckwd\mbox{ }F\mbox{ } N} $
 
 This declares a positive witness oracle for synthesis function $F$ and is syntactic sugar for:
 
-$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+$\paren{\constraintoraclekwd\mbox{ } 
 \paren{}\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
-\paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}
+\paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}\mbox{ }N
 }
 $
 
-\item$\paren{\negwitnessoracledeckwd\mbox{ }N\mbox{ } F}$
+\item$\paren{\negwitnessoracledeckwd\mbox{ }F\mbox{ } N}$
 
 This declares a negative witness oracle for synthesis function $F$ and  is syntactic sugar for:
 
@@ -1326,41 +1326,41 @@ This declares a negative witness oracle for synthesis function $F$ and  is synta
 % \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
 % }$
 
-$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+$\paren{\constraintoraclekwd\mbox{ } 
 \paren{}\mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
-\paren{{\tt not} \mbox{ } \paren{{\tt=} \mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}}}
+\paren{{\tt not} \mbox{ } \paren{{\tt=} \mbox{ } \paren{F \mbox{ } x_1 \ldots x_n}\mbox{ }  x}} \mbox{ } N}
 $
 
 
-\item$\paren{\memoracledeckwd\mbox{ }N\mbox{ } F} $
+\item$\paren{\memoracledeckwd\mbox{ }F\mbox{ } N} $
 
 This declares a membership-query oracle for synthesis function $F$ and is syntactic sugar for:
 
 
-$\paren{\constraintoraclekwd \mbox{ } N\mbox{ }
+$\paren{\constraintoraclekwd \mbox{ }
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} \paren{x \mbox{ }\sigma}}\mbox{ }
 \paren{\paren{R \mbox{ } \sbool}}\mbox{ } 
 %
-\paren{{\tt=} \mbox{ } \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n } \mbox{ }  x} \mbox{ } R}}
+\paren{{\tt=} \mbox{ } \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n } \mbox{ }  x} \mbox{ } R}  \mbox{ }N}
 $
 
 % 
 
-\item$\paren{\cexoracledeckwd\mbox{ }N\mbox{ } F} $
+\item$\paren{\cexoracledeckwd\mbox{ }F\mbox{ } N} $
 
 This declares a counter-example oracle for synthesis function $F$ and is syntactic sugar for:
 
-$\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+$\paren{\constraintoraclekwd\mbox{ }
 \paren{\paren{F_c \mbox{ } \paren{\funsortkwd \mbox{ } \sigma_1 \mbox{ } \ldots \mbox{ } \sigma_n \mbox{ } \sigma}}}
 \paren{\paren{R \mbox{ } \sbool} \paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} } \\
-\paren{\implopkwd \mbox{ } R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}}
+\paren{\implopkwd \mbox{ } R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}} \mbox{ } N}
 $
 
 where $F_c$ is a candidate implementation for $F$, and $R$ is a boolean that indicates that the oracle was able to find a counterexample.
 
 
-\item$\paren{\corroracledeckwd\mbox{ }S\mbox{ }N\mbox{ } F} $
+\item$\paren{\corroracledeckwd\mbox{ }S\mbox{ }F\mbox{ } N} $
 
 This declares a correctness oracle, and adds associated function oracle symbol $S$ to the signature, that determines whether a candidate implementation of a synthesis function $F$,
 where $F$ is a synthesis function symbol in the current signature
@@ -1369,16 +1369,16 @@ with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct.
 
 This oracle is mandatory to call in order to determine correctness of the synthesis function and so it is syntactic sugar for:
 
-$\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{
+$\paren{\oracledeckwd\mbox{ }S\mbox{ }\paren{
 \paren{
 \funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}
-\mbox{ }\sbool}\\
+\mbox{ }\sbool \mbox{ } N}\\
 %
 \paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
 $
 
 
-\item$\paren{\corrcexoracledeckwd\mbox{ }S\mbox{ }N\mbox{ } F\mbox{ }} $
+\item$\paren{\corrcexoracledeckwd\mbox{ }S\mbox{ } F\mbox{ }N} $
 This declares a correctness oracle, and adds associated functional oracle symbol $S$ to the signature, that determines whether a candidate implementation of a synthesis function $F$,
 where $F$ is a synthesis function symbol in the current signature
 with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct and returns a counterexample if not.
@@ -1386,17 +1386,17 @@ with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct and returns
 This oracle is mandatory to call to determine correctness of a synthesis function, and it adds a constraint to the oracle constraints, so it is syntactic sugar for the following commands:
 
 $
-\paren{\constraintoraclekwd\mbox{ } N\mbox{ }
+\paren{\constraintoraclekwd\mbox{ } 
 \paren{\paren{F_c \mbox{ } \paren{\funsortkwd \mbox{ } \sigma_1 \mbox{ } \ldots \mbox{ } \sigma_n \mbox{ } \sigma}}}
 \paren{\paren{R \mbox{ } \sbool} \paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n} } \\
-\paren{\implopkwd R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}} \\
+\paren{\implopkwd R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}\mbox{ }N} \\
 $
 
 $
-\paren{\oracledeckwd\mbox{ }S\mbox{ }N\mbox{ }\paren{
+\paren{\oracledeckwd\mbox{ }S\mbox{ }\paren{
 \paren{
 \funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}
-\mbox{ }\sbool}\\
+\mbox{ }\sbool \mbox{ }N}\\
 %
 \paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
 $
@@ -2392,9 +2392,9 @@ of the oracle or terminate with an error.
 \subsection{Oracle Example}
 
 \noindent Consider an oracle that implements the interface declared with the following command:\\\\
-$\paren{\constraintoraclekwd\mbox{ } N \mbox{ }
+$\paren{\constraintoraclekwd\mbox{ } 
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
-\paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t}$ \\
+\paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t\mbox{ } N }$ \\
 
 The text file must contain a list of values $\paren{v_1 \ldots v_n}$ for the input parameters $x_1 \ldots x_n$, and $v_i$ must have the same sort as $\sigma_i$.
 The oracle will return a list of values $\paren{w_{1} \ldots w_{m}}$, corresponding to the output parameters $y_{1} \ldots y_{m}$, and $w_i$ must have the same sort as $\tau_i$.
