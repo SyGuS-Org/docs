@@ -1360,26 +1360,27 @@ $
 where $F_c$ is a candidate implementation for $F$, and $R$ is a boolean that indicates that the oracle was able to find a counterexample.
 
 
-\item$\paren{\corroracledeckwd\mbox{ }S\mbox{ }F\mbox{ } N} $
+\item$\paren{\corroracledeckwd\mbox{ }F\mbox{ } N} $
 
-This declares a correctness oracle, and adds associated function oracle symbol $S$ to the signature, that determines whether a candidate implementation of a synthesis function $F$,
+This declares a correctness oracle that determines whether a candidate implementation of a synthesis function $F$,
 where $F$ is a synthesis function symbol in the current signature
 with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct. 
 
 
 This oracle is mandatory to call in order to determine correctness of the synthesis function and so it is syntactic sugar for:
 
-$\paren{\oracledeckwd\mbox{ }S\mbox{ }\paren{
+$\paren{\oracledeckwd\mbox{ }s\mbox{ }\paren{
 \paren{
 \funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}
 \mbox{ }\sbool \mbox{ } N}\\
 %
-\paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
+\paren{\constraintkwd \mbox{ } \paren{s \mbox{ } F}}
 $
 
+where $s$ is a fresh symbol. 
 
-\item$\paren{\corrcexoracledeckwd\mbox{ }S\mbox{ } F\mbox{ }N} $
-This declares a correctness oracle, and adds associated functional oracle symbol $S$ to the signature, that determines whether a candidate implementation of a synthesis function $F$,
+\item$\paren{\corrcexoracledeckwd\mbox{ } F\mbox{ }N} $
+This declares a correctness oracle that determines whether a candidate implementation of a synthesis function $F$,
 where $F$ is a synthesis function symbol in the current signature
 with sort $\sigma_1, \ldots \sigma_n \rightarrow \sigma$, is correct and returns a counterexample if not.
 
@@ -1392,14 +1393,15 @@ $
 \paren{\implopkwd R  \mbox{ } \paren{{\tt not} \paren{{\tt=}\mbox{ } \paren{F \mbox{ } x_1 \ldots x_n} \mbox{ } \paren{F_c \mbox{ }x_1 \ldots x_n }}}}\mbox{ }N} \\
 $
 $
-\paren{\oracledeckwd\mbox{ }S\mbox{ }\paren{
+\paren{\oracledeckwd\mbox{ }s\mbox{ }\paren{
 \paren{
 \funsortkwd \mbox{ } \sigma_1 \ldots \sigma_n\mbox{ }\sigma }}
 \mbox{ }\sbool \mbox{ }N}\\
 %
-\paren{\constraintkwd \mbox{ } \paren{S \mbox{ } F}}
+\paren{\constraintkwd \mbox{ } \paren{s \mbox{ } F}}
 $
 
+where $s$ is a fresh symbol. 
 
 
 % \item$\paren{\dioracledeckwd\mbox{ }S\mbox{ } F\mbox{ }} $
