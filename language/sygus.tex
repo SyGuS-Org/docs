@@ -495,6 +495,7 @@ they are associated with.
 Possible values of attributes include symbols, as well as (lists of) sorts and terms.
 The above definition of attribute coincides with
 attributes in Section 3.4 of SMT-LIB version 2.6.
+All attributes standardized in this document are listed in \cref{sec:attr}.
 
 \subsubsection{Weight Attributes}
 \label{sec:weight-attributes}
@@ -1073,8 +1074,7 @@ a symbol in the current signature.
 This command declares the symbol $:S$ as a weight keyword.
 The attributes $A_1 \ldots A_n$ can be used to indicate properties of the weight,
 such as its default value.
-
-TODO
+For details, see \cref{sec:attr-weights}.
 
 Terms can be subsequently annotated
 with this keyword, e.g. $\paren{!\mbox{ }t\mbox{ }:S\mbox{ }1}$,
@@ -1430,7 +1430,7 @@ Moreover, that solution should be optimal with respect to the objective
 specified by the list of terms $s_1, \ldots, s_j$ and attributes $A_1, \ldots, A_k$.
 Objectives can be specified both using annotations on terms $s_1, \ldots, s_j$
 as well as the use of attributes $A_1, \ldots, A_k$ to specify orderings on tuples.
-Details on objectives in given in \cref{sec:objectives}.
+Details on objectives in given in \cref{sec:attr-objectives}.
 
 To be well formed, $s_1, \ldots, s_j$ cannot contain any occurrence
 of universal variables in the current state,
@@ -1582,7 +1582,7 @@ the conjecture has no solutions, or to indicate a failure.
 The role of $A_1 \ldots A_k$ is to provide an ordering on solutions
 generated in response to this command, where a solver is expected to generate
 a solution that is optimal with respect to this ordering.
-For details, see \cref{sec:objectives}.
+For details, see \cref{sec:attr-objectives}.
 These attributes do not impact what consistutes a correct solution.
 
 %We assume that solution of the above form are ordered based on the objective
@@ -2402,12 +2402,73 @@ The oracle will return a list of values $\paren{w_{1} \ldots w_{m}}$, correspond
 %
 The solver calls the oracle with the command ${\tt N \,\,textfile.oracle}$, where ${\tt N}$ is the name of the oracle implememtation as specified in the oracle constraint declaration.
 
-\section{Objectives}%
-\label{sec:objectives}
+\section{Attributes}
+\label{sec:attr}
 
-In this section, we standardize several common use cases of the $\optsynthkwd$ command.
+In this section, we provide standardize attributes that are specific to
+the features introduced in this document.
 
-TODO
+\subsection{Weights}%
+\label{sec:attr-weights}
+
+\begin{enumerate}
+\item The attribute $\texttt{:default}$
+expects an integer attribute value $n$.
+It specifies that the default weight value of declared weight keyword is $n$.
+\end{enumerate}
+\noindent
+Recall from \cref{ssec:declaring-weights} that the default value
+for weight keywords is $0$.
+On the other hand, the command:
+\begin{lstlisting}[language=SyGuS, numbers=none, basicstyle=\ttfamily\small]
+(declare-weight numOps :default 1)
+\end{lstlisting}
+declares a weight keyword $\texttt{numOps}$ whose default weight is $1$.
+
+\subsection{Objectives}%
+\label{sec:attr-objectives}
+
+In this section, we standardize attributes that pertain to specifying objectives of the $\optsynthkwd$ command.
+We classify two kinds of attributes.
+The first pertain to the orderings on values,
+which are supplied in the first argument of $\optsynthkwd$ command.
+The second pertain to orderings on the tuple itself.
+Below, we use $\succ$ to denote orderings on values or tuples of values,
+such that when $e_1 \succ e_2$, we have that $e_1$ is a more preferred solution.
+
+\paragraph{Value Orderings}
+\begin{enumerate}
+\item The attribute $\texttt{:max}$ specifies that the ordering on values 
+$\succ$ for a given term $t$ should be maximized according to the default ordering
+of the type of $t$.
+The specification is well-defined only if the type of $t$ has a default ordering.
+We assume the default ordering $>$ is used for reals and integers, such that
+$v_1 \succ v_2$ if $v_1 > v_2$.
+Orderings on other types are not standardized by this document.
+Note that this attribute expects no provided attribute value.
+\item The attribute $\texttt{:min}$ is dual to $\texttt{:max}$, such that that ordering $\succ$
+should minimize the value based on the default ordering of its type.
+Like $\texttt{:max}$, this attribute expects no provided attribute value.
+\end{enumerate}
+
+\paragraph{Tuple Orderings}
+
+\begin{enumerate}
+\item The attribute $\texttt{:lexico}$ specifies that the ordering on tuples is lexicographic.
+In particular, assuming orderings $\succ_1, \ldots, \succ_n$ on the components of $n$-tuples,
+$(c_1, \ldots, c_n) \succ (d_1, \ldots, d_n)$ holds if there exists a $0 \leq j \leq n$
+such that $c_i = d_i$ for $i<j$ and $c_j \succ_j d_j$.
+This attribute expects no provided attribute value.
+\end{enumerate}
+
+\noindent
+For example, consider the command:
+\begin{lstlisting}[language=SyGuS, numbers=none, basicstyle=\ttfamily\small]
+(optimize-synth ((! x :min) (! y :max)) :lexico)
+\end{lstlisting}
+This indicates that the objective is to first minimize $x$, and then maximize $y$.
+Hence, in this example, solutions in response to this command are ordered such that
+$(0,3) \succ (1,3) \succ (1,0)$.
 
 \section{Examples}%
 \label{sec:examples}
@@ -2683,7 +2744,9 @@ Consider the following example:
 \end{lstlisting}
 In this example, a weight keyword $\texttt{numX}$ has been declared.
 A function-to-synthesize $f$ has been declared, whose production
-rules include annotations that count the number occurrences of $x$.
+rules include annotations.
+These annotations count the number occurrences of $x$, where recall
+that the default value for unannotated terms with repsect to the given weight is $0$.
 A constraint is given that states that the weight of $f$ with respect to
 the weight keyword $\texttt{numX}$ must be $3$.
 A possible correct response for this example from a synthesis solver is:
@@ -2779,7 +2842,7 @@ Notice that in this example,
 no attribute is provided for the $\texttt{optimize-synth}$ command,
 meaning that no ordering is specified on the tuple passes as argument
 to this command.
-For details on the default semantics for objectives, see \cref{sec:objectives}.
+For details on the default semantics for objectives, see \cref{sec:attr-objectives}.
 In the next example, we show how ordering on tuples can be specified.
 \end{example}
 
@@ -2792,7 +2855,7 @@ Consider the following example:
    ((I Int (0 1 x (+ I I) (ite B I I)))))
 (declare-var x Int)
 (constraint (or (= (f x) 1) (= (f x) x)))
-(optimize-synth ((! (f 0) :max) (! (f 100) :max)) :lexicographic)
+(optimize-synth ((! (f 0) :max) (! (f 100) :max)) :lexico)
 \end{lstlisting}
 This example also contains an optimization query.
 The objective of the query is to optimize the values
