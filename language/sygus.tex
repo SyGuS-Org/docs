@@ -1905,7 +1905,8 @@ k & \text{if exactly one } A_i \text{ is of the form } \texttt{W}\ k \text{ for 
 k_{def} & \text{otherwise, where } k_{def} \text{ is the default weight value for } \texttt{W}
 \end{cases}
 \]
-Unless stated otherwise, the default weight value for all weight keywords is $0$.
+The default weight value for all weight keywords is $0$.
+This value can be overidden via an attribute as described in \cref{sec:attr-weights}.
 
 Let $y \mapsto_{W,k} t_0$ denote a production rule
 whose weight with respect to $W$ is $k$.
@@ -2417,13 +2418,13 @@ expects an integer attribute value $n$.
 It specifies that the default weight value of declared weight keyword is $n$.
 \end{enumerate}
 \noindent
-Recall from \cref{ssec:declaring-weights} that the default value
+Recall from \cref{sec:weight-semantics} that the default value
 for weight keywords is $0$.
 On the other hand, the command:
 \begin{lstlisting}[language=SyGuS, numbers=none, basicstyle=\ttfamily\small]
 (declare-weight numOps :default 1)
 \end{lstlisting}
-declares a weight keyword $\texttt{numOps}$ whose default weight is $1$.
+declares a weight keyword $\texttt{numOps}$ whose default weight value is $1$.
 
 \subsection{Objectives}%
 \label{sec:attr-objectives}
