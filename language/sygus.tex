@@ -1906,7 +1906,7 @@ k_{def} & \text{otherwise, where } k_{def} \text{ is the default weight value fo
 \end{cases}
 \]
 The default weight value for all weight keywords is $0$.
-This value can be overidden via an attribute as described in \cref{sec:attr-weights}.
+This value can be overridden via an attribute as described in \cref{sec:attr-weights}.
 
 Let $y \mapsto_{W,k} t_0$ denote a production rule
 whose weight with respect to $W$ is $k$.
@@ -2747,7 +2747,7 @@ In this example, a weight keyword $\texttt{numX}$ has been declared.
 A function-to-synthesize $f$ has been declared, whose production
 rules include annotations.
 These annotations count the number occurrences of $x$, where recall
-that the default value for unannotated terms with repsect to the given weight is $0$.
+that the default value for unannotated terms with respect to the given weight is $0$.
 A constraint is given that states that the weight of $f$ with respect to
 the weight keyword $\texttt{numX}$ must be $3$.
 A possible correct response for this example from a synthesis solver is:
