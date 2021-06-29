@@ -2391,9 +2391,7 @@ SyGuS commands that implement interfaces of the appropriate sorts.
 If this is not the case, the synthesis solver may choose to ignore the output
 of the oracle or terminate with an error.
 
-\subsection{Oracle Example}
-
-\noindent Consider an oracle that implements the interface declared with the following command:\\\\
+For example, consider an oracle that implements the interface declared with the following command:\\\\
 $\paren{\constraintoraclekwd\mbox{ } 
 \paren{\paren{x_1\mbox{ }\sigma_1} \ldots \paren{x_n\mbox{ }\sigma_n}}\mbox{ }
 \paren{\paren{y_{1}\mbox{ }\tau_{1}} \ldots \paren{y_{m}\mbox{ }\tau_{m}}}  \mbox{ } t\mbox{ } N }$ \\
@@ -3014,6 +3012,80 @@ A possible correct response for this example from a synthesis solver is:
 )
 \end{lstlisting}
 \end{example}
+
+
+\begin{example}[PBE with Oracle Function Symbols]
+Oracle function symbols are used to represent black-box functions within specifications. Consider a PBE problem where the user has an external oracle and wishes to synthesize a summary of the external oracle for a specific set of inputs. This can be encoded
+using an oracle function symbol (note this is syntactic sugar for an oracle assumption and an uninterpreted function):
+\begin{lstlisting}[language=SyGuS]
+(set-logic BV)
+(set-feature :oracles true) 
+(synth-fun f ((x (_ BitVec 64))) (_ BitVec 64))
+(declare-oracle-fun target ((_ BitVec 64)) (_ BitVec 64) binaryname)
+
+(constraint (= (f #x28085a970e13e12c) (target #x28085a970e13e12d)))
+(constraint (= (f #xbe5341bebd2a0749) (target #xbe5341bebd2a0749)))
+(constraint (= (f #xe239460eed2cc34e) (target #xe239460eed2cc34f)))
+(constraint (= (f #xac5b1b5e9b236b10) (target #xac5b1b5e9b236b11)))
+(constraint (= (f #x4069a4c7173e1786) (target #x4069a4c7173e1786)))
+(constraint (= (f #x39419062091119a6) (target #x39419062091119a6)))
+(constraint (= (f #x49aeeca628644ee0) (target #x49aeeca628644ee0)))
+(constraint (= (f #x75e5bc2a07c77c97) (target #x75e5bc2a07c77c97)))
+(constraint (= (f #x4c5ee4be98c5ee7d) (target #x4c5ee4be98c5ee7d)))
+(constraint (= (f #xcd67bd5beaac575e) (target #xcd67bd5beaac575e)))
+(check-synth)
+\end{lstlisting}
+In this way, a PBE problem can be encoded without the user knowing the correct behaviour of the target function explicitly. 
+Instead, the target function is implemented by the oracle \lstinline{binaryname}, 
+and the solver can call \lstinline{binaryname} with an input given in a constraint 
+and \lstinline{binaryname} returns the result of applying \lstinline{target} to the input.
+\end{example}
+
+\begin{example}[Synthesis with Oracle Assumptions]
+In addition to their use in oracle function symbols, oracle assumptions can be used to relax a synthesis specification in other ways. Consider the following synthesis problem. The oracle, when called, generates an assumption that relaxes the values of x that the specification must hold for, i.e., when $x < z$ the specification need not hold. This could be used, for example, in invariant synthesis if an oracle can determine that certain parts of the state-space are unreachable from the initial states and backward unreachable from the violation of the post-condition. This could be particularly useful if the specified transition relation is over-approximate.
+
+\begin{lstlisting}[language=SyGuS]
+(set-logic LIA)
+(set-feature :oracles true) 
+(synth-fun inv-f ((x Int)) Bool)
+(declare-var x Int)
+(declare-var x! Int)
+
+(define-fun pre-f ((x Int)) Bool (= (mod x 2) 0))
+(define-fun trans-f ((x Int)(x! Int)) Bool (or (= x! x) (= x! (* x (x-1)))))
+(define-fun post-f ((x Int)) Bool (= (mod x 4) 0)
+
+(constraint (=> (pre-f x) (inv-f x)))
+(constraint (=> (and (inv-f x) (trans-f x x!)) (inv-f x!)))
+(constraint (=> (inv-f x) (post-f x)))
+
+(oracle-assume ((inv-candidate (-> Int Bool))) ((z Int)) binaryname
+  (>= x z))
+
+(check-synth)
+\end{lstlisting}
+\end{example}
+
+
+\begin{example}[Synthesis with Oracle Constraints and Oracle Function Symbols]
+
+As well as PBE style problems, oracle function symbols can be used to incorporate other verification engines via correctness oracles. Here, an oracle function symbol must return ``true'' before the synthesised function is valid. However, a black-box correctness oracle along does not provide much information to the synthesiser. This oracle can be supplemented with an oracle constraint. Here the oracle constraint provides a fresh positive witness whenever it is called, constraining the space of possible candidate functions. 
+
+\begin{lstlisting}[language=SyGuS]
+(set-logic LIA)
+(set-feature :oracles true) 
+(synth-fun f ((x Int)) Bool)
+(declare-oracle-fun isCorrect ((-> Int Bool)) Bool binaryname)
+
+(constraint (isCorrect f))
+
+(oracle-constraint () ((x Int)) ((z Bool)) binaryname2
+  (=> (f x) z))
+
+(check-synth)
+\end{lstlisting}
+\end{example}
+
 
 \bibliographystyle{plain}
 \bibliography{references}
