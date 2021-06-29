@@ -3076,7 +3076,7 @@ As well as PBE style problems, oracle function symbols can be used to incorporat
 
 (constraint (isCorrect f))
 
-(oracle-constraint () ((x Int) (z Bool) binaryname2)
+(oracle-constraint () ((x Int)) ((z Bool)) binaryname2
   (=> (f x) z))
 
 (check-synth)
