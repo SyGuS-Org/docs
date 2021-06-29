@@ -3035,7 +3035,10 @@ using an oracle function symbol (note this is syntactic sugar for an oracle assu
 (constraint (= (f #xcd67bd5beaac575e) (target #xcd67bd5beaac575e)))
 (check-synth)
 \end{lstlisting}
-In this way a PBE problem can be encoded without the user knowing the correct behaviour of the target function explicitly.
+In this way, a PBE problem can be encoded without the user knowing the correct behaviour of the target function explicitly. 
+Instead, the target function is implemented by the oracle \lstinline{binaryname}, 
+and the solver can call \lstinline{binaryname} with an input given in a constraint 
+and \lstinline{binaryname} returns the result of applying \lstinline{target} to the input.
 \end{example}
 
 \begin{example}[Synthesis with Oracle Assumptions]
