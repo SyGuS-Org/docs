@@ -1293,7 +1293,7 @@ This command declares an input-output oracle for function $F$.
 It is syntactic sugar for:
 
 \begin{lstlisting}[language=SyGuS-Desugar]
-($\constraintoraclekwd$ (($x_1$ $\sigma_1$)$\ldots$($x_n$ $\sigma_n$)) (($x$ $\sigma$)) (= ($F$ $x_1$ $\ldots$ $x_n$) $x$) $N$)
+($\constraintoraclekwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$)) (($x$ $\sigma$)) (= ($F$ $x_1$ $\ldots$ $x_n$) $x$) $N$)
 \end{lstlisting}
 
 \item$\paren{\poswitnessoracledeckwd\mbox{ }F\mbox{ } N} $
@@ -1302,7 +1302,11 @@ This command declares a positive witness oracle for synthesis function $F$.
 It is syntactic sugar for:
 
 \begin{lstlisting}[language=SyGuS-Desugar]
-($\constraintoraclekwd$ (($x_1$ $\sigma_1$)$\ldots$($x_n$ $\sigma_n$)) (($x$ $\sigma$)) (= ($F$ $x_1$ $\ldots$ $x_n$) $x$) $N$)
+($\constraintoraclekwd$
+  ()
+  (($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$) ($x$ $\sigma$))
+  (= ($F$ $x_1$ $\ldots$ $x_n$) $x$)
+  $N$)
 \end{lstlisting}
 
 \item$\paren{\negwitnessoracledeckwd\mbox{ }F\mbox{ } N}$
@@ -1311,7 +1315,11 @@ This command declares a negative witness oracle for synthesis function $F$.
 It is syntactic sugar for:
 
 \begin{lstlisting}[language=SyGuS-Desugar]
-($\constraintoraclekwd$ (($x_1$ $\sigma_1$)$\ldots$($x_n$ $\sigma_n$)) (($x$ $\sigma$)) (not (= ($F$ $x_1$ $\ldots$ $x_n$) $x$)) $N$)
+($\constraintoraclekwd$
+  ()
+  (($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$) ($x$ $\sigma$))
+  (not (= ($F$ $x_1$ $\ldots$ $x_n$) $x$))
+  $N$)
 \end{lstlisting}
 
 \item$\paren{\memoracledeckwd\mbox{ }F\mbox{ } N} $
@@ -1321,8 +1329,8 @@ It is syntactic sugar for:
 
 \begin{lstlisting}[language=SyGuS-Desugar]
 ($\constraintoraclekwd$
-  (($x_1$ $\sigma_1$)$\ldots$($x_n$ $\sigma_n$))
-  (($x$ $\sigma$) ($R$ Bool))
+  (($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$) ($x$ $\sigma$))
+  (($R$ Bool))
   (= (= ($F$ $x_1$ $\ldots$ $x_n$) $x$) $R$)
   $N$)
 \end{lstlisting}
@@ -1335,7 +1343,7 @@ It is syntactic sugar for:
 \begin{lstlisting}[language=SyGuS-Desugar]
 ($\constraintoraclekwd$
   (($F_c$ (-> $\sigma_1$ $\ldots$ $\sigma_n$ $\sigma$)))
-  (($R$ Bool) ($x_1$ $\sigma_1$)$\ldots$($x_n$ $\sigma_n$))
+  (($R$ Bool) ($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$))
   (=> $R$ (not (= ($F$ $x_1$ $\ldots$ $x_n$) ($F_c$ $x_1$ $\ldots$ $x_n$))))
   $N$)
 \end{lstlisting}
@@ -1367,7 +1375,7 @@ It is syntactic sugar for:
 \begin{lstlisting}[language=SyGuS-Desugar]
 ($\constraintoraclekwd$
   (($F_c$ (-> $\sigma_1$ $\ldots$ $\sigma_n$ $\sigma$)))
-  (($R$ Bool) ($x_1$ $\sigma_1$)$\ldots$($x_n$ $\sigma_n$))
+  (($R$ Bool) ($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$))
   (=> $R$ (not (= ($F$ $x_1$ $\ldots$ $x_n$) ($F_c$ $x_1$ $\ldots$ $x_n$))))
   $N$)
 ($\oracledeckwd$ $s$ ((-> $\sigma_1$ $\ldots$ $\sigma_n$ $\sigma$)) Bool $N$)
