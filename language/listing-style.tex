@@ -59,7 +59,7 @@
     keywordstyle=[60]\color{green!45!black},
     keywords=[60]{synth-fun},
     % oracle specific
-    keywordstyle=[70]\color{yellow!65!black},
+    keywordstyle=[70]\color{yellow!30!black},
     keywords=[70]{oracle-assume, oracle-constraint, %
                   declare-oracle-fun, %
                   declare-correctness-oracle, declare-correctness-cex-oracle, %
@@ -72,6 +72,12 @@
     % features
     keywordstyle=[90]\color{orange!70!black},
     keywords=[90]{fail, infeasible}
+}
+
+\lstdefinelanguage{SyGuS-Desugar}[]{SyGuS}{
+    basicstyle=\linespread{0.95}\ttfamily,
+    numbers=none,
+    xleftmargin=0em
 }
 
 \global\long\def\code{\lstinline[language=SyGuS, basicstyle=\ttfamily\color{black!80!white}]}
