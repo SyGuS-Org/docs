@@ -1293,7 +1293,11 @@ This command declares an input-output oracle for function $F$.
 It is syntactic sugar for:
 
 \begin{lstlisting}[language=SyGuS-Desugar]
-($\constraintoraclekwd$ (($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$)) (($x$ $\sigma$)) (= ($F$ $x_1$ $\ldots$ $x_n$) $x$) $N$)
+($\constraintoraclekwd$
+  (($x_1$ $\sigma_1$) $\ldots$ ($x_n$ $\sigma_n$))
+  (($x$ $\sigma$))
+  (= ($F$ $x_1$ $\ldots$ $x_n$) $x$)
+  $N$)
 \end{lstlisting}
 
 \item$\paren{\poswitnessoracledeckwd\mbox{ }F\mbox{ } N} $
