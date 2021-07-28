@@ -2310,8 +2310,9 @@ solution, but do not impact its correctness.
 
 In the following, we formalize the interface between the
 synthesis solver and an external binary, which we call an \emph{oracle}.
-The synthesis solver can query an oracle using text files with the extension
-\textit{.oracle}.
+An oracle can be queried either via command line (default) 
+or using text files with the extension
+\textit{.oracle}. If the oracle should be queried via text files, it is declared with the attribute $\texttt{:file}$.
 The expected interface is given by the following definition.
 
 \begin{definition}
@@ -2319,8 +2320,7 @@ An oracle \emph{implements an interface} with input
 $(\sigma_1 \times \ldots \times \sigma_n)$ and output
 $(\tau_1 \times \ldots \times \tau_m)$ if
 it has the following behavior.
-Let \textit{textfile.oracle}
-be a file containing the text
+Let the following be a string
 \[
 \paren{v_1 \ldots v_n}
 \]
@@ -2334,8 +2334,11 @@ The values for function types include all closed lambda terms.
 } of sorts $\sigma_1, \ldots, \sigma_n$
 written using the syntax for values described in this document.
 Let ${\tt oracle}$ be the name of the binary corresponding to the oracle.
-When the oracle is executed with the command
-${\tt oracle textfile.oracle}$,
+When an oracle that is queried by command line is executed with the command
+${\tt oracle \,\, \paren{v_1 \ldots v_n}}$,
+or an oracle that is queried via text files is executed with the command
+${\tt oracle \,\,filename.oracle}$, and and \textit{filename.oracle} contains the string
+$\paren{v_1 \ldots v_n}$, 
 it returns the text on the standard output channel
 \[
 \paren{w_{1} \ldots w_{m}}
@@ -2344,6 +2347,8 @@ where $w_1, \ldots, w_n$ are values of sorts $\tau_1, \ldots, \tau_m$
 written using the syntax for values described in this document.
 \qed
 \end{definition}
+
+
 
 In other words, the synthesis solver and the external binary
 communicate with one another using a text interface, where the input text contains
@@ -2389,7 +2394,7 @@ The solver calls the oracle with the command ${\tt N \,\,textfile.oracle}$, wher
 \section{Attributes}
 \label{sec:attr}
 
-In this section, we provide standardize attributes that are specific to
+In this section, we standardize attributes that are specific to
 the features introduced in this document.
 
 \subsection{Weights}%
@@ -2408,6 +2413,19 @@ On the other hand, the command:
 (declare-weight numOps :default 1)
 \end{lstlisting}
 declares a weight keyword $\texttt{numOps}$ whose default weight value is $1$.
+
+\subsection{Oracle communication}
+\label{sec:attr-oracles}
+\begin{enumerate}
+\item The attribute $\texttt{:file}$
+specifies that an oracle should be queried via text files, as described in Section~\ref{sec:oracleimplementations}
+\end{enumerate}
+
+For example, the following oracle function declaration specifies that the oracle should be queried via text files:
+\begin{lstlisting}[language=SyGuS-Desugar]
+(declare-oracle-fun (Int) Int binaryname :file)
+\end{lstlisting}
+
 
 \subsection{Objectives}%
 \label{sec:attr-objectives}
