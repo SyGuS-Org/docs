@@ -127,7 +127,7 @@ represent the argument list of the function $f_i$.
 %\ajr{Intro to sygus and example}
 
 \paragraph{Overview of This Document}
-This document defines the SyGuS format version 2.0,
+This document defines the SyGuS format version 2.1,
 which is intended to be used as the standard input and output language
 for solvers targeting the syntax-guided synthesis problem.
 The language borrows many concepts and language constructs
@@ -294,7 +294,7 @@ $\exists f_1, \ldots, f_n \ldotp \forall v_1, \ldots, v_m \ldotp \alpha \implies
 
 \item Oracle assumptions are introduced. Oracle assumptions are assumptions that are generated when an external oracle is called with a concrete set of input values. The assumptions are conjoined to the list of assumptions $\alpha$ in the synthesis conjecture.
 
-\item Oracle Functions are introduced. These are functional symbols whose interpretation is associated to an external oracle. The functions are treated as universally quantified uninterpreted functions, and calls to that external oracle place with concrete input values generate assumptions over the behavior of the uninterpreted function. These assumptions are conjoined to the list of assumptions $\alpha$ in the synthesis conjecture.
+\item Oracle functions are introduced. These are functional symbols whose interpretation is associated to an external oracle. The functions are treated as universally quantified uninterpreted functions, and calls to that external oracle place with concrete input values generate assumptions over the behavior of the uninterpreted function. These assumptions are conjoined to the list of assumptions $\alpha$ in the synthesis conjecture.
 
 \item A set of new commands are introduced to enable easy specification of specific types of oracles, for instance input-output oracles. These oracles are based on the formalization by Jha and Seshia~\cite{oracles}.
 
