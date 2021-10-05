@@ -65,7 +65,7 @@
 
 \section{Theory of Tables}
 
-This document describes a SMT-LIB theory of tables $\thtable$.
+This document describes an SMT-LIB theory of tables $\thtable$.
 We provide its signature $\sigtable$ in two parts,
 first describing its sorts and then its function symbols.
 We assume that $\sigtable$ includes the symbols of the core theory, 
@@ -109,6 +109,8 @@ The signature $\sigtable$ includes all sorts of the form:
 \end{align*}
 for all sorts $\syntax{T_1, ..., T_k}$.
 This sort denotes tuples taking arguments of sorts $\syntax{T_1, ..., T_k}$.
+Furthermore, the sort $\syntax{Tuple}$ (with no arguments) denotes
+the empty tuple.
 
 \subsection{Bag Sorts}
 The signature $\sigtable$ includes all sorts of the form:
@@ -124,12 +126,15 @@ The \emph{cardinality} of a bag is the number of elements it contains.
 %The elements of a bag are unordered.
 
 \paragraph{Notes}
-A table is bag whose elements are tuples.
+A table is a bag whose elements are tuples.
 We write $\syntax{ (Table\ T_1 ...\ T_k)}$ as shorthand for 
 the sort $\syntax{ (Bag\ (Tuple\ T_1\ ...\ T_k)) }$ 
 in the remainder of the document.
-We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table sort above,
+We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of the table sort above,
 and the elements of a given table as its \emph{rows}.
+Notice that the columns of the table are \emph{not} given explicit names.
+The sort $\syntax{Table}$ with no arguments denotes the table sort with
+no columns.
 
 \section{Function Symbols}
 
@@ -163,7 +168,7 @@ Its syntax is:
 where $\syntax{t}$ is a term,
 and $\syntax{x_1\ ...\ x_n}$ are bound variables.
 It has sort $\syntax{(->\ T_1\ ...\ T_n\ T)}$
-when $\syntax{t}$ has sort $\syntax{T}$.
+where $\syntax{t}$ has sort $\syntax{T}$.
 It denotes the anonymous function
 returning $t$ for input arguments $\syntax{x_1}, \ldots, \syntax{x_n}$.
 %The term 
@@ -191,20 +196,26 @@ Its sort definition is
 \end{verbatim}
 The term $\syntax{(tuple\ u_1\ ...\ u_n)}$ is
 interpreted as the tuple comprised of 
-the (ordered) list of elements $\syntax{u_1,\ ...\ u_n}$. 
+the (ordered) list of elements $\syntax{u_1,\ ...\ u_n}$.
+\paragraph{Notes}
+\begin{itemize}
+\item
+The list of arguments provided to the tuple constructor can be empty.
+The term $\syntax{tuple}$, when applied to no arguments, denotes the empty tuple,
+i.e. the tuple with zero components.
+\end{itemize}
 
 \subsubsection{Tuple Selection}
 The signature $\sigtable$ includes 
-all indexed function symbols of the form
-$\syntax{ 
-(\_\ sel\ n)
-}$
-where $\syntax{n}$ is a numeral.
-Its sort definition is
+the polymorphic function symbol $\syntax{tuple\_select}$.
+Its sort definition is parametrized on $j$ sorts:
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ sel n)
-  
+  (tuple_select
+    
+    ; The index we are selecting 
+    Int
+    
     ; The tuple we are selecting from
     (Tuple X_1 ... X_j)
     
@@ -213,23 +224,39 @@ Its sort definition is
   )
 )
 \end{verbatim}
-where $1 \leq \syntax{n} \leq \syntax{j}$.
-The term $\syntax{((\_\ sel\ n)\ t)}$ is
+When $1 \leq n \leq j$,
+the term $\syntax{(tuple\_select\ n\ t)}$ is
 interpreted as the $\syntax{n}^{th}$ argument of the tuple $\syntax{t}$.
+When $n$ is out of bounds, e.g. $1 \leq n \leq j$ does not hold,
+then the value of $\syntax{(tuple\_select\ n\ t)}$ is unspecified.
+
+\paragraph{Notes}
+\begin{itemize}
+\item Like other operators with partially specified semantics,
+the symbol $\syntax{tuple\_select}$ behaves like a function, meaning
+that $\syntax{(tuple\_select\ n_1\ t_1)}$ and  $\syntax{(tuple\_select\ n_2\ t_2)}$
+must have the same value when $n_1, t_1$ pairwise have the same value as $n_2, t_2$,
+even when $n_1$ and $n_2$ are out of bounds.
+\item When $n$ is a numeral, the indexed function
+$\syntax{(\_\ tuple\_select\ n)}$ is syntactic sugar for the function
+$\syntax{(tuple\_select\ n)}$, meaning that $\syntax{((\_\ tuple\_select\ n)\ t)}$
+and $\syntax{(tuple\_select\ n\ t)}$ specify the same term.
+The former may be used to make it is explicit the index to a tuple selection
+not allowed to be symbolic.
+\end{itemize}
 
 \subsubsection{Tuple Projection}
 \label{sec:tup-project}
 The signature $\sigtable$ includes 
-all indexed function symbols of the form
-$
-\syntax{ 
-(\_\ project\ n_1\ ...\ n_k)
-}$
-where $\syntax{n_1}, \ldots, \syntax{n_k}$ are numerals.
-Its sort definition is:
+the function symbol $\syntax{tuple\_project}$.
+Its sort definition includes an unbounded number of integer arguments, followed
+by a tuple:
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ project n_1 ... n_k)
+  (tuple_project
+    
+    ; the components to project
+    Int ... Int
   
     ; The table to project
     (Tuple X_1 ... X_j)
@@ -239,22 +266,33 @@ Its sort definition is:
   )
 )
 \end{verbatim}
-where for each $i = 1, \ldots, k$,
-$1 \leq n_i \leq j$.
 The term
-$\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
-returns the tuple obtained by concatenating the
+$\syntax{(tuple\_project\ n_1\ ...\ n_k\ t)}$
+returns the tuple obtained by collecting the
 values from $t$ at positions $n_1 \ldots n_k$.
-In other words, this term is equivalent to the
-term $\syntax{(tuple\ ((\_\ sel\ n_1)\ t)\ ...\ ((\_\ sel\ n_k)\ t))}$.
+In other words, this term is equivalent to:
+\begin{align*}
+\syntax{(tuple\ (tuple\_select\ n_1\ t)\ ...\ (tuple\_select\ n_k\ t))}
+\end{align*}
+Notice that if any $n_i$ in the above term is out of bounds, the value of
+that component of the returned tuple is unspecified.
+%If for each $i = 1, \ldots, k$,
+%$1 \leq n_i \leq j$,
 
 \paragraph{Notes}
 \begin{itemize}
 \item
-The function
-$\syntax{project}$ (without indices)
-denotes the operator above where $k=0$, which always returns the empty
-tuple.
+The indices $n_1, \ldots, n_k$ do not need to be ordered such that $n_1 < \ldots < n_k$.
+Moreover, it may be the case that $n_i = n_j$ for some $i \neq j$ in which
+case the component of the original is duplicated in the return value of the projection.
+\item
+The list of integer arguments to tuple projection can be empty.
+The function application
+$\syntax{(tuple\_project\ t)}$ always returns the empty tuple for any input $t$.
+\item Similar to the indexed syntax for tuple selection,
+when $n_1, \ldots, n_k$ are numerals,
+$\syntax{((\_\ tuple\_project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
+$\syntax{(tuple\_project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
 
 \subsection{Bags}
@@ -458,7 +496,7 @@ $
 (c\ u_n\ ...\ (c\ u_2\ (c\ u_1\ i))\ ...\ )
 }
 $.
-In other words, given a start value $\syntax{b}$,
+In other words, given a start value $\syntax{i}$,
 we apply the combining function $\syntax{c}$, taking these elements
 as first arguments in order.
 
@@ -466,7 +504,7 @@ as first arguments in order.
 \begin{itemize}
 \item
 The semantics above impose no restrictions on the ordering $\preceq$,
-which determines in which the tuples $\syntax{u_1}, \ldots, \syntax{u_n}$
+which determines the order in which the tuples $\syntax{u_1}, \ldots, \syntax{u_n}$
 are passed to the combining function $\syntax{c}$.
 Moreover, 
 we do not provide syntax to specify such an ordering.
@@ -528,8 +566,7 @@ In particular, this means it is reflexive, symmetric and transitive.
 This ensures that a partition with the above properties
 can be computed.
 The semantics of applications of $\syntax{partition}$ for relations $\syntax{r}$
-that are not equivalence relations
-are undefined.
+that are not equivalence relations is undefined.
 \item
 If $\syntax{u}$ occurs with some multiplicity $n$ in $\syntax{t}$,
 then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
@@ -539,20 +576,19 @@ then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
 
 \subsubsection{Table Projection}
 The signature $\sigtable$ includes 
-all indexed functions symbols of the form
-\begin{align*}
-\syntax{ 
-(\_\ project\ n_1\ ...\ n_k)
-}
-\end{align*}
-where $n_1, \ldots, n_k$ are numerals.
-Note this operator is overloaded,
-as a separate projection function (of the same name)
-is also defined for tuples in Section~\ref{sec:tup-project}.
-Its sort definition is:
+the functions symbol of the form
+$\syntax{tuple\_project}$.
+%Note this operator is overloaded,
+%as a separate projection function (of the same name)
+%is also defined for tuples in Section~\ref{sec:tup-project}.
+Its sort definition includes an unbounded number of integer arguments, followed
+by a tuple:
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ project n_1 ... n_k)
+  (table_project
+  
+    ; The columns to project
+    Int ... Int
   
     ; The table to project
     (Table X_1 ... X_j)
@@ -563,41 +599,43 @@ Its sort definition is:
 )
 \end{verbatim}
 where for each $i = 1, \ldots, j$,
-$1 \leq n_i \leq j$. 
-Note that
-$\syntax{project}$ without indices
-denotes the operator above where $k=0$.
+$1 \leq n_i \leq j$.
 
 \paragraph{Semantics}
 
-A projection operator keeps (copies) of the given columns
+A projection operator for tables keeps (copies) of the given columns
 in each (tuple) element of its argument.
 In other words,
-let $p$ be the projection operator denoted by $\syntax{(\_\ project\ n_1\ ...\ n_k)}$
-and let $t$ be a table.
-Then, $p(t)$
-is the table containing a tuple of the form
-$(u_{n_1}, \ldots, u_{n_k})$
-for each tuple $(u_1, \ldots, u_j)$ from $t$.
+consider the term $\syntax{(table\_project\ n_1\ ...\ n_k\ t)}$
+where $t$ is a table and $n_1, \ldots, n_k$ are integers.
+%The value of this term is the table containing a tuple of the form
+%$(u_{n_1}, \ldots, u_{n_k})$
+%for each tuple $(u_1, \ldots, u_j)$ from $t$.
+%More precisely,
+%the term $\syntax{((table\_project\ n_1\ ...\ n_k\ t)}$
+This term
+can be seen as syntax sugar for $\syntax{(map\ p\ t)}$ where $\syntax{p}$
+is the function:
+\begin{verbatim}
+(lambda ((u (Tuple X_1 ... X_j))) (tuple_project n_1 ... n_k u))
+\end{verbatim}
+In other words, table projection
+applies the tuple projection on all tuples in its table argument $\syntax{t}$
+to obtain tuples in the returned table.
 
 \paragraph{Notes}
 \begin{itemize}
-\item
-The term $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
-can be seen as syntax sugar for $\syntax{(map\ p\ t)}$ where $\syntax{p}$
-is a function that
-applies the tuple projection on tuples $\syntax{(Tuple\ X_1\ ...\ X_j)}$
-to obtain tuples $\syntax{(Tuple\ X_{n_1}\ ...\ X_{n_k})}$:
-\begin{verbatim}
-(lambda ((t (Tuple X_1 ... X_j))) ((_ project n_1 ... n_k) t))
-\end{verbatim}
 \item
 It may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
 in which case two (or more) copies of the column at that position
 are in the result of the projection.
 \item
-The cardinality of $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$ is
-same as the cardinality of $\syntax{t}$.
+The cardinality of $\syntax{(table\_project\ n_1\ ...\ n_k\ t)}$ is
+the same as the cardinality of $\syntax{t}$.
+\item
+For any table $t$,
+the application taking no integer arguments $\syntax{(table\_project\ t)}$ 
+returns a table with no columns whose cardinality is the same as that of $\syntax{t}$.
 \end{itemize}
 
 \subsubsection{Table Join}
@@ -640,7 +678,7 @@ is syntax sugar for $\syntax{(filter\ P\ (join\ t_1\ t_2))}$ where $\syntax{P}$ 
 the predicate:
 \begin{verbatim}
 (lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple Y_1 ... Y_l)))
-  (= ((_ project n_1 ... n_k) t_1) ((_ project m_1 ... m_k) t_2))
+  (= ((_ tuple_project n_1 ... n_k) t_1) ((_ tuple_project m_1 ... m_k) t_2))
 )
 \end{verbatim}
 In other words,
@@ -708,7 +746,7 @@ where $\syntax{eq}$ is the relation over tuples that holds
 when tuples are equivalent for indices $\syntax{n_1}, \ldots, \syntax{n_k}$:
 \begin{verbatim}
 (lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple X_1 ... X_j)))
-  (= ((_ project n_1 ... n_k) t_1) ((_ project n_1 ... n_k) t_2))
+  (= ((_ tuple_project n_1 ... n_k) t_1) ((_ tuple_project n_1 ... n_k) t_2))
 )
 \end{verbatim}
 Above, notice that 
@@ -767,6 +805,29 @@ $\syntax{(lambda\ ((y\ (Table\ T_1 ...\ T_k))\ (x\ X_a))\ x)}$.
 In other words, this function returns the result of the
 fold computation described above unchanged.
 \end{comment}
+
+\section{Extensions}
+
+In this section, we provide an extended syntax for representing
+\emph{abstract} sorts and function symbols.
+We provide an extended type system for type checking terms over these symbols.
+
+\subsection{Abstract Sorts}
+We write
+$\syntax{\abstype{Tuple}}$ and $\syntax{\abstype{Bag}}$
+to denote the abstract tuple type and the abstract bag type respectively.
+These types take no parameters.
+When a term $t$ is annotated with an abstract tuple type,
+conceptually the type of $t$ is some tuple type,
+but the parameters of that type is not given.
+We write $\syntax{\abstype{Table}}$ as shorthand for $\syntax{( Bag\ \abstype{Tuple})}$,
+that is, bags of tuples whose parameters are not given.
+Furthermore, we write $\syntax{\abstypebase}$ to denote
+the abstract type.
+An annotation of the abstract type on a term $t$ gives no information about the type of $t$.
+
+\subsection{Abstract Table Operators}
+
 
 \section{Examples}
 
