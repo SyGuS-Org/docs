@@ -237,12 +237,11 @@ the symbol $\syntax{tuple\_select}$ behaves like a function, meaning
 that $\syntax{(tuple\_select\ n_1\ t_1)}$ and  $\syntax{(tuple\_select\ n_2\ t_2)}$
 must have the same value when $n_1, t_1$ pairwise have the same value as $n_2, t_2$,
 even when $n_1$ and $n_2$ are out of bounds.
-\item When $n$ is a numeral, the indexed function
-$\syntax{(\_\ tuple\_select\ n)}$ is syntactic sugar for the function
-$\syntax{(tuple\_select\ n)}$, meaning that $\syntax{((\_\ tuple\_select\ n)\ t)}$
-and $\syntax{(tuple\_select\ n\ t)}$ specify the same term.
-The former may be used to make it is explicit the index to a tuple selection
-not allowed to be symbolic.
+\item When $n$ is a numeral such that $1 \leq n \leq j$,
+$\syntax{((\_\ tuple\_select\ n)\ t)}$ is syntax sugar for the term
+$\syntax{(tuple\_select\ n\ t)}$.
+The former may be used to make it is explicit the index to a tuple selector
+is within bounds, and is not allowed to be symbolic.
 \end{itemize}
 
 \subsubsection{Tuple Projection}
@@ -290,7 +289,7 @@ The list of integer arguments to tuple projection can be empty.
 The function application
 $\syntax{(tuple\_project\ t)}$ always returns the empty tuple for any input $t$.
 \item Similar to the indexed syntax for tuple selection,
-when $n_1, \ldots, n_k$ are numerals,
+when $n_1, \ldots, n_k$ are numerals in the range $[1, j]$,
 $\syntax{((\_\ tuple\_project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
 $\syntax{(tuple\_project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
@@ -598,8 +597,8 @@ by a tuple:
   )
 )
 \end{verbatim}
-where for each $i = 1, \ldots, j$,
-$1 \leq n_i \leq j$.
+%where for each $i = 1, \ldots, j$,
+%$1 \leq n_i \leq j$.
 
 \paragraph{Semantics}
 
@@ -626,7 +625,8 @@ to obtain tuples in the returned table.
 \paragraph{Notes}
 \begin{itemize}
 \item
-It may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
+Like tuple projection,
+it may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
 in which case two (or more) copies of the column at that position
 are in the result of the projection.
 \item
@@ -636,6 +636,10 @@ the same as the cardinality of $\syntax{t}$.
 For any table $t$,
 the application taking no integer arguments $\syntax{(table\_project\ t)}$ 
 returns a table with no columns whose cardinality is the same as that of $\syntax{t}$.
+\item
+When $n_1, \ldots, n_k$ are numerals in the range $[1, j]$,
+$\syntax{((\_\ table\_project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
+$\syntax{(table\_project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
 
 \subsubsection{Table Join}
@@ -676,8 +680,8 @@ For any $\syntax{k}>0$, $\syntax{(table\_join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2
 is syntax sugar for $\syntax{(filter\ P\ (table\_join\ t_1\ t_2))}$ where $\syntax{P}$ is
 the predicate:
 \begin{verbatim}
-(lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple Y_1 ... Y_l)))
-  (= (tuple_project n_1 ... n_k t_1) (tuple_project m_1 ... m_k t_2))
+(lambda ((u1 (Tuple X_1 ... X_j)) (u2 (Tuple Y_1 ... Y_l)))
+  (= (tuple_project n_1 ... n_k u1) (tuple_project m_1 ... m_k u2))
 )
 \end{verbatim}
 In other words,
@@ -700,7 +704,8 @@ which however rely on the semantics of tuple projection for out of bound indices
 The cardinality of $\syntax{(join\ t_1\ t_2)}$
 is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
 \item 
-When $n_1, \ldots, n_k, m_1, \ldots, m_k$ are numerals,
+When $n_1, \ldots, n_k$ are numerals in the range $[1, j]$ 
+and $m_1, \ldots, m_k$ are numerals in the range $[1, l]$, then
 $\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
 is syntax sugar for the term
 $\syntax{(join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$.
@@ -764,12 +769,13 @@ and returns a term of type $\syntax{X}$.
 \begin{itemize}
 \item
 In common usage,
-the indices provided to this operator specify columns that are in bounds.
+the indices provided to table aggregation specify columns that are in bounds.
 When the indices are out of bounds,
-the semantics of the aggregation are the same as above, 
+the semantics are the same as above, 
 which however rely on the semantics of tuple projection for out of bound indices.
 \item
-When $n_1, \ldots, n_k$ are numerals,
+When $n_1, \ldots, n_k$ are numerals in the range $[1,j]$,
+we have that
 $\syntax{((\_\ table\_aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$
 is syntax sugar for the term
 $\syntax{(table\_aggr\ n_1\ ...\ n_k\ c\ i\ t)}$.
