@@ -640,18 +640,16 @@ returns a table with no columns whose cardinality is the same as that of $\synta
 
 \subsubsection{Table Join}
 The signature $\sigtable$ includes 
-all indexed functions symbols of the form
-\begin{align*}
-\syntax{ 
-(\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)
-}
-\end{align*}
-where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
+the function symbol $\syntax{table\_join}$
+%where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
 Its sort definition is:
 
 \begin{verbatim}
 (par (X_1 ... X_j Y_1 ... Y_l)
-  ((_ join n_1 m_1 ... n_k m_k)
+  (table_join
+    
+    ; the pairs of columns to join
+    Int Int ... Int Int
   
     ; The tables to join
     (Table X_1 ... X_j)
@@ -662,54 +660,64 @@ Its sort definition is:
   )
 )
 \end{verbatim}
-where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_i} \leq \syntax{j}$, $1 \leq \syntax{m_i} \leq \syntax{l}$
-and $X_{n_i}$ is the same type as $Y_{m_i}$.
-Note that
-$\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
+%where for all $i = 1, \ldots k$,
+%we have that $1 \leq \syntax{n_i} \leq \syntax{j}$, $1 \leq \syntax{m_i} \leq \syntax{l}$
+%and $X_{n_i}$ is the same type as $Y_{m_i}$.
+%Note that
+%$\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
 
 \paragraph{Semantics}
-When $\syntax{k}=0$, we have that $\syntax{(join\ t_1\ t_2)}$
+When the join operator takes no integer arguments,
+we have that $\syntax{(table\_join\ t_1\ t_2)}$
 denotes the table containing a tuple corresponding to the concatentation
 of tuples $u_1$ and $u_2$
 for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
-When $\syntax{k}>0$, $\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
-is syntax sugar for $\syntax{(filter\ P\ (join\ t_1\ t_2))}$ where $\syntax{P}$ is
+For any $\syntax{k}>0$, $\syntax{(table\_join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$
+is syntax sugar for $\syntax{(filter\ P\ (table\_join\ t_1\ t_2))}$ where $\syntax{P}$ is
 the predicate:
 \begin{verbatim}
 (lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple Y_1 ... Y_l)))
-  (= ((_ tuple_project n_1 ... n_k) t_1) ((_ tuple_project m_1 ... m_k) t_2))
+  (= (tuple_project n_1 ... n_k t_1) (tuple_project m_1 ... m_k t_2))
 )
 \end{verbatim}
 In other words,
 the join keeps only concatenations of tuples $u_1 \in \syntax{t_1}$ and
 $u_2 \in \syntax{t_2}$ 
 that match on each of the pairs of argument indices (columns) specified by
-the indices of the operator,
+the given indices,
 where $n_1\ ...\ n_k$ are indices corresponding to arguments of $u_1$
 and $m_1\ ...\ m_k$ are indices corresponding to arguments of $u_2$.
 
 \paragraph{Notes}
 \begin{itemize}
-\item The cardinality of $\syntax{(join\ t_1\ t_2)}$
+\item
+In common usage,
+the indices provided to this operator specify columns that are in bounds.
+When the indices are out of bounds,
+the semantics of the join are the same as above, 
+which however rely on the semantics of tuple projection for out of bound indices.
+\item 
+The cardinality of $\syntax{(join\ t_1\ t_2)}$
 is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
+\item 
+When $n_1, \ldots, n_k, m_1, \ldots, m_k$ are numerals,
+$\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
+is syntax sugar for the term
+$\syntax{(join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$.
 \end{itemize}
 
 
 \subsubsection{Table Aggregation}
 The signature $\sigtable$ includes 
-all indexed function symbols of the form
-$
-\syntax{ 
-(\_\ aggr\ n_1\ ...\ n_k)
-}
-$
-where $\syntax{n_1}, \ldots, \syntax{n_k}$ are numerals,
-called \emph{table aggregation operations}. Their sort definition is:
+the function symbol $\syntax{table\_aggr}$
+called \emph{table aggregation operator}. Its sort definition is:
 
 \begin{verbatim}
 (par (X_1 ... X_j X) 
-  ((_ aggr n_1 ... n_k)
+  (table_aggr
+  
+    ; The columns to aggregate
+    Int ... Int
     
     ; The "combining function"
     (-> (Tuple X_1 ... X_j) X X)
@@ -725,17 +733,15 @@ called \emph{table aggregation operations}. Their sort definition is:
   )
 )
 \end{verbatim}
-where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_i} \leq \syntax{j}$. 
 
 \paragraph{Semantics}
-Let $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$
+Let $\syntax{(table\_aggr\ n_1\ ...\ n_k\ c\ i\ t)}$
 be a well-sorted term for
 combining function $\syntax{c}$, 
 initial value $\syntax{i}$,
 and table-to-aggregate $\syntax{t}$.
 Assume that $\syntax{c}$ is \emph{order-agnostic} (see Section~\ref{sec:fold}).
-The application $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$ is
+The application $\syntax{(table\_aggr\ n_1\ ...\ n_k\ c\ i\ t)}$ is
 the union of elements computed via a fold operation involving $\syntax{c}$ and $\syntax{i}$
 that run over elements in a partition of the table $\syntax{t}$.
 In particular, this application of an aggregation function is syntax sugar for:
@@ -746,13 +752,28 @@ where $\syntax{eq}$ is the relation over tuples that holds
 when tuples are equivalent for indices $\syntax{n_1}, \ldots, \syntax{n_k}$:
 \begin{verbatim}
 (lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple X_1 ... X_j)))
-  (= ((_ tuple_project n_1 ... n_k) t_1) ((_ tuple_project n_1 ... n_k) t_2))
+  (= (tuple_project n_1 ... n_k t_1) (tuple_project n_1 ... n_k t_2))
 )
 \end{verbatim}
 Above, notice that 
 $\syntax{(fold\ c\ i)}$ is a partial application of the fold
 function which takes a $\syntax{(Bag\ (Tuple\ X_1\ ...\ X_j))}$
 and returns a term of type $\syntax{X}$.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+In common usage,
+the indices provided to this operator specify columns that are in bounds.
+When the indices are out of bounds,
+the semantics of the aggregation are the same as above, 
+which however rely on the semantics of tuple projection for out of bound indices.
+\item
+When $n_1, \ldots, n_k$ are numerals,
+$\syntax{((\_\ table\_aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$
+is syntax sugar for the term
+$\syntax{(table\_aggr\ n_1\ ...\ n_k\ c\ i\ t)}$.
+\end{itemize}
 
 \begin{comment}
 In detail,
@@ -825,9 +846,6 @@ that is, bags of tuples whose parameters are not given.
 Furthermore, we write $\syntax{\abstypebase}$ to denote
 the abstract type.
 An annotation of the abstract type on a term $t$ gives no information about the type of $t$.
-
-\subsection{Abstract Table Operators}
-
 
 \section{Examples}
 
