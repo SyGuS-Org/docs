@@ -281,6 +281,9 @@ that component of the returned tuple is unspecified.
 \paragraph{Notes}
 \begin{itemize}
 \item
+When $k=0$,
+we have that $\syntax{(tuple\_project\ t)}$ is equivalent to the empty tuple.
+\item
 The indices $n_1, \ldots, n_k$ do not need to be ordered such that $n_1 < \ldots < n_k$.
 Moreover, it may be the case that $n_i = n_j$ for some $i \neq j$ in which
 case the component of the original is duplicated in the return value of the projection.
@@ -637,10 +640,36 @@ For any table $t$,
 the application taking no integer arguments $\syntax{(table\_project\ t)}$ 
 returns a table with no columns whose cardinality is the same as that of $\syntax{t}$.
 \item
-When $n_1, \ldots, n_k$ are numerals in the range $[1, j]$,
+When $k>0$ and
+$n_1, \ldots, n_k$ are numerals in the range $[1, j]$,
 $\syntax{((\_\ table\_project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
 $\syntax{(table\_project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
+
+\subsubsection{Table Product}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{table\_product}$
+%where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
+Its sort definition is:
+
+\begin{verbatim}
+(par (X_1 ... X_j Y_1 ... Y_l)
+  (table_product
+  
+    ; The tables to take the product of
+    (Table X_1 ... X_j)
+    (Table Y_1 ... Y_j)
+    
+    ; The return sort
+    (Table X_1 ... X_j Y_1 ... Y_j)
+  )
+)
+\end{verbatim}
+\paragraph{Semantics}
+We have that $\syntax{(table\_product\ t_1\ t_2)}$
+denotes the table containing a tuple corresponding to the concatentation
+of tuples $u_1$ and $u_2$
+for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
 
 \subsubsection{Table Join}
 The signature $\sigtable$ includes 
@@ -671,13 +700,8 @@ Its sort definition is:
 %$\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
 
 \paragraph{Semantics}
-When the join operator takes no integer arguments,
-we have that $\syntax{(table\_join\ t_1\ t_2)}$
-denotes the table containing a tuple corresponding to the concatentation
-of tuples $u_1$ and $u_2$
-for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
-For any $\syntax{k}>0$, $\syntax{(table\_join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$
-is syntax sugar for $\syntax{(filter\ P\ (table\_join\ t_1\ t_2))}$ where $\syntax{P}$ is
+We have that $\syntax{(table\_join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$
+is syntax sugar for $\syntax{(filter\ P\ (table\_product\ t_1\ t_2))}$ where $\syntax{P}$ is
 the predicate:
 \begin{verbatim}
 (lambda ((u1 (Tuple X_1 ... X_j)) (u2 (Tuple Y_1 ... Y_l)))
@@ -691,9 +715,15 @@ that match on each of the pairs of argument indices (columns) specified by
 the given indices,
 where $n_1\ ...\ n_k$ are indices corresponding to arguments of $u_1$
 and $m_1\ ...\ m_k$ are indices corresponding to arguments of $u_2$.
+Note that if $k=0$, all concenations are kept, and the join is
+equivalent to a product.
 
 \paragraph{Notes}
 \begin{itemize}
+\item
+When the join operator takes no integer arguments,
+we have that $\syntax{(table\_join\ t_1\ t_2)}$
+is equivalent to $\syntax{(table\_product\ t_1\ t_2)}$.
 \item
 In common usage,
 the indices provided to this operator specify columns that are in bounds.
@@ -703,8 +733,8 @@ which however rely on the semantics of tuple projection for out of bound indices
 \item 
 The cardinality of $\syntax{(join\ t_1\ t_2)}$
 is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
-\item 
-When $n_1, \ldots, n_k$ are numerals in the range $[1, j]$ 
+\item
+If $k>0$ and $n_1, \ldots, n_k$ are numerals in the range $[1, j]$ 
 and $m_1, \ldots, m_k$ are numerals in the range $[1, l]$, then
 $\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
 is syntax sugar for the term
