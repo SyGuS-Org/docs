@@ -1017,7 +1017,8 @@ a production rule for $\syntax{StartInt}$.
 Thus, it is assumed that this rule is limited to generating terms
 $\syntax{(tuple.select\ n\ s)}$ where $\syntax{s}$ is a table whose $\syntax{n}^{th}$ column is an integer.
 
-A possible correct response for this example from a synthesis solver is:
+A possible correct response for this example from a synthesis solver 
+prepends the integer $\syntax{7}$ to all rows of the original table:
 \begin{verbatim}
 (
 (define-fun f ((x (Table String))) (Table Int String) 
@@ -1025,14 +1026,11 @@ A possible correct response for this example from a synthesis solver is:
 )
 \end{verbatim}
 
-In particular, this prepends the integer $\syntax{7}$ to all rows of the original table.
-
 Note the use of abstract sorts in this example gives
 greater flexibility for specifications. 
 Although not necessary in this example, the solution
 may involve types that are not explicitly specified in the grammar.
-For example,
-the following solution involves tables with two integer columns and a string column:
+For example:
 \begin{verbatim}
 (
 (define-fun f ((x (Table String))) (Table Int String) 
@@ -1041,6 +1039,7 @@ the following solution involves tables with two integer columns and a string col
     (table.product (bag (tuple 7) 1) x))))
 )
 \end{verbatim}
-It is also a solution to the above problem.
+The above solution involves constructing a table with two integer columns and a string column,
+and is also a valid solution to the above problem.
 
 \end{document}
