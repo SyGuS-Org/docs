@@ -1015,8 +1015,8 @@ the return type of $\syntax{f}$.
 Several non-terminals of the above grammar are well-typed only for a subset of the terms they apply to.
 For example, $\syntax{(tuple.select\ StartInt\ Start)}$ is the right hand side of
 a production rule for $\syntax{StartInt}$.
-Thus, it is assumed that this rule is limited to generating terms
-$\syntax{(tuple.select\ n\ s)}$ where $\syntax{s}$ is a table whose $\syntax{n}^{th}$ column is an integer.
+This rule is limited to generating terms
+$\syntax{(tuple.select\ n\ t)}$ where $\syntax{t}$ is a table whose $\syntax{n}^{th}$ column is an integer.
 
 A possible correct response for this example from a synthesis solver 
 prepends the integer $\syntax{7}$ to all rows of the original table:
