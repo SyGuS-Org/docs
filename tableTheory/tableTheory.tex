@@ -871,13 +871,12 @@ In other words, this function returns the result of the
 fold computation described above unchanged.
 \end{comment}
 
-\section{Extensions}
+\section{Abstract Sorts}
 
 In this section, we provide an extended syntax for representing
 \emph{abstract} sorts and function symbols.
 %We provide an extended type system for type checking terms over these symbols.
 
-\subsection{Abstract Sorts}
 We write
 $\syntax{\abstype{Tuple}}$ and $\syntax{\abstype{Bag}}$
 to denote the abstract tuple type and the abstract bag type respectively.
@@ -887,8 +886,12 @@ conceptually the type of $t$ is some tuple type,
 but the parameters of that type is not given.
 We write $\syntax{\abstype{Table}}$ as shorthand for $\syntax{( Bag\ \abstype{Tuple})}$,
 that is, bags of tuples whose parameters are not given.
-Furthermore, we write $\syntax{\abstypebase}$ to denote
-the abstract type.
+Furthermore, 
+the syntax $\syntax{\abstype{->}}$ specifies the abstract function sort,
+i.e. functions having an unspecified (at least one) argument sort and a return sort.
+
+We write $\syntax{\abstypebase}$ to denote
+the (fully) abstract type.
 An annotation of the abstract type on a term $t$ gives no information about the type of $t$.
 
 \section{Examples}
@@ -977,6 +980,7 @@ The following additionally makes use of abstract sorts.
   (bag StartTuple StartInt)
   (bag.union_disjoint Start Start)
   (table.product Start Start)
+  (table.project StartInt StartInt Start)
 ))
 (StartTuple (Tuple Int) (
   (tuple StartInt)
@@ -1022,5 +1026,21 @@ A possible correct response for this example from a synthesis solver is:
 \end{verbatim}
 
 In particular, this prepends the integer $\syntax{7}$ to all rows of the original table.
+
+Note the use of abstract sorts in this example gives
+greater flexibility for specifications. 
+Although not necessary in this example, the solution
+may involve types that are not explicitly specified in the grammar.
+For example,
+the following solution involves tables with two integer columns and a string column:
+\begin{verbatim}
+(
+(define-fun f ((x (Table String))) (Table Int String) 
+  (table.project 1 2 
+    (table.product (bag (tuple 0) 1) 
+    (table.product (bag (tuple 7) 1) x))))
+)
+\end{verbatim}
+It is also a solution to the above problem.
 
 \end{document}
