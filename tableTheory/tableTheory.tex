@@ -381,9 +381,9 @@ is the if-then-else construct.
 \paragraph{Notes}
 \begin{itemize}
 \item
-The above operators are \emph{chainable}, that is,
-$\syntax{(bag.union_max\ A\ B\ C)}$ is syntax sugar for
-$\syntax{(bag.union_max\ (bag.union_max\ A\ B)\ C)}$.
+The above operators are \emph{left-associative}, that is,
+$\syntax{(bag.union\_max\ A\ B\ C)}$ is syntax sugar for
+$\syntax{(bag.union\_max\ (bag.union\_max\ A\ B)\ C)}$.
 \end{itemize}
 
 \subsubsection{Bag Cardinality}
