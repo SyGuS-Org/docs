@@ -57,7 +57,7 @@
 
 \title{Proposal for a Theory of Tables}
 
-\author{Andrew Reynolds \and Chenglong Wang \and Mudathir Mohammed \and Cesare Tinelli}
+\author{Andrew Reynolds \and Chenglong Wang \and Mudathir Mohamed \and Cesare Tinelli}
 
 \maketitle
 
@@ -382,8 +382,10 @@ is the if-then-else construct.
 \begin{itemize}
 \item
 The above operators are \emph{left-associative}, that is,
-$\syntax{(bag.union\_max\ A\ B\ C)}$ is syntax sugar for
-$\syntax{(bag.union\_max\ (bag.union\_max\ A\ B)\ C)}$.
+$\syntax{(bag.union\_max\ A\ B\ C)}$ is syntax sugar for:
+\begin{align*}
+\syntax{(bag.union\_max\ (bag.union\_max\ A\ B)\ C)}
+\end{align*}
 \end{itemize}
 
 \subsubsection{Bag Cardinality}
@@ -470,7 +472,7 @@ the elements $\syntax{(f\ u)}$
 for each $\syntax{u}$ that occurs in $\syntax{t}$.
 The multiplicity of $\syntax{(f\ u)}$
 in $\syntax{(bag.map\ f\ t)}$
-is the same as the multiplicity of $\syntax{u}$ in $\syntax{t}$.
+is at least the multiplicity of $\syntax{u}$ in $\syntax{t}$.
 
 \subsubsection{Bag Fold}
 \label{sec:fold}
