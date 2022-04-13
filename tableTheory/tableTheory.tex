@@ -227,7 +227,7 @@ Its sort definition is parametrized on $j$ sorts:
 When $0 \leq n \leq j-1$,
 the term $\syntax{(tuple.select\ n\ t)}$ is
 interpreted as the $\syntax{n}^{th}$ argument of the tuple $\syntax{t}$.
-When $n$ is out of bounds, e.g. $1 \leq n \leq j$ does not hold,
+When $n$ is out of bounds, e.g. $0 \leq n \leq j-1$ does not hold,
 then the value of $\syntax{(tuple.select\ n\ t)}$ is unspecified.
 
 \paragraph{Notes}
@@ -237,7 +237,7 @@ the symbol $\syntax{tuple.select}$ behaves like a function, meaning
 that $\syntax{(tuple.select\ n_1\ t_1)}$ and  $\syntax{(tuple.select\ n_2\ t_2)}$
 must have the same value when $n_1, t_1$ pairwise have the same value as $n_2, t_2$,
 even when $n_1$ and $n_2$ are out of bounds.
-\item When $n$ is a numeral such that $1 \leq n \leq j$,
+\item When $n$ is a numeral such that $0 \leq n \leq j-1$,
 $\syntax{((\_\ tuple.select\ n)\ t)}$ is syntax sugar for the term
 $\syntax{(tuple.select\ n\ t)}$.
 The former may be used to make it is explicit the index to a tuple selector
@@ -292,7 +292,7 @@ The list of integer arguments to tuple projection can be empty.
 The function application
 $\syntax{(tuple.project\ t)}$ always returns the empty tuple for any input $t$.
 \item Similar to the indexed syntax for tuple selection,
-when $n_1, \ldots, n_k$ are numerals in the range $[1, j]$,
+when $n_1, \ldots, n_k$ are numerals in the range $[0, j-1]$,
 $\syntax{((\_\ tuple.project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
 $\syntax{(tuple.project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
