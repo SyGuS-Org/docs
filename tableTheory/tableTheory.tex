@@ -141,7 +141,7 @@ no columns.
 The signature $\sigtable$ includes function symbols for
 lambda abstractions,
 tuples, bags, and
-three function symbols denoting table operations.
+several function symbols denoting table operations.
 We list these in the following.
 Function symbols in its signature may be polymorphic.
 To provide the sort of (classes of) polymorphic functions,
@@ -358,7 +358,7 @@ is a member of $\syntax{t}$ (with any multiplicity).
 The signature $\sigtable$ includes 
 the binary function symbols 
 $\syntax{bag.union\_max}$, $\syntax{bag.union\_disjoint}$, 
-$\syntax{bag.intersect\_min}$, $\syntax{bag.difference\_subtract}$ and
+$\syntax{bag.inter\_min}$, $\syntax{bag.difference\_subtract}$ and
 $\syntax{bag.difference\_remove}$.
 Each $\syntax{f}$ of the aforementioned operators
 has sort definition:
@@ -370,7 +370,7 @@ and bags $\syntax{A,B}$:
 \begin{verbatim}
 (bag.count x (bag.union_max A B))            = (max (bag.count x A) (bag.count x B))
 (bag.count x (bag.union_disjoint A B))       = (+ (bag.count x A) (bag.count x B))
-(bag.count x (bag.intersect_min A B))        = (min (bag.count x A) (bag.count x B))
+(bag.count x (bag.inter_min A B))            = (min (bag.count x A) (bag.count x B))
 (bag.count x (bag.difference_subtract A B))  = (max (- (bag.count x A) (bag.count x B)) 0)
 (bag.count x (bag.difference_remove A B))    = (ite (> (bag.count x B) 0) 0 (bag.count x A))
 \end{verbatim}
