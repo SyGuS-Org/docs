@@ -57,7 +57,7 @@
 
 \title{Proposal for a Theory of Tables}
 
-\author{Andrew Reynolds \and Chenglong Wang}
+\author{Andrew Reynolds \and Chenglong Wang \and Mudathir Mohamed \and Cesare Tinelli}
 
 \maketitle
 
@@ -65,7 +65,7 @@
 
 \section{Theory of Tables}
 
-This document describes a SMT-LIB theory of tables $\thtable$.
+This document describes an SMT-LIB theory of tables $\thtable$.
 We provide its signature $\sigtable$ in two parts,
 first describing its sorts and then its function symbols.
 We assume that $\sigtable$ includes the symbols of the core theory, 
@@ -109,6 +109,8 @@ The signature $\sigtable$ includes all sorts of the form:
 \end{align*}
 for all sorts $\syntax{T_1, ..., T_k}$.
 This sort denotes tuples taking arguments of sorts $\syntax{T_1, ..., T_k}$.
+Furthermore, the sort $\syntax{Tuple}$ (with no arguments) denotes
+the empty tuple.
 
 \subsection{Bag Sorts}
 The signature $\sigtable$ includes all sorts of the form:
@@ -124,19 +126,22 @@ The \emph{cardinality} of a bag is the number of elements it contains.
 %The elements of a bag are unordered.
 
 \paragraph{Notes}
-A table is bag whose elements are tuples.
+A table is a bag whose elements are tuples.
 We write $\syntax{ (Table\ T_1 ...\ T_k)}$ as shorthand for 
 the sort $\syntax{ (Bag\ (Tuple\ T_1\ ...\ T_k)) }$ 
 in the remainder of the document.
-We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of table sort above,
+We refer to $\syntax{T_1}, \ldots, \syntax{T_k}$ as the \emph{columns} of the table sort above,
 and the elements of a given table as its \emph{rows}.
+Notice that the columns of the table are \emph{not} given explicit names.
+The sort $\syntax{Table}$ with no arguments denotes the table sort with
+no columns.
 
 \section{Function Symbols}
 
 The signature $\sigtable$ includes function symbols for
 lambda abstractions,
 tuples, bags, and
-three function symbols denoting table operations.
+several function symbols denoting table operations.
 We list these in the following.
 Function symbols in its signature may be polymorphic.
 To provide the sort of (classes of) polymorphic functions,
@@ -163,7 +168,7 @@ Its syntax is:
 where $\syntax{t}$ is a term,
 and $\syntax{x_1\ ...\ x_n}$ are bound variables.
 It has sort $\syntax{(->\ T_1\ ...\ T_n\ T)}$
-when $\syntax{t}$ has sort $\syntax{T}$.
+where $\syntax{t}$ has sort $\syntax{T}$.
 It denotes the anonymous function
 returning $t$ for input arguments $\syntax{x_1}, \ldots, \syntax{x_n}$.
 %The term 
@@ -191,20 +196,26 @@ Its sort definition is
 \end{verbatim}
 The term $\syntax{(tuple\ u_1\ ...\ u_n)}$ is
 interpreted as the tuple comprised of 
-the (ordered) list of elements $\syntax{u_1,\ ...\ u_n}$. 
+the (ordered) list of elements $\syntax{u_1,\ ...\ u_n}$.
+\paragraph{Notes}
+\begin{itemize}
+\item
+The list of arguments provided to the tuple constructor can be empty.
+The term $\syntax{tuple}$, when applied to no arguments, denotes the empty tuple,
+i.e. the tuple with zero components.
+\end{itemize}
 
 \subsubsection{Tuple Selection}
 The signature $\sigtable$ includes 
-all indexed function symbols of the form
-$\syntax{ 
-(\_\ sel\ n)
-}$
-where $\syntax{n}$ is a numeral.
-Its sort definition is
+the polymorphic function symbol $\syntax{tuple.select}$.
+Its sort definition is parametrized on $j$ sorts:
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ sel n)
-  
+  (tuple.select
+    
+    ; The index we are selecting 
+    Int
+    
     ; The tuple we are selecting from
     (Tuple X_1 ... X_j)
     
@@ -213,23 +224,38 @@ Its sort definition is
   )
 )
 \end{verbatim}
-where $1 \leq \syntax{n} \leq \syntax{j}$.
-The term $\syntax{((\_\ sel\ n)\ t)}$ is
+When $0 \leq n \leq j-1$,
+the term $\syntax{(tuple.select\ n\ t)}$ is
 interpreted as the $\syntax{n}^{th}$ argument of the tuple $\syntax{t}$.
+When $n$ is out of bounds, e.g. $0 \leq n \leq j-1$ does not hold,
+then the value of $\syntax{(tuple.select\ n\ t)}$ is unspecified.
+
+\paragraph{Notes}
+\begin{itemize}
+\item Like other operators with partially specified semantics,
+the symbol $\syntax{tuple.select}$ behaves like a function, meaning
+that $\syntax{(tuple.select\ n_1\ t_1)}$ and  $\syntax{(tuple.select\ n_2\ t_2)}$
+must have the same value when $n_1, t_1$ pairwise have the same value as $n_2, t_2$,
+even when $n_1$ and $n_2$ are out of bounds.
+\item When $n$ is a numeral such that $0 \leq n \leq j-1$,
+$\syntax{((\_\ tuple.select\ n)\ t)}$ is syntax sugar for the term
+$\syntax{(tuple.select\ n\ t)}$.
+The former may be used to make it is explicit the index to a tuple selector
+is within bounds, and is not allowed to be symbolic.
+\end{itemize}
 
 \subsubsection{Tuple Projection}
 \label{sec:tup-project}
 The signature $\sigtable$ includes 
-all indexed function symbols of the form
-$
-\syntax{ 
-(\_\ project\ n_1\ ...\ n_k)
-}$
-where $\syntax{n_1}, \ldots, \syntax{n_k}$ are numerals.
-Its sort definition is:
+the function symbol $\syntax{tuple.project}$.
+Its sort definition includes an unbounded number of integer arguments, followed
+by a tuple:
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ project n_1 ... n_k)
+  (tuple.project
+    
+    ; the components to project
+    Int ... Int
   
     ; The table to project
     (Tuple X_1 ... X_j)
@@ -239,22 +265,36 @@ Its sort definition is:
   )
 )
 \end{verbatim}
-where for each $i = 1, \ldots, k$,
-$1 \leq n_i \leq j$.
 The term
-$\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
-returns the tuple obtained by concatenating the
+$\syntax{(tuple.project\ n_1\ ...\ n_k\ t)}$
+returns the tuple obtained by collecting the
 values from $t$ at positions $n_1 \ldots n_k$.
-In other words, this term is equivalent to the
-term $\syntax{(tuple\ ((\_\ sel\ n_1)\ t)\ ...\ ((\_\ sel\ n_k)\ t))}$.
+In other words, this term is equivalent to:
+\begin{align*}
+\syntax{(tuple\ (tuple.select\ n_1\ t)\ ...\ (tuple.select\ n_k\ t))}
+\end{align*}
+Notice that if any $n_i$ in the above term is out of bounds, the value of
+that component of the returned tuple is unspecified.
+%If for each $i = 1, \ldots, k$,
+%$1 \leq n_i \leq j$,
 
 \paragraph{Notes}
 \begin{itemize}
 \item
-The function
-$\syntax{project}$ (without indices)
-denotes the operator above where $k=0$, which always returns the empty
-tuple.
+When $k=0$,
+we have that $\syntax{(tuple.project\ t)}$ is equivalent to the empty tuple.
+\item
+The indices $n_1, \ldots, n_k$ do not need to be ordered such that $n_1 < \ldots < n_k$.
+Moreover, it may be the case that $n_i = n_j$ for some $i \neq j$ in which
+case the component of the original is duplicated in the return value of the projection.
+\item
+The list of integer arguments to tuple projection can be empty.
+The function application
+$\syntax{(tuple.project\ t)}$ always returns the empty tuple for any input $t$.
+\item Similar to the indexed syntax for tuple selection,
+when $n_1, \ldots, n_k$ are numerals in the range $[0, j-1]$,
+$\syntax{((\_\ tuple.project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
+$\syntax{(tuple.project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
 
 \subsection{Bags}
@@ -281,15 +321,15 @@ interpreted as the bag containing $n$ copies of the element $\syntax{t}$.
 %If $n=0$,
 %then $\syntax{bag}$ denotes the empty bag.
 Notice that bags containing multiple distinct elements
-can be constructed using $\syntax{union\_disjoint}$,
+can be constructed using $\syntax{bag.union\_disjoint}$,
 introduced in Section~\ref{sec:bag-compositions}
 
 \subsubsection{Bag Count}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{count}$ whose sort definition is
+the function symbol $\syntax{bag.count}$ whose sort definition is
 \begin{verbatim}
 (par (X)
-  (count 
+  (bag.count 
   
     ; The element we are counting
     X 
@@ -309,7 +349,7 @@ interpreted as the number of times element $\syntax{u}$ occurs in $\syntax{t}$.
 \begin{itemize}
 \item
 We do not include an explicit membership predicate for bags, although note that
-the formula $\syntax{(>\ (count\ u\ t)\ 0)}$ holds exactly when $\syntax{u}$
+the formula $\syntax{(>\ (bag.count\ u\ t)\ 0)}$ holds exactly when $\syntax{u}$
 is a member of $\syntax{t}$ (with any multiplicity).
 \end{itemize}
 
@@ -317,9 +357,9 @@ is a member of $\syntax{t}$ (with any multiplicity).
 \label{sec:bag-compositions}
 The signature $\sigtable$ includes 
 the binary function symbols 
-$\syntax{union\_max}$, $\syntax{union\_disjoint}$, 
-$\syntax{intersect\_min}$, $\syntax{difference\_subtract}$ and
-$\syntax{difference\_remove}$.
+$\syntax{bag.union\_max}$, $\syntax{bag.union\_disjoint}$, 
+$\syntax{bag.inter\_min}$, $\syntax{bag.difference\_subtract}$ and
+$\syntax{bag.difference\_remove}$.
 Each $\syntax{f}$ of the aforementioned operators
 has sort definition:
 \begin{verbatim}
@@ -328,22 +368,32 @@ has sort definition:
 These functions are such that for all elements $\syntax{x}$
 and bags $\syntax{A,B}$:
 \begin{verbatim}
-(count x (union_max A B))            = (max (count x A) (count x B))
-(count x (union_disjoint A B))       = (+ (count x A) (count x B))
-(count x (intersect_min A B))        = (min (count x A) (count x B))
-(count x (difference_subtract A B))  = (max (- (count x A) (count x B)) 0)
-(count x (difference_remove A B))    = (ite (> (count x B) 0) 0 (count x A))
+(bag.count x (bag.union_max A B))            = (max (bag.count x A) (bag.count x B))
+(bag.count x (bag.union_disjoint A B))       = (+ (bag.count x A) (bag.count x B))
+(bag.count x (bag.inter_min A B))            = (min (bag.count x A) (bag.count x B))
+(bag.count x (bag.difference_subtract A B))  = (max (- (bag.count x A) (bag.count x B)) 0)
+(bag.count x (bag.difference_remove A B))    = (ite (> (bag.count x B) 0) 0 (bag.count x A))
 \end{verbatim}
 where $\syntax{max}$ and $\syntax{min}$ are binary functions
 returning the maximum (resp. minimum) of two integers, and $\syntax{ite}$
 is the if-then-else construct.
 
+\paragraph{Notes}
+\begin{itemize}
+\item
+The above operators are \emph{left-associative}, that is,
+$\syntax{(bag.union\_max\ A\ B\ C)}$ is syntax sugar for:
+\begin{align*}
+\syntax{(bag.union\_max\ (bag.union\_max\ A\ B)\ C)}
+\end{align*}
+\end{itemize}
+
 \subsubsection{Bag Cardinality}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{card}$ whose sort definition is
+the function symbol $\syntax{bag.card}$ whose sort definition is
 \begin{verbatim}
 (par (X) 
-  (card 
+  (bag.card 
   
     ; The bag to process
     (Bag X) 
@@ -353,19 +403,19 @@ the function symbol $\syntax{card}$ whose sort definition is
   )
 )
 \end{verbatim}
-The term $\syntax{(card\ t)}$ is equal to
+The term $\syntax{(bag.card\ t)}$ is equal to
 the total number of elements (taking into account multiplicity)
 that occur in the bag $\syntax{t}$.
-For example, the term $\syntax{(card\ (bag\ t\ n))}$ is
+For example, the term $\syntax{(bag.card\ (bag\ t\ n))}$ is
 equivalent to $\syntax{n}$.
 
 \subsubsection{Bag Filtering}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{filter}$. Its sort definition is:
+the function symbol $\syntax{bag.filter}$. Its sort definition is:
 
 \begin{verbatim}
 (par (X)
-  (filter
+  (bag.filter
   
     ; The predicate we are filtering based on
     (-> X Bool)
@@ -381,16 +431,16 @@ the function symbol $\syntax{filter}$. Its sort definition is:
 
 \paragraph{Semantics}
 The filter operator keeps only the elements
-from its first argument
-for which the predicate of its second argument is true.
+from its second argument
+for which the predicate of its first argument is true.
 In other words,
-$\syntax{(filter\ P\ t)}$
+$\syntax{(bag.filter\ P\ t)}$
 is the bag containing exactly
 the elements $u$ from $\syntax{t}$
 such that $\syntax{(P\ u)}$ is true.
 Notice that if $\syntax{(P\ u)}$ is true,
-then $u$ has the same multiplicity in $\syntax{(filter\ P\ t)}$
-as it did in $\syntax{t}$.
+then $u$ has the same multiplicity in $\syntax{(bag.filter\ P\ t)}$
+as it did in $\syntax{t}$. Otherwise its multiplicity is zero. 
 
 \subsubsection{Bag Map}
 The signature $\sigtable$ includes 
@@ -398,7 +448,7 @@ the function symbol $\syntax{map}$. Its sort definition is:
 
 \begin{verbatim}
 (par (X_1 X_2)
-  (map
+  (bag.map
     
     ; The function we are applying
     (-> X_1 X_2)
@@ -414,24 +464,24 @@ the function symbol $\syntax{map}$. Its sort definition is:
 
 \paragraph{Semantics}
 The map operator runs the function provided
-in the second argument to all elements in the bag.
+in the first argument to all elements in the bag.
 In other words,
-$\syntax{(map\ f\ t)}$
+$\syntax{(bag.map\ f\ t)}$
 is the bag containing exactly
 the elements $\syntax{(f\ u)}$
 for each $\syntax{u}$ that occurs in $\syntax{t}$.
 The multiplicity of $\syntax{(f\ u)}$
-in $\syntax{(map\ f\ t)}$
-is the same as the multiplicity of $\syntax{u}$ in $\syntax{t}$.
+in $\syntax{(bag.map\ f\ t)}$
+is at least the multiplicity of $\syntax{u}$ in $\syntax{t}$.
 
 \subsubsection{Bag Fold}
 \label{sec:fold}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{fold}$. Its sort definition is:
+the function symbol $\syntax{bag.fold}$. Its sort definition is:
 
 \begin{verbatim}
 (par (X_1 X_2)
-  (fold
+  (bag.fold
     
     ; The "combining" function we are applying
     (-> X_1 X_2 X_2)
@@ -452,13 +502,13 @@ the function symbol $\syntax{fold}$. Its sort definition is:
 \paragraph{Semantics}
 Given a bag $t$ whose elements are $\syntax{u_1}, \ldots, \syntax{u_n}$,
 assume an arbitrary total ordering over these elements $\preceq$.
-Then, $\syntax{(fold\ c\ i\ t)}$ is equivalent to
+Then, $\syntax{(bag.fold\ c\ i\ t)}$ is equivalent to
 $
 \syntax{
 (c\ u_n\ ...\ (c\ u_2\ (c\ u_1\ i))\ ...\ )
 }
 $.
-In other words, given a start value $\syntax{b}$,
+In other words, given a start value $\syntax{i}$,
 we apply the combining function $\syntax{c}$, taking these elements
 as first arguments in order.
 
@@ -466,7 +516,7 @@ as first arguments in order.
 \begin{itemize}
 \item
 The semantics above impose no restrictions on the ordering $\preceq$,
-which determines in which the tuples $\syntax{u_1}, \ldots, \syntax{u_n}$
+which determines the order in which the tuples $\syntax{u_1}, \ldots, \syntax{u_n}$
 are passed to the combining function $\syntax{c}$.
 Moreover, 
 we do not provide syntax to specify such an ordering.
@@ -492,11 +542,11 @@ of fold over combining functions that are not order-agnostic are undefined.
 
 \subsubsection{Bag Partition}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{partition}$. Its sort definition is:
+the function symbol $\syntax{bag.partition}$. Its sort definition is:
 
 \begin{verbatim}
 (par (X)
-  (partition
+  (bag.partition
     
     ; The equivalence relation
     (-> X X Bool)
@@ -512,7 +562,7 @@ the function symbol $\syntax{partition}$. Its sort definition is:
 
 \paragraph{Semantics}
 Given a bag $t$, 
-the term $\syntax{(partition\ r\ t)}$ is interpreted
+the term $\syntax{(bag.partition\ r\ t)}$ is interpreted
 as a bag of bags that partition the elements of $\syntax{t}$,
 whose elements (of bag sort) are $\syntax{t_1}, \ldots, \syntax{t_n}$.
 For each pair of elements $\syntax{u_i}, \syntax{u_j}$
@@ -523,13 +573,12 @@ we have that $k=l$ if and only if $\syntax{(r\ u_i\ u_j)}$ is true.
 \begin{itemize}
 \item
 The argument $r$ passed as the
-first argument to $\syntax{partition}$ is expected to be an equivalence relation.
+first argument to $\syntax{bag.partition}$ is expected to be an equivalence relation.
 In particular, this means it is reflexive, symmetric and transitive.
 This ensures that a partition with the above properties
 can be computed.
-The semantics of applications of $\syntax{partition}$ for relations $\syntax{r}$
-that are not equivalence relations
-are undefined.
+The semantics of applications of $\syntax{bag.partition}$ for relations $\syntax{r}$
+that are not equivalence relations is undefined.
 \item
 If $\syntax{u}$ occurs with some multiplicity $n$ in $\syntax{t}$,
 then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
@@ -539,20 +588,19 @@ then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
 
 \subsubsection{Table Projection}
 The signature $\sigtable$ includes 
-all indexed functions symbols of the form
-\begin{align*}
-\syntax{ 
-(\_\ project\ n_1\ ...\ n_k)
-}
-\end{align*}
-where $n_1, \ldots, n_k$ are numerals.
-Note this operator is overloaded,
-as a separate projection function (of the same name)
-is also defined for tuples in Section~\ref{sec:tup-project}.
-Its sort definition is:
+the functions symbol of the form
+$\syntax{table.project}$.
+%Note this operator is overloaded,
+%as a separate projection function (of the same name)
+%is also defined for tuples in Section~\ref{sec:tup-project}.
+Its sort definition includes an unbounded number of integer arguments, followed
+by a bag of tuples (or a table):
 \begin{verbatim}
 (par (X_1 ... X_j) 
-  ((_ project n_1 ... n_k)
+  (table.project
+  
+    ; The columns to project
+    Int ... Int
   
     ; The table to project
     (Table X_1 ... X_j)
@@ -562,58 +610,89 @@ Its sort definition is:
   )
 )
 \end{verbatim}
-where for each $i = 1, \ldots, j$,
-$1 \leq n_i \leq j$. 
-Note that
-$\syntax{project}$ without indices
-denotes the operator above where $k=0$.
+%where for each $i = 1, \ldots, j$,
+%$1 \leq n_i \leq j$.
 
 \paragraph{Semantics}
 
-A projection operator keeps (copies) of the given columns
+A projection operator for tables keeps (copies) of the given columns
 in each (tuple) element of its argument.
 In other words,
-let $p$ be the projection operator denoted by $\syntax{(\_\ project\ n_1\ ...\ n_k)}$
-and let $t$ be a table.
-Then, $p(t)$
-is the table containing a tuple of the form
-$(u_{n_1}, \ldots, u_{n_k})$
-for each tuple $(u_1, \ldots, u_j)$ from $t$.
+consider the term $\syntax{(table.project\ n_1\ ...\ n_k\ t)}$
+where $t$ is a table and $n_1, \ldots, n_k$ are integers.
+%The value of this term is the table containing a tuple of the form
+%$(u_{n_1}, \ldots, u_{n_k})$
+%for each tuple $(u_1, \ldots, u_j)$ from $t$.
+%More precisely,
+%the term $\syntax{((table.project\ n_1\ ...\ n_k\ t)}$
+This term
+can be seen as syntax sugar for $\syntax{(map\ p\ t)}$ where $\syntax{p}$
+is the function:
+\begin{verbatim}
+(lambda ((u (Tuple X_1 ... X_j))) (tuple.project n_1 ... n_k u))
+\end{verbatim}
+In other words, table projection
+applies the tuple projection on all tuples in its table argument $\syntax{t}$
+to obtain tuples in the returned table.
 
 \paragraph{Notes}
 \begin{itemize}
 \item
-The term $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$
-can be seen as syntax sugar for $\syntax{(map\ p\ t)}$ where $\syntax{p}$
-is a function that
-applies the tuple projection on tuples $\syntax{(Tuple\ X_1\ ...\ X_j)}$
-to obtain tuples $\syntax{(Tuple\ X_{n_1}\ ...\ X_{n_k})}$:
-\begin{verbatim}
-(lambda ((t (Tuple X_1 ... X_j))) ((_ project n_1 ... n_k) t))
-\end{verbatim}
-\item
-It may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
+Like tuple projection,
+it may be the case that $\syntax{n_i} = \syntax{n_j}$ for some $i \neq j$,
 in which case two (or more) copies of the column at that position
 are in the result of the projection.
 \item
-The cardinality of $\syntax{((\_\ project\ n_1\ ...\ n_k)\ t)}$ is
-same as the cardinality of $\syntax{t}$.
+The cardinality of $\syntax{(table.project\ n_1\ ...\ n_k\ t)}$ is
+the same as the cardinality of $\syntax{t}$.
+\item
+For any table $t$,
+the application taking no integer arguments $\syntax{(table.project\ t)}$ 
+returns a table with no columns whose cardinality is the same as that of $\syntax{t}$.
+\item
+When $k>0$ and
+$n_1, \ldots, n_k$ are numerals in the range $[0, j-1]$,
+$\syntax{((\_\ table.project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
+$\syntax{(table.project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
 
-\subsubsection{Table Join}
+\subsubsection{Table Product}
 The signature $\sigtable$ includes 
-all indexed functions symbols of the form
-\begin{align*}
-\syntax{ 
-(\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)
-}
-\end{align*}
-where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
+the function symbol $\syntax{table.product}$
+%where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
 Its sort definition is:
 
 \begin{verbatim}
 (par (X_1 ... X_j Y_1 ... Y_l)
-  ((_ join n_1 m_1 ... n_k m_k)
+  (table.product
+  
+    ; The tables to take the product of
+    (Table X_1 ... X_j)
+    (Table Y_1 ... Y_j)
+
+    ; The return sort
+    (Table X_1 ... X_j Y_1 ... Y_j)
+  )
+)
+\end{verbatim}
+\paragraph{Semantics}
+We have that $\syntax{(table.product\ t_1\ t_2)}$
+denotes the table containing a tuple corresponding to the concatentation
+of tuples $u_1$ and $u_2$
+for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
+
+\subsubsection{Table Join}
+The signature $\sigtable$ includes 
+the function symbol $\syntax{table.join}$
+%where $n_1, m_1, \ldots, n_k, m_k$ are numerals.
+Its sort definition is:
+
+\begin{verbatim}
+(par (X_1 ... X_j Y_1 ... Y_l)
+  (table.join
+    
+    ; the pairs of columns to join
+    Int Int ... Int Int
   
     ; The tables to join
     (Table X_1 ... X_j)
@@ -624,54 +703,66 @@ Its sort definition is:
   )
 )
 \end{verbatim}
-where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_i} \leq \syntax{j}$, $1 \leq \syntax{m_i} \leq \syntax{l}$
-and $X_{n_i}$ is the same type as $Y_{m_i}$.
-Note that
-$\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
+%where for all $i = 1, \ldots k$,
+%we have that $1 \leq \syntax{n_i} \leq \syntax{j}$, $1 \leq \syntax{m_i} \leq \syntax{l}$
+%and $X_{n_i}$ is the same type as $Y_{m_i}$.
+%Note that
+%$\syntax{join}$ (without numeral indices) denotes the above operator where $\syntax{k}$ is $0$.
 
 \paragraph{Semantics}
-When $\syntax{k}=0$, we have that $\syntax{(join\ t_1\ t_2)}$
-denotes the table containing a tuple corresponding to the concatentation
-of tuples $u_1$ and $u_2$
-for each $u_1 \in \syntax{t_1}$ and $u_2 \in \syntax{t_2}$.
-When $\syntax{k}>0$, $\syntax{((\_\ join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
-is syntax sugar for $\syntax{(filter\ P\ (join\ t_1\ t_2))}$ where $\syntax{P}$ is
+We have that $\syntax{(table.join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$
+is syntax sugar for $\syntax{(filter\ P\ (table.product\ t_1\ t_2))}$ where $\syntax{P}$ is
 the predicate:
 \begin{verbatim}
-(lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple Y_1 ... Y_l)))
-  (= ((_ project n_1 ... n_k) t_1) ((_ project m_1 ... m_k) t_2))
+(lambda ((u1 (Tuple X_1 ... X_j)) (u2 (Tuple Y_1 ... Y_l)))
+  (= (tuple.project n_1 ... n_k u1) (tuple.project m_1 ... m_k u2))
 )
 \end{verbatim}
 In other words,
 the join keeps only concatenations of tuples $u_1 \in \syntax{t_1}$ and
 $u_2 \in \syntax{t_2}$ 
 that match on each of the pairs of argument indices (columns) specified by
-the indices of the operator,
+the given indices,
 where $n_1\ ...\ n_k$ are indices corresponding to arguments of $u_1$
 and $m_1\ ...\ m_k$ are indices corresponding to arguments of $u_2$.
+Note that if $k=0$, all concenations are kept, and the join is
+equivalent to a product.
 
 \paragraph{Notes}
 \begin{itemize}
-\item The cardinality of $\syntax{(join\ t_1\ t_2)}$
+\item
+When the join operator takes no integer arguments,
+we have that $\syntax{(table.join\ t_1\ t_2)}$
+is equivalent to $\syntax{(table.product\ t_1\ t_2)}$.
+\item
+In common usage,
+the indices provided to this operator specify columns that are in bounds.
+When the indices are out of bounds,
+the semantics of the join are the same as above, 
+which however rely on the semantics of tuple projection for out of bound indices.
+\item 
+The cardinality of $\syntax{(table.join\ t_1\ t_2)}$
 is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
+\item
+If $k>0$ and $n_1, \ldots, n_k$ are numerals in the range $[0, j-1]$ 
+and $m_1, \ldots, m_k$ are numerals in the range $[1, l]$, then
+$\syntax{((\_\ table.join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
+is syntax sugar for the term
+$\syntax{(table.join\ n_1\ m_1\ ...\ n_k\ m_k\ t_1\ t_2)}$.
 \end{itemize}
 
 
 \subsubsection{Table Aggregation}
 The signature $\sigtable$ includes 
-all indexed function symbols of the form
-$
-\syntax{ 
-(\_\ aggr\ n_1\ ...\ n_k)
-}
-$
-where $\syntax{n_1}, \ldots, \syntax{n_k}$ are numerals,
-called \emph{table aggregation operations}. Their sort definition is:
+the function symbol $\syntax{table.aggr}$
+called \emph{table aggregation operator}. Its sort definition is:
 
 \begin{verbatim}
 (par (X_1 ... X_j X) 
-  ((_ aggr n_1 ... n_k)
+  (table.aggr
+  
+    ; The columns to aggregate
+    Int ... Int
     
     ; The "combining function"
     (-> (Tuple X_1 ... X_j) X X)
@@ -687,34 +778,48 @@ called \emph{table aggregation operations}. Their sort definition is:
   )
 )
 \end{verbatim}
-where for all $i = 1, \ldots k$,
-we have that $1 \leq \syntax{n_i} \leq \syntax{j}$. 
 
 \paragraph{Semantics}
-Let $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$
+Let $\syntax{(table.aggr\ n_1\ ...\ n_k\ c\ i\ t)}$
 be a well-sorted term for
 combining function $\syntax{c}$, 
 initial value $\syntax{i}$,
 and table-to-aggregate $\syntax{t}$.
 Assume that $\syntax{c}$ is \emph{order-agnostic} (see Section~\ref{sec:fold}).
-The application $\syntax{((\_\ aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$ is
+The application $\syntax{(table.aggr\ n_1\ ...\ n_k\ c\ i\ t)}$ is
 the union of elements computed via a fold operation involving $\syntax{c}$ and $\syntax{i}$
 that run over elements in a partition of the table $\syntax{t}$.
 In particular, this application of an aggregation function is syntax sugar for:
 \begin{verbatim}
-(map (fold c i) (partition eq t))
+(bag.map (bag.fold c i) (bag.partition eq t))
 \end{verbatim}
 where $\syntax{eq}$ is the relation over tuples that holds
 when tuples are equivalent for indices $\syntax{n_1}, \ldots, \syntax{n_k}$:
 \begin{verbatim}
 (lambda ((t_1 (Tuple X_1 ... X_j)) (t_2 (Tuple X_1 ... X_j)))
-  (= ((_ project n_1 ... n_k) t_1) ((_ project n_1 ... n_k) t_2))
+  (= (tuple.project n_1 ... n_k t_1) (tuple.project n_1 ... n_k t_2))
 )
 \end{verbatim}
 Above, notice that 
-$\syntax{(fold\ c\ i)}$ is a partial application of the fold
+$\syntax{(bag.fold\ c\ i)}$ is a partial application of the fold
 function which takes a $\syntax{(Bag\ (Tuple\ X_1\ ...\ X_j))}$
 and returns a term of type $\syntax{X}$.
+
+\paragraph{Notes}
+\begin{itemize}
+\item
+In common usage,
+the indices provided to table aggregation specify columns that are in bounds.
+When the indices are out of bounds,
+the semantics are the same as above, 
+which however rely on the semantics of tuple projection for out of bound indices.
+\item
+When $n_1, \ldots, n_k$ are numerals in the range $[1,j]$,
+we have that
+$\syntax{((\_\ table.aggr\ n_1\ ...\ n_k)\ c\ i\ t)}$
+is syntax sugar for the term
+$\syntax{(table.aggr\ n_1\ ...\ n_k\ c\ i\ t)}$.
+\end{itemize}
 
 \begin{comment}
 In detail,
@@ -768,8 +873,176 @@ In other words, this function returns the result of the
 fold computation described above unchanged.
 \end{comment}
 
+\section{Abstract Sorts}
+
+In this section, we provide an extended syntax for representing
+\emph{abstract} sorts and function symbols.
+%We provide an extended type system for type checking terms over these symbols.
+
+We write
+$\syntax{\abstype{Tuple}}$ and $\syntax{\abstype{Bag}}$
+to denote the abstract tuple type and the abstract bag type respectively.
+These types take no parameters.
+When a term $t$ is annotated with an abstract tuple type,
+conceptually the type of $t$ is some tuple type,
+but the parameters of that type is not given.
+We write $\syntax{\abstype{Table}}$ as shorthand for $\syntax{( Bag\ \abstype{Tuple})}$,
+that is, bags of tuples whose parameters are not given.
+Furthermore, 
+the syntax $\syntax{\abstype{->}}$ specifies the abstract function sort,
+i.e. functions having an unspecified (at least one) argument sort and a return sort.
+
+We write $\syntax{\abstypebase}$ to denote
+the (fully) abstract type.
+An annotation of the abstract type on a term $t$ gives no information about the type of $t$.
+
 \section{Examples}
 
+\subsection{Table Transformation}
+The following is an example using the table theory in a syntax-guided synthesis problem
+in the SyGuS 2.1 format.
 
+\begin{verbatim}
+; Predicates for tuples
+(define-fun p_true ((r (Tuple Int String))) Bool true)
+(define-fun p_false ((r (Tuple Int String))) Bool false)
+(define-fun p_gt_zero ((r (Tuple Int String))) Bool (> ((_ tuple.select 0) r) 0))
+(define-fun p_lt_zero ((r (Tuple Int String))) Bool (< ((_ tuple.select 0) r) 0))
+(define-fun p_str_emp ((r (Tuple Int String))) Bool (= (str.len ((_ tuple.select 1) r)) 0))
+
+; Synthesize a transformation for tables with an integer and string column
+(synth-fun f ((x (Table Int String))) (Table Int String)(
+(Start (Table Int String))
+(StartTuple (Tuple Int String))
+(StartInt Int)
+(StartString String)
+(StartPred (-> (Tuple Int String) Bool))
+)(
+(Start (Table Int String) (
+  x
+  (bag StartTuple StartInt)
+  (bag.filter StartPred Start)
+  (bag.union_disjoint Start Start)
+))
+(StartTuple (Tuple Int String) (
+  (tuple StartInt StartString)
+))
+(StartInt Int (
+  0 1
+  ((_ tuple.select 0) StartTuple)
+))
+(StartString String (
+  "" "A" "B" "C" "D" "E" 
+  ((_ tuple.select 1) StartTuple)
+))
+(StartPred (-> (Tuple Int String) Bool)(
+  p_true p_false p_gt_zero p_lt_zero p_str_emp
+))
+))
+(constraint (= (f 
+(bag.union_disjoint
+(bag (tuple 1 "A") 1)
+(bag (tuple (- 2) "B") 1)
+(bag (tuple (- 1) "C") 1)
+(bag (tuple 1 "C") 1)
+(bag (tuple 0 "D") 1)
+(bag (tuple 2 "E") 1))
+)
+(bag.union_disjoint
+(bag (tuple 1 "A") 1)
+(bag (tuple 1 "C") 1)
+(bag (tuple 2 "E") 1))
+))
+(check-synth)
+\end{verbatim}
+In this example, we are looking to synthesize a transformation on
+tables with one integer column and one string column whose body
+fits the provided grammar.
+A possible correct response for this example from a synthesis solver is:
+\begin{verbatim}
+(
+(define-fun f ((x (Table Int String))) (Table Int String)
+  (bag.filter p_gt_zero x))
+)
+\end{verbatim}
+In particular, the transformation filters the rows of the table such that
+only those whose integer column is greater than zero, as specified by the
+predicate $\syntax{p\_gt\_zero}$ are kept.
+
+\subsection{Table Transformation with Abstract Sorts}
+The following additionally makes use of abstract sorts.
+
+\begin{verbatim}
+(synth-fun f ((x (Table String))) (Table Int String) (
+(Start ?Table)
+(StartTuple (Tuple Int))
+)(
+(Start ?Table (
+  x
+  (bag StartTuple StartInt)
+  (bag.union_disjoint Start Start)
+  (table.product Start Start)
+  (table.project StartInt StartInt Start)
+))
+(StartTuple (Tuple Int) (
+  (tuple StartInt)
+))
+(StartInt Int (
+  0 1 7
+  (tuple.select StartInt Start)
+))
+))
+(constraint (= (f 
+(bag.union_disjoint
+(bag (tuple "A") 1)
+(bag (tuple "C") 1)
+(bag (tuple "E") 1))
+)
+(bag.union_disjoint
+(bag (tuple 7 "A") 1)
+(bag (tuple 7 "C") 1)
+(bag (tuple 7 "E") 1))
+))
+(check-synth)
+\end{verbatim}
+In this example, we are looking to synthesize a function that transforms
+a table having a string column to one that has an integer and a string column.
+Notice that the grammar for $\syntax{f}$ begins with a non-terminal
+symbol $\syntax{Start}$ whose type annotation is $\syntax{?Table}$.
+In particular, this means that $\syntax{Start}$ may generate terms having
+\emph{any} table type. However, a term generated by this non-terminal is
+only valid as a solution for $\syntax{f}$ if it has type $\syntax{(Table\ Int\ String)}$,
+the return type of $\syntax{f}$.
+
+Several non-terminals of the above grammar are well-typed only for a subset of the terms they apply to.
+For example, $\syntax{(tuple.select\ StartInt\ Start)}$ is the right hand side of
+a production rule for $\syntax{StartInt}$.
+This rule is limited to generating terms
+$\syntax{(tuple.select\ n\ t)}$ where $\syntax{t}$ is a table whose $\syntax{n}^{th}$ column is an integer.
+
+A possible correct response for this example from a synthesis solver 
+prepends the integer $\syntax{7}$ to all rows of the original table:
+\begin{verbatim}
+(
+(define-fun f ((x (Table String))) (Table Int String) 
+  (table.product (bag (tuple 7) 1) x)
+)
+\end{verbatim}
+
+Note the use of abstract sorts in this example gives
+greater flexibility for specifications. 
+Although not necessary in this example, the solution
+may involve types that are not explicitly specified in the grammar.
+For example:
+\begin{verbatim}
+(
+(define-fun f ((x (Table String))) (Table Int String) 
+  (table.project 1 2 
+    (table.product (bag (tuple 0) 1) 
+    (table.product (bag (tuple 7) 1) x))))
+)
+\end{verbatim}
+The above solution involves constructing a table with two integer columns and a string column,
+and is also a valid solution to the above problem.
 
 \end{document}
