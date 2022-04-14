@@ -390,7 +390,7 @@ $\syntax{(bag.union\_max\ A\ B\ C)}$ is syntax sugar for:
 
 \subsubsection{Bag Cardinality}
 The signature $\sigtable$ includes 
-the function symbol $\syntax{card}$ whose sort definition is
+the function symbol $\syntax{bag.card}$ whose sort definition is
 \begin{verbatim}
 (par (X) 
   (bag.card 
@@ -431,8 +431,8 @@ the function symbol $\syntax{bag.filter}$. Its sort definition is:
 
 \paragraph{Semantics}
 The filter operator keeps only the elements
-from its first argument
-for which the predicate of its second argument is true.
+from its second argument
+for which the predicate of its first argument is true.
 In other words,
 $\syntax{(bag.filter\ P\ t)}$
 is the bag containing exactly
@@ -440,7 +440,7 @@ the elements $u$ from $\syntax{t}$
 such that $\syntax{(P\ u)}$ is true.
 Notice that if $\syntax{(P\ u)}$ is true,
 then $u$ has the same multiplicity in $\syntax{(bag.filter\ P\ t)}$
-as it did in $\syntax{t}$.
+as it did in $\syntax{t}$. Otherwise its multiplicity is zero. 
 
 \subsubsection{Bag Map}
 The signature $\sigtable$ includes 
@@ -464,7 +464,7 @@ the function symbol $\syntax{map}$. Its sort definition is:
 
 \paragraph{Semantics}
 The map operator runs the function provided
-in the second argument to all elements in the bag.
+in the first argument to all elements in the bag.
 In other words,
 $\syntax{(bag.map\ f\ t)}$
 is the bag containing exactly
@@ -589,12 +589,12 @@ then $\syntax{u}$ occurs with the same multiplicity $n$ in some $\syntax{t_i}$.
 \subsubsection{Table Projection}
 The signature $\sigtable$ includes 
 the functions symbol of the form
-$\syntax{tuple.project}$.
+$\syntax{table.project}$.
 %Note this operator is overloaded,
 %as a separate projection function (of the same name)
 %is also defined for tuples in Section~\ref{sec:tup-project}.
 Its sort definition includes an unbounded number of integer arguments, followed
-by a tuple:
+by a bag of tuples (or a table):
 \begin{verbatim}
 (par (X_1 ... X_j) 
   (table.project
@@ -651,7 +651,7 @@ the application taking no integer arguments $\syntax{(table.project\ t)}$
 returns a table with no columns whose cardinality is the same as that of $\syntax{t}$.
 \item
 When $k>0$ and
-$n_1, \ldots, n_k$ are numerals in the range $[1, j]$,
+$n_1, \ldots, n_k$ are numerals in the range $[0, j-1]$,
 $\syntax{((\_\ table.project\ n_1\ ...\ n_k)\ t)}$ is syntax sugar for the term
 $\syntax{(table.project\ n_1\ ...\ n_k\ t)}$.
 \end{itemize}
@@ -744,7 +744,7 @@ which however rely on the semantics of tuple projection for out of bound indices
 The cardinality of $\syntax{(table.join\ t_1\ t_2)}$
 is the cardinality of $\syntax{t_1}$ times the cardinality of $\syntax{t_2}$.
 \item
-If $k>0$ and $n_1, \ldots, n_k$ are numerals in the range $[1, j]$ 
+If $k>0$ and $n_1, \ldots, n_k$ are numerals in the range $[0, j-1]$ 
 and $m_1, \ldots, m_k$ are numerals in the range $[1, l]$, then
 $\syntax{((\_\ table.join\ n_1\ m_1\ ...\ n_k\ m_k)\ t_1\ t_2)}$
 is syntax sugar for the term
